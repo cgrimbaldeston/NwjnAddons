@@ -30,7 +30,7 @@ createEvent("serverTick", (fn) =>
 )
 
 createEvent("spawnDamageTag", (fn) =>
-    register("packetReceived", (packet, event) => {
+    register("packetReceived", (packet) => {
         if (packet.func_149025_e() !== 30) return
 
         const firstString = packet.func_149027_c().find(o => o.func_75674_c() === 4)?.func_75669_b()
@@ -44,32 +44,10 @@ createEvent("spawnObject", (fn) =>
     ).setFilteredClass(net.minecraft.network.play.server.S0EPacketSpawnObject)
 )
 
-createEvent("spawnPainting", (fn) => 
+createEvent("cancelPacket", className => 
     register("packetReceived", (_, event) => 
-        fn(event)
-    ).setFilteredClass(net.minecraft.network.play.server.S10PacketSpawnPainting)
-)
-
-createEvent("spawnExp", (fn) => 
-    register("packetReceived", (_, event) => 
-        fn(event)
-    ).setFilteredClass(net.minecraft.network.play.server.S11PacketSpawnExperienceOrb)
-)
-
-createEvent("armorStandDeath", (fn) => 
-    register("packetReceived", (packet, event) => {
-        const dataWatcherList = packet.func_149376_c()
-        if (dataWatcherList?.length !== 1) return
-
-        const entry = dataWatcherList[0]
-        if (entry.func_75674_c() !== 4) return
-        if (!/ 0(\/|❤)/.test(entry.func_75669_b().removeFormatting())) return
-
-        const entity = World.getWorld().func_73045_a(packet.func_149375_d())
-        if (!entity) return
-
-        fn(entity, event)
-    }).setFilteredClass(net.minecraft.network.play.server.S1CPacketEntityMetadata)
+        cancel(event)
+    ).setFilteredClass(net.minecraft.network.play.server[className])
 )
 
 createEvent("serverChat", (fn, criteria = "") => 
@@ -164,6 +142,8 @@ createEvent("containerClick", (fn) =>
 )
 
 export const getEvent = (triggerType, method, args) => {
+    if (triggerType instanceof com.chattriggers.ctjs.triggers.Trigger) return triggerType.unregister()
+
     const type = typeof(triggerType) === "string" ? triggerType.toUpperCase() : triggerType
 
     const trigger =

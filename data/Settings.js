@@ -561,68 +561,19 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     placeHolder: "Click",
     options: [
         {
-            title: "PrimedTnt (Prob don't cuz SuperBoomTnt & T5 Phase 4)",
-            configName: "removeTnt",
-            value: false
-        },
-        {
-            title: "Ender Crystals (Prob don't cuz M7 Phase 1)",
-            configName: "removeCrystals",
-            value: false
-        },
-        {
-            title: "Arrows (Recommended)",
+            title: "&e✯&r Arrows",
             configName: "removeArrows",
             value: false
         },
         {
-            title: "&e✯&r Fireballs",
-            configName: "removeFireballs",
-            value: true
-        },
-        {
-            title: "&e✯&r Wither Skulls (Recommended)",
-            configName: "removeWitherSkulls",
-            value: true
-        },
-        {
-            title: "&e✯&r Falling Blocks (Recommended)",
+            title: "&e✯&r Falling Blocks",
             configName: "removeFallingBlocks",
-            value: true
-        },
-        {
-            title: "&e✯&r Rockets",
-            configName: "removeRockets",
             value: true
         }
     ],
     shouldShow(data) {
         return data.miscShit
     }
-})
-.addMultiCheckbox({
-    category: "QOL",
-    configName: "chatCleanup",
-    title: "Cleanup Chat",
-    description: "Cancels message events of these options",
-    placeHolder: "Click",
-    options: [
-        {
-            title: "Boss Messages",
-            configName: "bossCleaner",
-            value: false
-        },
-        {
-            title: "Discord Warnings",
-            configName: "discordCleaner",
-            value: false
-        },
-        {
-            title: "Visitor Dialouge",
-            configName: "visitorCleaner",
-            value: false
-        }
-    ]
 })
 
 import TextUtil from "../core/static/TextUtil"

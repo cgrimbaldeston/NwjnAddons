@@ -1,4 +1,6 @@
 export default class EntityUtil {
+    static getEntityByID = (id) => World.getWorld()["getEntityByID", "func_73045_a"](id)
+
     /**
      * @param {MCTEntity|Entity} entity 
      * @returns {MCTEntity} the mcEntity
