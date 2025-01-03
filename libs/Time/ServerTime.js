@@ -1,8 +1,12 @@
 import Tick from "./Tick"
 import Second from "./Second"
 
-/** @returns {Tick} */
-const normalize = (time) => time instanceof Second ? Tick.fromSeconds(time) : time
+/** @returns {Tick|Second|Number} */
+const normalize = (val) => {
+    if (val instanceof Tick) return val
+    if (val instanceof Second) return Tick.fromSeconds(val)
+    else return new Tick(val)
+}
 
 /** @type {Map<Symbol, Tick>} */
 const scheduledTasks = new Map()
@@ -13,8 +17,10 @@ const scheduledTasks = new Map()
 export const scheduleTask = (onEnd, delay = new Tick(1)) => {
     const id = onEnd.toString()
     const tick = normalize(delay)
-        .atTick(0, onEnd)
-        .atTick(0, () => scheduledTasks.delete(id))
+        .atTick(0, () => {
+            scheduledTasks.delete(id)
+            onEnd()
+        })
     
     scheduledTasks.set(id, tick)
 }
