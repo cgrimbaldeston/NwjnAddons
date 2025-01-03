@@ -11,7 +11,7 @@ new Feature({setting: "miscShit"})
     .addEvent("spawnObject", (entityType, event) => {
         const value = blacklist.get(entityType)
 
-        if (typeof(value) !== "function" || value()) cancel(event)
+        if (value === null || value?.()) cancel(event)
     })
 
     .addEvent("cancelPacket", "S10PacketSpawnPainting")
