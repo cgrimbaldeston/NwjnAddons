@@ -13,7 +13,7 @@ const ChatWaypoints = new Feature({setting: "waypoint"})
     .addEvent("serverChat", (displayName, x, y, z, text = "", event, formatted) => {
         const ign = TextUtil.getSenderName(displayName).toLowerCase()
         
-        if (data.blacklist.includes(ign)) return TextUtil.append(event.func_148915_c(), "§cBlacklisted")
+        if (ign in data.blacklist) return TextUtil.append(event.func_148915_c(), "§cBlacklisted")
         
         const [title] = TextUtil.getMatches(/^(.+)§.:/, formatted)
 

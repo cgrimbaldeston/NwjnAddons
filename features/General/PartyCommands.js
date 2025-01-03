@@ -107,7 +107,7 @@ new Feature({setting: "partyCommands"})
         const ign = TextUtil.getSenderName(player).toLowerCase()
         const cmd = command.toLowerCase()
 
-        if (data.blacklist.includes(ign)) return TextUtil.append(event.func_148915_c(), "&cBlacklisted")
+        if (ign in data.blacklist) return TextUtil.append(event.func_148915_c(), "&cBlacklisted")
         
         const response = Object.values(commands).find(obj => obj.matches.test(cmd) && obj.access())
 

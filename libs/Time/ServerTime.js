@@ -52,15 +52,14 @@ export const addTimer = (onTick, start = new Tick(0)) => {
 }
 
 
-const history = Array(3)
-let tick = 0, lastSec = 0, avg = 0
+const history = Array(5)
+let tick = 0, lastSec = 0
 
-export const getTPS = () => MathLib.clampFloat(avg, 0, 20).toFixed(2)
+export const getTPS = () => MathLib.clampFloat(history.reduce((a,b) => a+b) / 5, 0, 20).toFixed(2)
 const _updateTPS = () => {
     if (tick++ % 20) return
     const ticked = 20000 / (-lastSec + (lastSec = Date.now()))
     history.push(ticked)
-    avg = history.reduce((a,b) => a+b) / 4
     history.shift()
 }
 
