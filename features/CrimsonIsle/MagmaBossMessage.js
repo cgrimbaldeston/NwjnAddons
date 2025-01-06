@@ -1,4 +1,4 @@
-import Feature from "../../core/Feature"
+import Feature from "../../libs/Features/Feature"
 
 let totalDamage = 0
 new Feature({

@@ -534,30 +534,34 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
 })
 .addSwitch({
     category: "QOL",
-    configName: "noDeathAnimation",
-    title: "&e✯&r &bRemove Entity Death Animation",
+    subcategory: "Death Clutter",
+    configName: "removeDyingMobs",
+    title: "&e✯&r &bRemove Dying Mobs",
     description: "Fully kills the entity before it can perform the animation",
     value: true
 })
 .addSwitch({
     category: "QOL",
-    configName: "noDeadArmorStands",
-    title: "&e✯&r &bRemove Dead Armor Stands",
-    description: "Kills the ArmorStand used for a mob's hp when the mob dies instead of half a second after",
+    subcategory: "Death Clutter",
+    configName: "removeDeadNames",
+    title: "&e✯&r &bRemove Names of Dead Mobs",
+    description: "Kills the ArmorStand used for a mob's HP instantly when the mob dies",
     value: true
 })
 .addSwitch({
     category: "QOL",
-    configName: "miscShit",
-    title: "&e✯&r &bRemove Misc Shit",
-    description: `Completely cancels the construction of lots of useless entities for a notable performance boost`,
+    subcategory: "Spawn Clutter",
+    configName: "abortJunkSpawns",
+    title: "&e✯&r &bAbort Junk-Spawns",
+    description: `Completely cancels the construction of many unused + non-performative entities`,
     value: true
 })
 .addMultiCheckbox({
     category: "QOL",
-    configName: "miscShitOptions",
-    title: "&e✯&r &bRemove Misc Shit Customization",
-    description: "Edit which entities to cancel, most are occluded because they should always or never be canceled",
+    subcategory: "Spawn Clutter",
+    configName: "abortJunkSpawnsOptions",
+    title: "➤ &e✯&r &bAbort Junk-Spawns Customization",
+    description: "     Toggle potentially wanted entities",
     placeHolder: "Click",
     options: [
         {
@@ -571,9 +575,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
             value: true
         }
     ],
-    shouldShow(data) {
-        return data.miscShit
-    }
+    shouldShow: data => data.abortJunkSpawns
 })
 
 import TextUtil from "../core/static/TextUtil"
@@ -581,11 +583,5 @@ const meinConf = new Settings("NwjnAddons", defCon1, "/data/Scheme.json", `${Tex
     .setPos(15, 15)
     .setSize(70, 70)
     .apply()
-
-try {
-    const changelog = FileLib.getUrlContent("https://raw.githubusercontent.com/wiki/nwjn/NwjnAddons/Latest-Changelog.md")
-
-    meinConf.addChangelog(changelog).apply()
-} catch (e) {}
     
 export default () => meinConf.settings

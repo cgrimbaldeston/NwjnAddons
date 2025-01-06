@@ -1,4 +1,4 @@
-import Feature from "../../core/Feature";
+import Feature from "../../libs/Features/Feature";
 import {log} from "../../core/static/TextUtil";
 import { scheduleTask } from "../../libs/Time/ServerTime";
 import Second from "../../libs/Time/Second";

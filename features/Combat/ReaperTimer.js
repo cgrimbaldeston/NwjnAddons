@@ -1,4 +1,4 @@
-import GuiFeature from "../../core/GuiFeature";
+import GuiFeature from "../../libs/Features/GuiFeature";
 import ItemUtil from "../../core/static/ItemUtil";
 import { data } from "../../data/Data";
 import { addCountdown } from "../../libs/Time/ServerTime";

@@ -26,9 +26,8 @@ import "./features/General/Commands"
 
 // import "./features/HUD/BlazeTimers"
 import "./features/QOL/BlockHighlight"
-import "./features/QOL/ChatCleanup"
-import "./features/QOL/GrimReaper"
-import "./features/QOL/MiscShit"
+import "./features/QOL/DeathClutter"
+import "./features/QOL/SpawnClutter"
 
 import "./features/Mining/MineshaftWaypoints"
 

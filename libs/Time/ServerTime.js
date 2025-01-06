@@ -62,12 +62,6 @@ const history = Array(5)
 let tick = 0, lastSec = 0
 
 export const getTPS = () => MathLib.clampFloat(history.reduce((a,b) => a+b) / 5, 0, 20).toFixed(2)
-const _updateTPS = () => {
-    if (tick++ % 20) return
-    const ticked = 20000 / (-lastSec + (lastSec = Date.now()))
-    history.push(ticked)
-    history.shift()
-}
 
 register("packetReceived", (packet) => {
     if (packet.func_148890_d() > 0) return
@@ -75,5 +69,8 @@ register("packetReceived", (packet) => {
     scheduledTasks.forEach(tick => tick.value--)
     countdowns.forEach(tick => tick.value--)
     timers.forEach(tick => tick.value++)
-    _updateTPS()
+
+    if (tick++ % 20) return
+    history.push(20000 / (-lastSec + (lastSec = Date.now())))
+    history.shift()
 }).setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)

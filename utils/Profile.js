@@ -1,5 +1,5 @@
 import TextUtil, {notify} from "../core/static/TextUtil"
-import Event from "../libs/CustomEventFactory/Event"
+import Event from "../libs/Events/Event"
 import { data } from "../data/Data"
 import { scheduleTask } from "../libs/Time/ServerTime"
 import Tick from "../libs/Time/Tick"

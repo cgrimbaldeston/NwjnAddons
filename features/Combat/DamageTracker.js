@@ -1,4 +1,4 @@
-import Feature from "../../core/Feature";
+import Feature from "../../libs/Features/Feature";
 
 new Feature({
     setting: "damageTracker"

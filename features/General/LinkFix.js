@@ -1,6 +1,6 @@
 /** @see StuffysCipher */
 import StuffysCipher from "../../core/static/StuffysCipher";
-import Feature from "../../core/Feature";
+import Feature from "../../libs/Features/Feature";
 
 const whitelist = /^(wiki.)?hypixel.net|plancke.io$/
 

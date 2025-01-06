@@ -1,4 +1,4 @@
-import Feature from "../../core/Feature";
+import Feature from "../../libs/Features/Feature";
 import RenderUtil from "../../core/static/RenderUtil";
 import TextUtil from "../../core/static/TextUtil";
 import { data } from "../../data/Data";
@@ -34,7 +34,7 @@ const ChatWaypoints = new Feature({setting: "waypoint"})
         })
     })
 
-    .onDisabled(() => waypoints.clear())
+    .onUnregister(() => waypoints.clear())
 
 class Waypoint {
     constructor(key, title, x, y, z, extraText = "", lifespan = Settings().wpTime) {
@@ -68,26 +68,3 @@ class Waypoint {
         return `${this.title} §b[${ this.dist }m]${this.extraText}`
     }
 }
-
-/*
-"RENDERWORLD": {
-            "index.js:1 -> ChatWaypoints.js:18 -> Feature.js:79 (addSubEvent) -> Event.js:20 (Event)": {
-                "impact": "9193ms",
-                "calls": "16656 calls",
-                "avg": "0.5519ms/call"
-            }
-        },
-        "RENDERWORLD": {
-            "index.js:1 -> ChatWaypoints.js:11 -> Feature.js:82 (addSubEvent) -> Event.js:20 (Event)": {
-                "impact": "17249ms",
-                "calls": "38313 calls",
-                "avg": "0.4502ms/call"
-            }
-        },
-        "RENDERWORLD": {
-            "index.js:1 -> ChatWaypoints.js:11 -> Feature.js:82 (addSubEvent) -> Event.js:20 (Event)": {
-                "impact": "42692ms",
-                "calls": "1319676 calls",
-                "avg": "0.0324ms/call"
-            },
-        */

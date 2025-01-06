@@ -5,9 +5,9 @@
  * @credit https://github.com/DocilElm/Doc/blob/main/core/Feature.js
  */
 
-import Settings from "../data/Settings";
-import Location from "../utils/Location"
-import Event from "../libs/CustomEventFactory/Event";
+import Settings from "../../data/Settings";
+import Location from "../../utils/Location"
+import Event from "../Events/Event";
 
 export default class Feature {
     /**
@@ -29,7 +29,6 @@ export default class Feature {
         this.subEvents = []
         this.registerListeners = []
         this.unregisterListeners = []
-        this.disabledListeners = []
 
         this.isRegistered = false
 
@@ -39,8 +38,6 @@ export default class Feature {
             this.settingValue = Settings()[setting]
     
             Settings().getConfig().registerListener(setting, (_, val) => {
-                if (!val) this.disabledListeners.forEach(it => it())
-
                 this.settingValue = val
                 this._updateRegister()
             })
@@ -105,12 +102,6 @@ export default class Feature {
      */
     onUnregister(fn) {
         this.unregisterListeners.push(fn)
-
-        return this
-    }
-
-    onDisabled(fn) {
-        this.disabledListeners.push(fn)
 
         return this
     }

@@ -1,4 +1,4 @@
-import Feature from "../../core/Feature";
+import Feature from "../../libs/Features/Feature";
 import { notify } from "../../core/static/TextUtil";
 import RenderUtil from "../../core/static/RenderUtil"
 

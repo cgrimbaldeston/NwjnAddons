@@ -1,13 +1,13 @@
-import Feature from "../../core/Feature";
+import Feature from "../../libs/Features/Feature";
 import Settings from "../../data/Settings";
 
 /** 
  * @see {https://github.com/Marcelektro/MCP-919/blob/1717f75902c6184a1ed1bfcd7880404aab4da503/src/minecraft/net/minecraft/entity/EntityTrackerEntry.java} ctrl-f S0EPacketSpawnObject
- * @type {Map<Number, ?() => Boolean>} 
+ * @type {Map<Number, null|ReturnType<Boolean>} 
  */
 const blacklist = new Map()
 
-new Feature({setting: "miscShit"})
+new Feature({setting: "abortJunkSpawns"})
     .addEvent("spawnObject", (entityType, event) => {
         const value = blacklist.get(entityType)
 
@@ -17,7 +17,7 @@ new Feature({setting: "miscShit"})
     .addEvent("cancelPacket", "S10PacketSpawnPainting")
     .addEvent("cancelPacket", "S11PacketSpawnExperienceOrb")
 
-/* [Always Enabled] */
+/* [Always Canceled] */
 blacklist.set(1)  // Boat
 blacklist.set(10) // MineCart
 blacklist.set(61) // Snowball

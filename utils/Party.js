@@ -1,5 +1,5 @@
 // Credit: BloomCore
-import Feature from "../core/Feature"
+import Feature from "../libs/Features/Feature"
 import TextUtil from "../core/static/TextUtil"
 
 const members = new Set()

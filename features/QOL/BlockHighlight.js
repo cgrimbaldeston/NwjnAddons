@@ -1,14 +1,11 @@
-import Feature from "../../core/Feature"
+import Feature from "../../libs/Features/Feature"
 import RenderUtil from "../../core/static/RenderUtil"
 import Settings from "../../data/Settings"
 
-const DrawBlockHighlightEvent = net.minecraftforge.client.event.DrawBlockHighlightEvent
-const BlockHit = net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK
-
 new Feature({setting: "blockHighlight"})
-    .addEvent(DrawBlockHighlightEvent, (event) => {
+    .addEvent(net.minecraftforge.client.event.DrawBlockHighlightEvent, (event) => {
         const target = event.target
-        if (target?.["typeOfHit", "field_72313_a"] !== BlockHit) return
+        if (target?.["typeOfHit", "field_72313_a"]?.toString() !== "BLOCK") return
 
         const pos = target["getBlockPos", "func_178782_a"]()
         const WorldClient = World.getWorld()

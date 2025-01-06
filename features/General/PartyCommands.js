@@ -1,8 +1,8 @@
-import Feature from "../../core/Feature";
+import Feature from "../../libs/Features/Feature";
 import Party from "../../utils/Party";
 import { data } from "../../data/Data";
 import TextUtil from "../../core/static/TextUtil";
-import MathUtil from "../../core/static/MathUtil";
+import Time from "../../libs/Time/Util"
 import Location from "../../utils/Location";
 import Settings from "../../data/Settings";
 import { getTPS, scheduleTask } from "../../libs/Time/ServerTime";
@@ -17,7 +17,7 @@ const commands = {
     "time": {
         matches: /^time$/,
         access: () => Settings().pcTime,
-        fn: () => "pc " + MathUtil.getTime()
+        fn: () => "pc " + Time.getLongTime()
     },
 
     "coords": {

@@ -1,5 +1,5 @@
-import MathUtil from "../../core/static/MathUtil";
-import GuiFeature from "../../core/GuiFeature";
+import Time from "../../libs/Time/Util"
+import GuiFeature from "../../libs/Features/GuiFeature";
 import { data } from "../../data/Data";
 
 const clock = new GuiFeature({
@@ -10,5 +10,5 @@ const clock = new GuiFeature({
     color: "clockColor"
 })
     .addEvent("interval", () => {
-        clock.text = MathUtil.getTime()
+        clock.text = Time.getShortTime()
     }, 1)

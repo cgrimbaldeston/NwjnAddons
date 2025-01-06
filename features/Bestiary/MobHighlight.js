@@ -5,7 +5,7 @@
 import MathUtil from "../../core/static/MathUtil"
 import EntityUtil from "../../core/static/EntityUtil"
 import RenderUtil from "../../core/static/RenderUtil"
-import Feature from "../../core/Feature"
+import Feature from "../../libs/Features/Feature"
 import { notify } from "../../core/static/TextUtil"
 import Settings from "../../data/Settings"
 

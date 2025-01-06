@@ -1,5 +1,5 @@
 import { data } from "../../data/Data";
-import GuiFeature from "../../core/GuiFeature"
+import GuiFeature from "../../libs/Features/GuiFeature"
 
 const EnumMinibosses = {
     "BLADESOUL": "&8Bladesoul",

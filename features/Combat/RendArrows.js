@@ -1,4 +1,4 @@
-import Feature from "../../core/Feature";
+import Feature from "../../libs/Features/Feature";
 import ItemUtil from "../../core/static/ItemUtil";
 import { scheduleTask } from "../../libs/Time/ServerTime";
 import Tick from "../../libs/Time/Tick";

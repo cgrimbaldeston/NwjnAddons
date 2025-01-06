@@ -5,7 +5,7 @@
  * @credit https://github.com/DocilElm/Doc/blob/main/shared/Location.js
  */
 
-import Event from "../libs/CustomEventFactory/Event"
+import Event from "../libs/Events/Event"
 import TextUtil from "../core/static/TextUtil"
 
 export default new class Location {
