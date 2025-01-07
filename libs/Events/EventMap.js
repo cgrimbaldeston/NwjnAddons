@@ -65,12 +65,6 @@ createEvent("serverChat", (fn, criteria = "") =>
     }).setFilteredClass(net.minecraft.network.play.server.S02PacketChat)
 )
 
-createEvent("messageSent", (fn, criteria) => 
-    register("messageSent", (msg, event) => {
-        TextUtil.matchesCriteria(fn, criteria, msg, event, msg)
-    })
-)
-
 createEvent("actionBarChange", (fn, criteria) => 
     register("packetReceived", (packet, event) => {
         if (!packet["isChat", "func_148916_d"]()) return
