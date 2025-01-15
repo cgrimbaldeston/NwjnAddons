@@ -20,10 +20,7 @@ const ChatWaypoints = new Feature({setting: "waypoint"})
         new Waypoint(ign, title, x, y, z, text)
     }, /^(?:[\w\-]{5} > )?(?:\[\d{1,3}\] .? ?)?(?:\[\w+\+*\] )?(\w{1,16})(?: .? ?)?: x: (-?[\d\.]+), y: (-?[\d\.]+), z: (-?[\d\.]+) ?(.+)?$/)
 
-    .addSubEvent("tick", () => {
-        if (!World.isLoaded()) return
-        waypoints.forEach(it => it.updateRenderable())
-    })
+    .addSubEvent("tick", () => waypoints.forEach(it => it.update()))
 
     .addSubEvent("renderWorld", () => {
         const [r, g, b, a] = Settings().wpColor
@@ -33,8 +30,6 @@ const ChatWaypoints = new Feature({setting: "waypoint"})
             RenderUtil.renderWaypoint(it.text, x, y, z, r, g, b, a, true)
         })
     })
-
-    .onUnregister(() => waypoints.clear())
 
 class Waypoint {
     constructor(key, title, x, y, z, extraText = "", lifespan = Settings().wpTime) {
@@ -57,7 +52,7 @@ class Waypoint {
         if (waypoints.delete(this.key) && waypoints.size) ChatWaypoints.register()
     }
 
-    updateRenderable() {
+    update() {
         if (this.dist < 5) return this.remove()
 
         this.dist = ~~this.loc.distance(Player.asPlayerMP().getPos())

@@ -60,7 +60,7 @@ export default new class Party extends Feature {
             
             .addSubEvent("serverChat", (event) => cancel(event), /^(?:-{53}|Party (?:Members|Moderators|Leader)\:?.*|You are not currently in a party\.)$/, () => this.checkingParty)
             
-            .addSubEvent("messageSent", (event) => cancel(event), /^\/(?:pl|party list)$/i, () => this.checkingParty)
+            .addSubEvent("messageSent", (_, event) => cancel(event), /^\/(?:pl|party list)$/i, () => this.checkingParty)
 
         this.checkParty()
 	}

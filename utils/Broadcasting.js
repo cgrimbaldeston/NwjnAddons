@@ -5,10 +5,8 @@ try {
     const moduleApi = JSON.parse(FileLib.getUrlContent("https://chattriggers.com/api/modules/NwjnAddons"))
 
     // [Welcome Message]
-    const welcome = register("worldLoad", () => {
+    const welcome = data.newUser && register("worldLoad", () => {
         welcome.unregister()
-        if (!data.newUser) return
-
         data.newUser = false
 
         notify(`&dFrom &6nwjn: &7Welcome! Open settings with '/nwjn'. Official Discord: https://discord.gg/3S3wXpC4gE`)
