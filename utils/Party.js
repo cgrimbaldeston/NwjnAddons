@@ -43,10 +43,6 @@ export default new class Party extends Feature {
             }, /^Party Finder > Your party has been queued in the (dungeon|party) finder!$/)
             
             .addEvent("serverChat", () => {
-                this.checkParty()
-            }, /You have joined .+'s party!/)
-            
-            .addEvent("serverChat", () => {
                 if (!members.size) leader = Player.getName()
             }, /^.+ invited .+ to the party! They have 60 seconds to accept\.$/)
             
