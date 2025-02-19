@@ -9,12 +9,10 @@ import TextUtil from "../../core/static/TextUtil"
 
 const S38PacketPlayerListItem = net.minecraft.network.play.server.S38PacketPlayerListItem
 
-/** @type {HashMap<String,Function>} */
+/** @type {HashMap<String, Function>} */
 const map = new HashMap()
 
-const createEvent = (triggerType, method) => {
-    map.put(triggerType.toUpperCase(), method)
-}
+const createEvent = (triggerType, method) => map.put(triggerType.toUpperCase(), method)
 
 createEvent("interval", (fn, interval) => {
     const reg = register("step", fn)
@@ -23,10 +21,12 @@ createEvent("interval", (fn, interval) => {
     return reg.setFps(1 / interval)
 })
 
+createEvent("packetSent", (fn, clazz) => register("packetSent", fn).setFilteredClass(clazz))
+createEvent("packetReceived", (fn, clazz) => register("packetReceived", fn).setFilteredClass(clazz))
+
 createEvent("serverTick", (fn) => 
-    register("packetReceived", (packet) => {
-        if (packet.func_148890_d() <= 0) fn()
-    }).setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
+    register("packetReceived", (packet) => packet./* getWindowId */func_148890_d() <= 0 && fn())
+        .setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
 )
 
 createEvent("spawnDamageTag", (fn) =>
@@ -42,12 +42,6 @@ createEvent("spawnObject", (fn) =>
     register("packetReceived", (packet, event) => 
         fn(packet.func_148993_l(), event)
     ).setFilteredClass(net.minecraft.network.play.server.S0EPacketSpawnObject)
-)
-
-createEvent("cancelPacket", className => 
-    register("packetReceived", (_, event) => 
-        cancel(event)
-    ).setFilteredClass(net.minecraft.network.play.server[className])
 )
 
 createEvent("serverChat", (fn, criteria = "") => 

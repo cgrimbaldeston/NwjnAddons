@@ -10,6 +10,9 @@ import Location from "../../utils/Location"
 import Event from "../Events/Event";
 
 export default class Feature {
+    /** @override Listener function that's called when this [Feature] is registered */ onRegister;
+    /** @override Listener function that's called when this [Feature] is registered */ onUnregister;
+
     /**
      * - Utility that handles registering various events and listeners to make complex, functional, and performative features
      * - Class can be used with or without requiring the settings, worlds, or zones fields depending on the intended functionality
@@ -24,14 +27,6 @@ export default class Feature {
         worlds = null,
         zones = null
     } = {}) {
-        // Events & listeners
-        this.events = []
-        this.subEvents = []
-        this.registerListeners = []
-        this.unregisterListeners = []
-
-        this.isRegistered = false
-
         // Feature should listen for setting changes if required
         if (setting in Settings()) {
             this.setting = setting
@@ -55,14 +50,14 @@ export default class Feature {
 
     /**
      * - Adds an [Event] that is registered as long as the Feature is
-     * @param {String|Event} triggerType
-     * @param {() => void} methodFn
+     * @param {String|com.chattriggers.ctjs.triggers.Trigger|net.minecraftforge.fml.common.eventhandler.Event} triggerType
+     * @param {Function} methodFn
      * @param {any} args
      * @returns {this} meth chain
      */
     addEvent(triggerType, methodFn, args) {
-        if (triggerType instanceof Event) this.events.push(triggerType)
-        else this.events.push(new Event(triggerType, methodFn, args))
+        if (!("events" in this)) this.events = []
+        this.events.push(new Event(triggerType, methodFn, args, false))
 
         return this
     }
@@ -76,65 +71,13 @@ export default class Feature {
      * @returns {this} meth chain
      */
     addSubEvent(triggerType, methodFn, args, condition = () => true) {
-        this.subEvents.push([
-            new Event(triggerType, methodFn, args),
-            condition
-        ])
+        if (!("subEvents" in this)) {
+            this.subEvents = []
+            this.updateSubEvents = () => this.subEvents.forEach(([subEvent, condition]) => condition() ? subEvent.register() : subEvent.unregister())
+            this.unregisterSubEvents = () => this.subEvents.forEach(([subEvent]) => subEvent.unregister())
+        }
 
-        return this
-    }
-
-    /**
-     * - Tags a listener function that's called when this [Feature] is registered
-     * @param {Function} fn
-     * @returns {this} meth chain   
-     */
-    onRegister(fn) {
-        this.registerListeners.push(fn)
-
-        return this
-    }
-
-    /**
-     * - Tags a listener function that's called when this [Feature] is unregistered
-     * @param {Function} fn
-     * @returns {this} meth chain
-     */
-    onUnregister(fn) {
-        this.unregisterListeners.push(fn)
-
-        return this
-    }
-
-    /**
-     * - Calls every subEvent's condition and (un)register based on its state
-     * @returns {this} meth chain
-     */
-    update() {
-        this.subEvents.forEach(([subEvent, condition]) => condition() ? subEvent.register() : subEvent.unregister())
-
-        return this
-    }
-
-    /**
-     * - Externally registers all subEvents
-     * @returns {this} meth chain
-     */
-    register() {
-        this.update()
-        for (let listener of this.registerListeners) listener?.()
-
-        return this
-    }
-
-    /**
-     * - Externally unRegisters all subEvents
-     * @returns {this} meth chain
-     */
-    unregister() {
-        for (let subEvent of this.subEvents) subEvent[0].unregister()
-        for (let listener of this.unregisterListeners) listener?.()
-
+        this.subEvents.push([new Event(triggerType, methodFn, args, false), condition])
         return this
     }
 
@@ -156,12 +99,12 @@ export default class Feature {
      */
     _unregister() {
         if (!this.isRegistered) return this
-        
-        for (let event of this.events) event.unregister()
-        for (let subEvent of this.subEvents) subEvent[0].unregister()
-        for (let listener of this.registerListeners) listener?.()
-    
         this.isRegistered = false
+        
+        this.events?.forEach(event => event.unregister())
+        this.unregisterSubEvents?.()
+        this.onUnregister?.()
+    
         return this
     }
 
@@ -171,12 +114,12 @@ export default class Feature {
      */
     _register() {
         if (this.isRegistered) return this
-        
-        for (let event of this.events) event.register()
-        this.update()
-        for (let listener of this.unregisterListeners) listener?.()
-    
         this.isRegistered = true
+        
+        this.events?.forEach(event => event.register())
+        this.updateSubEvents?.()
+        this.onRegister?.()
+    
         return this
     }
 }
