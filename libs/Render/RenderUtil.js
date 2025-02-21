@@ -1,15 +1,19 @@
-// Based off https://github.com/DocilElm/Doc/blob/main/shared/Render.js
+/** 
+ * Largely from:
+ * @author DocilElm
+ * @license {GNU-GPL-3} https://github.com/DocilElm/Doc/blob/main/LICENSE
+ * @credit https://github.com/DocilElm/Doc/blob/main/shared/Render.js
+ */
 
+import RenderHelper from "./RenderHelper"
 const RenderGlobal = net.minecraft.client.renderer.RenderGlobal
-const MCTessellator = net.minecraft.client.renderer.Tessellator.func_178181_a()
+const MCTessellator = net.minecraft.client.renderer.Tessellator./* getInstance */func_178181_a()
 const DefaultVertexFormats = net.minecraft.client.renderer.vertex.DefaultVertexFormats
-const WorldRenderer = MCTessellator.func_178180_c()
+const WorldRenderer = MCTessellator./* getWorldRenderer */func_178180_c()
 
 // From BeaconBeam module
 const ResourceLocation = net.minecraft.util.ResourceLocation
-const MathHelper = net.minecraft.util.MathHelper
 const beaconBeam = new ResourceLocation("textures/entity/beacon_beam.png")
-import RenderHelper from "./RenderHelper"
 
 export default class RenderUtil {
     /**
@@ -22,26 +26,38 @@ export default class RenderUtil {
      * @param {Boolean} phase 
      * @param {Number} lineWidth 
      */
-    static drawOutlinedAABB(aabb, r, g, b, a, phase = false, lineWidth = 3) {
+    static drawOutlinedAABB(aabb, r, g, b, a, phase = false, lineWidth = 3, checkFrustum = true) {
+        if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
+
         const [rx, ry, rz] = RenderHelper.getRenderPos()
 
+        Tessellator.pushMatrix()
+        GlStateManager.func_179129_p()
         Tessellator
+            .disableTexture2D()
             .enableBlend()
+            .disableLighting()
+            .disableAlpha()
             .tryBlendFuncSeparate(770, 771, 1, 0)
             .colorize(r / 255, g / 255, b / 255, a / 255)
         GL11.glLineWidth(lineWidth)
-        Tessellator
-            .disableTexture2D()
-
+        
         if (phase) Tessellator.disableDepth()
 
         RenderGlobal.func_181561_a(aabb.func_72314_b(0.002, 0.002, 0.002).func_72317_d(-rx, -ry, -rz)) // drawSelectionBoundingBox
 
         if (phase) Tessellator.enableDepth()
-
+        
         Tessellator
             .disableBlend()
+            .enableAlpha()
             .enableTexture2D()
+            .colorize(1, 1, 1, 1)
+        
+            GlStateManager.func_179089_o()
+            Tessellator
+                .enableLighting()
+                .popMatrix()
     }
 
     /**
@@ -57,12 +73,14 @@ export default class RenderUtil {
      * @param {boolean} phase Whether to render the box through walls or not (`false` by default)
      * @param {number} lineWidth The width of the line
      */
-    static drawOutlinedBox(x, y, z, w, h, r, g, b, a, phase = false, lineWidth = 3) {
+    static drawOutlinedBox(x, y, z, w, h, r, g, b, a, phase = false, lineWidth = 3, checkFrustum = true) {
         const aabb = RenderHelper.toAABB(x, y, z, w, h)
-        this.drawOutlinedAABB(aabb, r, g, b, a, phase, lineWidth)
+        this.drawOutlinedAABB(aabb, r, g, b, a, phase, lineWidth, checkFrustum)
     }
 
-    static drawFilledAABB(aabb, r, g, b, a, phase = true) {
+    static drawFilledAABB(aabb, r, g, b, a, phase = true, checkFrustum = true) {
+        if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
+
         const [ x0, y0, z0, x1, y1, z1 ] = RenderHelper.getAxisCoords(aabb)
         
         const [ rx, ry, rz ] = RenderHelper.getRenderPos()
@@ -132,9 +150,9 @@ export default class RenderUtil {
      * @param {number} a Alpha 0 - 255
      * @param {boolean} phase Whether to render the box through walls or not (`false` by default)
      */
-    static drawFilledBox(x, y, z, w, h, r, g, b, a, phase = false) {
+    static drawFilledBox(x, y, z, w, h, r, g, b, a, phase = false, checkFrustum = true) {
         const aabb = RenderHelper.toAABB(x, y, z, w, h)
-        this.drawFilledBox(aabb, r, g, b, a, phase)
+        this.drawFilledBox(aabb, r, g, b, a, phase, checkFrustum)
     }
 
     /**
@@ -151,7 +169,10 @@ export default class RenderUtil {
      * @param {boolean} translate Whether to translate the rendering coords to the [RenderViewEntity] coords (`true` by default)
      * @link From [NotEnoughUpdates](https://github.com/NotEnoughUpdates/NotEnoughUpdates/blob/master/src/main/java/io/github/moulberry/notenoughupdates/core/util/render/RenderUtils.java#L220)
      */
-    static renderBeaconBeam(x, y, z, r, g, b, a, phase = false, height = 300) {
+    static renderBeaconBeam(x, y, z, r, g, b, a, phase = false, height = 150, checkFrustum = true) {
+        const aabb = RenderHelper.toAABB(x, y, z, 0.5, height)
+        if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
+
         ({x, y, z} = Tessellator.getRenderPos(x, y, z))
 
         Tessellator.pushMatrix()
@@ -178,7 +199,8 @@ export default class RenderUtil {
             .tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
 
         const time = World.getTime() + Tessellator.getPartialTicks()
-        const d1 = MathHelper.func_181162_h(-time * 0.2 - MathHelper.func_76128_c(-time * 0.1))
+        const bounds = -time * 0.2 - Math.floor(-time * 0.1)
+        const d1 = bounds - Math.floor(bounds)
         const d2 = time * 0.025 * -1.5
         const d4 = 0.5 + Math.cos(d2 + 2.356194490192345) * 0.2
         const d5 = 0.5 + Math.sin(d2 + 2.356194490192345) * 0.2
@@ -243,15 +265,16 @@ export default class RenderUtil {
             .popMatrix()
     }
     
-    static renderWaypoint(text, x, y, z, r, g, b, a, phase = true) {
+    static renderWaypoint(text, x, y, z, r, g, b, a, phase = true, checkFrustum = true) {
         [x, y, z] = RenderHelper.coerceToRenderDist(x, y, z)
 
         const aabb = RenderHelper.toAABB(x, y, z, 1, 1)
+        this.renderBeaconBeam(x - 0.5, y, z - 0.5, r, g, b, 150, phase, checkFrustum)
+        if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
 
-        this.drawOutlinedAABB(aabb, r, g, b, a, phase, 2)
-        this.drawFilledAABB(aabb, r, g, b, 50, phase)
-        this.drawString(text, x, y + 3, z)
-        this.renderBeaconBeam(x - 0.5, y, z - 0.5, r, g, b, 150, phase)
+        this.drawOutlinedAABB(aabb, r, g, b, a, phase, 2, false)
+        this.drawFilledAABB(aabb, r, g, b, 50, phase, false)
+        this.drawString(text, x, y + 3, z, false)
     }
     
     /**
@@ -279,8 +302,12 @@ export default class RenderUtil {
         iScale = 1,
         autoScale = true,
         shadow = true,
-        depth = true
+        depth = true,
+        checkFrustum = true
     ) {
+        const aabb = RenderHelper.toAABB(x, y, z, 1, 1)
+        if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
+        
         ({ x, y, z } = Tessellator.getRenderPos(x, y, z))
         iScale /= 2
 
@@ -293,8 +320,8 @@ export default class RenderUtil {
             .colorize(1, 1, 1, 0.5)
             .pushMatrix()
             .translate(x, y, z)
-            .rotate(-RenderHelper.getPitch(), 0, 1, 0)
-            .rotate(RenderHelper.getYaw() * xMulti, 1, 0, 0)
+            .rotate(-RenderHelper.getRenderPitch(), 0, 1, 0)
+            .rotate(RenderHelper.getRenderYaw() * xMulti, 1, 0, 0)
 
             .scale(-lScale, -lScale, lScale)
             .disableLighting()

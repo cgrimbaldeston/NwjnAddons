@@ -29,15 +29,6 @@ createEvent("serverTick", (fn) =>
         .setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
 )
 
-createEvent("spawnDamageTag", (fn) =>
-    register("packetReceived", (packet) => {
-        if (packet.func_149025_e() !== 30) return
-
-        const firstString = packet.func_149027_c().find(o => o.func_75674_c() === 4)?.func_75669_b()
-        if (firstString && !firstString.includes(" ")) fn(firstString)
-    }).setFilteredClass(net.minecraft.network.play.server.S0FPacketSpawnMob)
-)
-
 createEvent("spawnObject", (fn) =>
     register("packetReceived", (packet, event) => 
         fn(packet.func_148993_l(), event)
