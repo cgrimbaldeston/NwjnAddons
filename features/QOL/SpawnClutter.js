@@ -1,36 +1,48 @@
 import Feature from "../../libs/Features/Feature";
 import Settings from "../../data/Settings";
 
-/** 
- * @see {https://github.com/Marcelektro/MCP-919/blob/1717f75902c6184a1ed1bfcd7880404aab4da503/src/minecraft/net/minecraft/entity/EntityTrackerEntry.java} ctrl-f S0EPacketSpawnObject
- * @type {Map<Number, null|ReturnType<Boolean>} 
- */
-const blacklist = new Map()
+new class JunkSpawnAborter extends Feature {
+    constructor() {
+        super({setting: "abortJunkSpawns"}), this
+            .addEvent("spawnObject", (typeId, event) => this.blacklist?.get(typeId) && cancel(event))
+            .addEvent("packetReceived", (_, event) => cancel(event), net.minecraft.network.play.server.S10PacketSpawnPainting)
+            .addEvent("packetReceived", (_, event) => cancel(event), net.minecraft.network.play.server.S11PacketSpawnExperienceOrb)
 
-new Feature({setting: "abortJunkSpawns"})
-    .addEvent("spawnObject", (entityType, event) => {
-        const value = blacklist.get(entityType)
+        Settings().getConfig()
+            .registerListener("removeArrows", (_, val) => this.blacklist?.set(60, val))
+            .registerListener("removeFallingBlocks", (_, val) => this.blacklist?.set(70, val))
+    }
 
-        if (value === null || value?.()) cancel(event)
-    })
+    onRegister() {
+        /** 
+         * Check link for type list, notify me on discord if any of these types not to be edited or changed to have a setting
+         * @see {https://github.com/Marcelektro/MCP-919/blob/1717f75902c6184a1ed1bfcd7880404aab4da503/src/minecraft/net/minecraft/entity/EntityTrackerEntry.java} ctrl-f S0EPacketSpawnObject
+         * @type {Map<Number, Boolean>} 
+         */
+        this.blacklist = new Map()
+        
+        const list = [
+            1,  // Boat
+            10, // MineCart
+            61, // Snowball
+            62, // Egg
+            63, // Fireball
+            64, // SmallFireball
+            66, // WitherSkull
+            72, // EnderEye
+            73, // Potion
+            75, // ExpBottle
+            76, // Rocket
+            77 // Leash
+        ]
+        
+        list.forEach(id => this.blacklist.set(id, true))
 
-    .addEvent("cancelPacket", "S10PacketSpawnPainting")
-    .addEvent("cancelPacket", "S11PacketSpawnExperienceOrb")
+        this.blacklist.set(60, Settings().removeArrows)
+        this.blacklist.set(70, Settings().removeFallingBlocks)
+    }
 
-/* [Always Canceled] */
-blacklist.set(1)  // Boat
-blacklist.set(10) // MineCart
-blacklist.set(61) // Snowball
-blacklist.set(62) // Egg
-blacklist.set(63) // Fireball
-blacklist.set(64) // SmallFireball
-blacklist.set(66) // WitherSkull
-blacklist.set(72) // EnderEye
-blacklist.set(73) // Potion
-blacklist.set(75) // ExpBottle
-blacklist.set(75) // Rocket
-blacklist.set(77) // Leash
-
-/* [Optional] */
-blacklist.set(60, () => Settings().removeArrows) // Arrow (Who's not shooting?)
-blacklist.set(70, () => Settings().removeFallingBlocks) // FallingBlock
+    onUnregister() { 
+        this.blacklist = null
+    }
+}

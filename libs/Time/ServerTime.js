@@ -1,3 +1,4 @@
+import Event from "../Events/Event"
 import Tick from "./Tick"
 import Second from "./Second"
 
@@ -8,7 +9,7 @@ const normalize = (val) => {
     else return new Tick(val)
 }
 
-/** @type {Map<Symbol, Tick>} */
+/** @type {Map<String, Tick>} */
 const scheduledTasks = new Map()
 /**
  * @param {Function} onEnd
@@ -26,7 +27,7 @@ export const scheduleTask = (onEnd, delay = new Tick(1)) => {
 }
 
 
-/** @type {Map<Symbol, Tick>} */
+/** @type {Map<String, Tick>} */
 const countdowns = new Map()
 
 /**
@@ -63,9 +64,7 @@ let tick = 0, lastSec = 0
 
 export const getTPS = () => MathLib.clampFloat(history.reduce((a,b) => a+b) / 5, 0, 20).toFixed(2)
 
-register("packetReceived", (packet) => {
-    if (packet.func_148890_d() > 0) return
-
+new Event("serverTick", () => {
     scheduledTasks.forEach(tick => tick.value--)
     countdowns.forEach(tick => tick.value--)
     timers.forEach(tick => tick.value++)
@@ -73,4 +72,4 @@ register("packetReceived", (packet) => {
     if (tick++ % 20) return
     history.push(20000 / (-lastSec + (lastSec = Date.now())))
     history.shift()
-}).setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
+})
