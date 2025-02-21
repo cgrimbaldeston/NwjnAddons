@@ -1,7 +1,7 @@
 import Feature from "../../libs/Features/Feature"
 
 let totalDamage = 0
-new Feature({
+const feat = new Feature({
     setting: "magma",
     worlds: "Crimson Isle",
     zones: "Magma Chamber"
@@ -18,4 +18,4 @@ new Feature({
 
     .addEvent("serverChat", () => totalDamage = 0, /^\S+MAGMA BOSS DOWN!$/)
 
-    .onUnregister(() => totalDamage = 0)
+    feat.onUnregister = () => totalDamage = 0

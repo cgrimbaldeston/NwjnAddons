@@ -5,40 +5,6 @@ import ItemUtil from "../../core/static/ItemUtil"
 import { addCommand } from "../../utils/Command";
 import Settings from "../../data/Settings";
 
-register("command", () => ChatLib.command("nwjn clearChat", true)).setName("clearChat", true)
-addCommand(
-  "clearChat",
-  "Clears entire chat log (may improve performance if you've been on for a long time)",
-  () => ChatLib.clearChat()
-)
-
-register("command", () => ChatLib.command("nwjn deal", true)).setName("deal", true)
-addCommand(
-  "deal", 
-  "Sends a trade request to the player in front of you",
-  () => {
-    const looking = Player.lookingAt()
-    if (!(looking instanceof PlayerMP)) return
-
-    const name = looking.getName()
-    log(`Trading with &e${name}`)
-    ChatLib.command(`trade ${ name }`);
-    ChatLib.addToSentMessageHistory(-1, `/trade ${ name }`)
-  }
-)
-
-register("command", (...args) => ChatLib.command(`nwjn calc ${args.join(" ")}`, true)).setName("calc", true)
-addCommand(
-  "calc",
-  "Simple calculator",
-  (args) => {
-    try {
-      const equat = args.join(" ").replace(/,/g, "");
-      log(`${ equat } = ${ MathUtil.addCommas(eval(equat)) }`);
-    } catch (err) { log("Failed equation") }
-  }
-)
-
 // [Dev tools]
 register("command", () => ChatLib.command("nwjn Entity", true)).setName("entity", true)
 addCommand(
@@ -47,7 +13,7 @@ addCommand(
   () => {
     let res = {}
     World.getAllEntities().forEach(it => {
-      res[it.entity.func_145782_y()] = {
+      res[it.entity.class.simpleName] = {
         name: it.getName(),
         clazz: it.getClassName(),
         currentHealth: MathUtil.addCommas(~~EntityUtil?.getHP(it)),

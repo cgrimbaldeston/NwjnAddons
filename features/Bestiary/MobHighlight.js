@@ -4,7 +4,7 @@
 
 import MathUtil from "../../core/static/MathUtil"
 import EntityUtil from "../../core/static/EntityUtil"
-import RenderUtil from "../../core/static/RenderUtil"
+import RenderUtil from "../../libs/Render/RenderUtil"
 import Feature from "../../libs/Features/Feature"
 import { notify } from "../../core/static/TextUtil"
 import Settings from "../../data/Settings"
@@ -12,28 +12,26 @@ import Settings from "../../data/Settings"
 const MOB_TYPES = ["monster", "passive", "boss"];
 function getClassOfEntity(name, index = 0) {
     try {
-        const clazz = Java.type(`net.minecraft.entity.${ MOB_TYPES[index] }.Entity${ name }`).class;
         // recurses if #toString() throws error
-        clazz.toString()
-
-        return clazz;
+        return java.lang.Class.forName(`net.minecraft.entity.${ MOB_TYPES[index] }.Entity${ name }`)
     } catch(err) {
-        if (index < MOB_TYPES.length) return getClassOfEntity(name, index + 1)
+        if (index++ < MOB_TYPES.length) return getClassOfEntity(name, index)
 
         notify(`&cEntity class called &e'${name}'&r &cdoesn't exist. Make sure to use Mob Class Name not SkyBlock name. &3@see https://github.com/nwjn/NwjnAddons/wiki/Bestiary-Entries`)
-        return null;
+        return
     }
 }
 
-// change to weakhashmap
-const mobsHighlight = new java.util.WeakHashMap()
+/** @type {HashMap<JavaTClass, Set<Number>?} */
+const mobsHighlight = new HashMap()
+/** @type {WeakHashMap<MCTEntity, () => AxisAlignedBB>} */
 const renderThese = new java.util.WeakHashMap()
 /**
  * @see https://github.com/nwjn/NwjnAddons/wiki/Bestiary-Entries
  */
 function setMobHighlight() {
-    mobsHighlight.clear()
-    renderThese.clear()
+    mobsHighlight.clear(), renderThese.clear()
+    
     if (!Settings().mobList) return
 
     Settings().mobList.split(/,\s?/g).forEach(entry => {
@@ -44,36 +42,36 @@ function setMobHighlight() {
         const clazz = getClassOfEntity(mob)
         if (!clazz) return
 
-        const hps = hpParam?.split("|")?.map(MathUtil.convertToNumber) ?? 0
+        const hps = hpParam?.split("|")?.map(MathUtil.convertToNumber)
 
         mobsHighlight.put(
             clazz,
-            hps
+            hps ? new Set(hps) : null
         )
     })
 }
 setMobHighlight()
 Settings().getConfig().onCloseGui(setMobHighlight)
 
+function validate(entity) {
+    const hps = mobsHighlight.getOrDefault(entity.class, true)
+    if (!hps || hps?.has(EntityUtil.getMaxHP(entity))) renderThese.put(entity, true)
+}
 
-const feat = new Feature({setting: "mobList"})
-    .addEvent("interval", () => {
-        renderThese.clear()
-        mobsHighlight.forEach((clazz, hps) => {
-            World.getAllEntitiesOfType(clazz).forEach(it => {
-                if (it.isDead()) return
-                if (!hps || hps?.includes(EntityUtil.getMaxHP(it))) renderThese.put(it, [it.getWidth(), it.getHeight()])
+new class MobHighlight extends Feature {
+    constructor() {
+        super({setting: "mobList"}), this
+            .addEvent("interval", () => World.getAllEntities().forEach(({entity}) => mobsHighlight.containsKey(entity.class) && validate(entity)), 1)
+
+            .addEvent("postRenderEntity", ({entity}) => {
+                const whitelisted = renderThese.get(entity)
+                if (!whitelisted) return
+        
+                const [r, g, b, a] = Settings().mobHighlightColor
+                // todo: expand by height and width is less
+                RenderUtil.drawOutlinedAABB(entity.func_174813_aQ(), r, g, b, a, true, 3, false)
             })
-        })
-
-        feat.update()
-    }, 1 / 3)
-
-    .addSubEvent("renderWorld", () => {
-        const color = Settings().mobHighlightColor
-        renderThese.forEach((it, [w, h]) => 
-            RenderUtil.drawOutlinedBox(it.getRenderX(), it.getRenderY(), it.getRenderZ(), w, h, color[0], color[1], color[2], color[3], true, 2)
-        )
-    }, () => !renderThese.isEmpty())
-
-    .onUnregister(() => renderThese.clear())
+        
+            .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, ({entity}) => renderThese.remove(entity))
+    }
+}

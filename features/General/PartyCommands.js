@@ -23,7 +23,7 @@ const commands = {
     "coords": {
         matches: /^coord(s)?|loc|xyz$/,
         access: () => Settings().pcCoords,
-        fn: () => `pc x: ${ ~~Player.getX() }, y: ${ ~~Player.getY() }, z: ${ ~~Player.getZ() } [${Location.getWorld()} - ${Location.getZone()}]`
+        fn: () => `pc x: ${ ~~Player.getX() }, y: ${ ~~Player.getY() }, z: ${ ~~Player.getZ() } [${Location.world} - ${Location.zone}]`
     },
 
     "power": {
