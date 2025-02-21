@@ -22,22 +22,18 @@ export default class GuiFeature extends Feature {
      * 
      * @param {Object} obj
      * @param {String} obj.setting The main config name: If null -> Feature is always active, If setting returns false -> all events of this feature will be unregistered
-     * @param {String[]|String} obj.worlds The world(s) where this feature should activate: If null -> Feature is not world dependent
-     * @param {String[]|String} obj.zones The zones(s) where this feature should activate: If null -> Feature is not zone dependent
+     * @param {String[]|String|null} obj.worlds The world(s) where this feature should activate: If null -> Feature is not world dependent
+     * @param {String[]|String|null} obj.zones The zones(s) where this feature should activate: If null -> Feature is not zone dependent
      * 
-     * @param {String} obj.name The gui name to show on the button in the editor
-     * @param {Object} obj.dataObj The reference to the data with the x, y, scale values
-     * @param {String} obj.baseText The text to shown in the editor if the feature's text is blank
-     * @param {String} obj.color The feature's color setting (Not needed for texts with color codes)
+     * @param {String?} obj.name The gui name to show on the button in the editor
+     * @param {Object?} obj.dataObj The reference to the data with the x, y, scale values
+     * @param {String?} obj.initText The text to shown in the editor if the feature's text is blank
+     * @param {String?} obj.color The feature's color setting (Not needed for texts with color codes)
     */
-    constructor({
-        setting = null,
-        worlds = null,
-        zones = null,
-
+    constructor({setting = null, worlds = null, zones = null,
         name = null,
         dataObj = {},
-        baseText = null,
+        initText = null,
         color = null
     } = {}) {
         super({setting, worlds, zones})
@@ -74,10 +70,10 @@ export default class GuiFeature extends Feature {
     }
 
     /** Automatically un(register) the render event when setting the text */
-    set text(txt) {
-        txt ? this.render.register() : this.render.unregister() 
+    setText(message) {
+        message ? this.render.register() : this.render.unregister() 
 
-        return this.message = txt
+        this.message = message
     }
 }
 

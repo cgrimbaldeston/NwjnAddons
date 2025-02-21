@@ -9,61 +9,16 @@ import Event from "../libs/Events/Event"
 import TextUtil from "../core/static/TextUtil"
 
 export default new class Location {
-  /**
-   * @param {(world: String?) => void} fn 
-  */
-  registerWorldChange(fn) {
-    this._listeners.world.push(fn)
-
-    return this
-  }
-  
-  /**
-   * @param {(zone: String?) => void} fn 
-  */
-  registerZoneChange(fn) {
-    this._listeners.zone.push(fn)
-
-    return this
-  }
-
-  /**
-   * @param {String[]|String|null} world 
-   * @returns {Boolean}
-   */
-  inWorld(world) {
-    if (Array.isArray(world)) return world.includes(this.world)
-    if (typeof(world) === "string" || world instanceof String) return world === this.world
-    return true
-  }
-
-  /**
-   * @param {String[]|String|null} zone 
-   * @returns {Boolean}
-   */
-  inZone(zone) {
-    if (Array.isArray(zone)) return zone.includes(this.zone)
-    if (typeof(zone) === "string" || zone instanceof String) return zone === this.zone
-    return true
-  }
-
-  getWorld() {
-    return this.world
-  }
-
-  getZone() {
-    return this.zone
-  }
-
   constructor() {
-    new Event("tabAdd", (world) => this._triggerWorldEvents(world), /^(?:Area|Dungeon): (.+)$/, true)
-    new Event("sidebarChange", (zone) => this._triggerZoneEvents(zone), /^ [⏣ф] (.+)$/, true)
-    new Event("worldUnload", () => this._triggerWorldEvents(null)._triggerZoneEvents(null), null, true)
+    this.worldListeners = []
+    this.zoneListeners = []
+
+    new Event("tabAdd", (world) => this._triggerWorldEvents(world), /^(?:Area|Dungeon): (.+)$/)
+    new Event("sidebarChange", (zone) => this._triggerZoneEvents(zone), /^ [⏣ф] (.+)$/)
+    new Event("worldUnload", () => this._triggerWorldEvents(), this._triggerZoneEvents())
 
     // For CT Reload while playing
-    new Event("gameLoad", () => {
-      if (!World.isLoaded()) return
-
+    if (World.isLoaded()) {
       TabList.getNames().find(it => {
         [it] = TextUtil.getMatches(/^(?:Area|Dungeon): (.+)$/, it.removeFormatting())
         return it ? this._triggerWorldEvents(it) : false
@@ -72,27 +27,34 @@ export default new class Location {
         [it] = TextUtil.getMatches(/^ [⏣ф] (.+)$/, it.getName().removeFormatting().replace(/[^\w\s]/g, "").trim())
         return it ? this._triggerZoneEvents(it) : false
       })
-    }, null, true)
+    }
   }
 
-  _listeners = {
-    world: [],
-    zone: []
+  onWorldChange = (fn) => this.worldListeners.push(fn)
+  
+  onZoneChange = (fn) => this.zoneListeners.push(fn)
+
+  /** @returns {Boolean} */
+  inWorld(world) {
+    if (Array.isArray(world)) return world.includes(this.world)
+    if (typeof(world) === "string") return world === this.world
+    return true
   }
 
-  /** @param {String?} world */
+  /** @returns {Boolean} */
+  inZone(zone) {
+    if (Array.isArray(zone)) return zone.includes(this.zone)
+    if (typeof(zone) === "string") return zone === this.zone
+    return true
+  }
+
   _triggerWorldEvents(world) {
     this.world = world
-    this._listeners.world.forEach(fn => fn(world))
-
-    return this
+    this.worldListeners.forEach(fn => fn(world))
   }
 
-  /** @param {String?} zone */
   _triggerZoneEvents(zone) {
     this.zone = zone
-    this._listeners.zone.forEach(fn => fn(zone))
-
-    return this
+    this.zoneListeners.forEach(fn => fn(zone))
   }
 }

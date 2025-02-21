@@ -33,9 +33,8 @@ export default class Feature {
         }
 
         // Will always update on world changes
-        this._updateRegister()
-        Location.registerWorldChange(() => this._updateRegister())
-        if (zones) Location.registerWorldChange(() => this._updateRegister())
+        Location.onWorldChange(() => this._updateRegister())
+        if (zones) Location.onZoneChange(() => this._updateRegister())
     }
 
     /**
@@ -50,7 +49,7 @@ export default class Feature {
         }
         this.events.push(new Event(triggerType, methodFn, args, false))
 
-        return this
+        return this._updateRegister()
     }
 
     /**
@@ -65,7 +64,7 @@ export default class Feature {
         }
         this.subEvents.push([new Event(triggerType, methodFn, args, false), condition])
 
-        return this
+        return this._updateRegister()
     }
 
     /**
