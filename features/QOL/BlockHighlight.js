@@ -1,26 +1,46 @@
 import Feature from "../../libs/Features/Feature"
-import RenderUtil from "../../core/static/RenderUtil"
+import RenderUtil from "../../libs/Render/RenderUtil"
 import Settings from "../../data/Settings"
+import RenderHelper from "../../libs/Render/RenderHelper"
 
-const DrawBlockHighlightEvent = net.minecraftforge.client.event.DrawBlockHighlightEvent
-const MovingObjectTypeBLOCK = net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK
-const Air = net.minecraft.block.material.Material["air", "field_151579_a"]
+new class BlockHighlight extends Feature {
+    constructor() {
+        super({setting: "blockHighlight"}), this
+            .addEvent(net.minecraftforge.client.event.DrawBlockHighlightEvent, (event) => {
+                const {target} = event
+                cancel(event)
+        
+                if (!this?.isTargetingBlock(target./* typeOfHit */field_72313_a)) return
+        
+                const BlockPos = target./* getBlockPos */func_178782_a()
+                if (!BlockPos) return
 
-new Feature({setting: "blockHighlight"})
-    .addEvent(DrawBlockHighlightEvent, (event) => {
-        const { target } = event
-        if (target["typeOfHit", "field_72313_a"] !== MovingObjectTypeBLOCK) return
+                const BlockState = this.World./* getStateAt */func_180495_p(BlockPos) 
+                if (RenderHelper.isAir(BlockState)) return
         
-        const pos = target["getBlockPos", "func_178782_a"]()
-        const WorldClient = World.getWorld()
-        const BlockAt = WorldClient["getStateAt", "func_180495_p"](pos)["getBlock", "func_177230_c"]()
+                // Accurately retrieve the Block's bounds
+                const Block = BlockState./* getBlock */func_177230_c()
+                Block./* setBoundsBasedOnState */func_180654_a(this.World, BlockPos)
+                const BlockBounds = Block./* getSelectedBoundingBox */func_180646_a(this.World, BlockPos)
         
-        if (BlockAt["getMaterial", "func_149688_o"]() === Air) return
-        
-        BlockAt["setBlockBoundsBasedOnState", "func_180654_a"](WorldClient, pos)
-        const AABB = BlockAt["getSelectedBoundingBox", "func_180646_a"](WorldClient, pos)
-        
-        const color = Settings().highlightColor
-        RenderUtil.drawOutlinedAABB(AABB, color[0], color[1], color[2], color[3], false, 3)
-        cancel(event)
-    })
+                const [r, g, b, a] = this.Color
+                RenderUtil.drawOutlinedAABB(BlockBounds, r, g, b, a, false, 3, false)
+            })
+
+        Settings().getConfig().registerListener("highlightColor", (_, val) => this.Color = val)
+    }
+
+    onRegister() {
+        const MovingObjectType$BLOCK = net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK
+        this.isTargetingBlock = (typeOfHit) => typeOfHit == MovingObjectType$BLOCK
+
+        this.World = World.getWorld()
+        this.Color = Settings().highlightColor
+    }
+
+    onUnregister() {
+        this.isTargetingBlock = null
+        this.World = null
+        this.Color = null
+    }
+}

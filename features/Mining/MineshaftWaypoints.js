@@ -1,55 +1,69 @@
 import Feature from "../../libs/Features/Feature";
 import { notify } from "../../core/static/TextUtil";
-import RenderUtil from "../../core/static/RenderUtil"
-
-const data = JSON.parse(FileLib.read("NwjnAddons", "features/Mining/MineshaftWaypointsData.json"))
-let currentCorpses = []
-let currentRoom = null
+import Settings from "../../data/Settings";
+import Waypoint from "../../libs/Render/TempWaypoint";
 
 /** @todo make a quick check for vang which immediately checks for a gold block at a coord relative to the player's location */
-const feat = new Feature({
-    setting: "mineshaftWaypoints",
-    zones: "Glacite Mineshafts"
-    // Does not use Mineshaft as world because the scoreboard check is always triggered before it
-})
-    .addEvent("sidebarChange", (id, material, type) => {
-        if (currentRoom) return
-        if (type != 2 && !(id in data.rooms)) return
+new class MineshaftWaypoints extends Feature {
+    constructor() {
+        super({
+            setting: "mineshaftWaypoints",
+            zones: "Glacite Mineshafts"
+            // Does not use Mineshaft as world because the scoreboard check is always triggered before it
+        })
 
-        currentRoom = data.rooms[type == 2 ? type : id]
-        currentCorpses = currentRoom.corpses
+        this
+            .addEvent("sidebarChange", (id, material, type) => {
+                if (this.hasChecked) return
+                if (type != 2 && !(id in this.data.rooms)) return
+                this.hasChecked = true
+
+                const room = this.data.rooms[type == 2 ? type : id]
+                room.corpses.forEach(([x, y, z]) => 
+                    this.waypoints.add(
+                        new Waypoint("§cGuess", null, x, y, z, 5, null)
+                    )
+                )
+
+                const [ex, ey, ez] = room.exit
+                this.waypoints.add(
+                    new Waypoint("§bExit", null, ex, ey, ez, null, null)
+                )
+                
+                const name = this.data.names[material]
+                const formatName = type == 2 ? `${name} Crystal` : name
         
-        const name = data.names[material]
-        const formatName = type == 2 ? `${name} Crystal` : name
+                notify(formatName)
+                this.updateSubEvents()
+            }, / (([A-Z]{4})(1|2))$/)
+        
+            .addSubEvent("interval", () => 
+                this.waypoints.forEach(it => 
+                    it.dirty ? this.waypoints.delete(it) : it.update()
+                ), 
+            1 / 5)
+            
+            .addSubEvent("renderWorld", () => 
+                this.waypoints.forEach(it => 
+                    !it.dirty && it.render([255, 0, 0, 255])
+                )
+            )
 
-        notify(formatName)
-        feat.update()
+        if (Settings().mineshaftWaypoints) this.parseData()
+        else Settings().getConfig().registerListener("mineshaftWaypoints", (_, val) => val && this?.parseData())
+    }
 
-        if (id === "FAIR1") {
-            new TextComponent("&eClick here to notify guild of the Vanguard!")
-                .setClickAction("run_command")
-                .setClickValue(`gc ${formatName}`)
-                .chat()
-            new TextComponent("&eClick here to stream open")
-                .setClickAction("run_command")
-                .setClickValue("stream open")
-                .chat()
-        }
-    }, / (([A-Z]{4})(1|2))$/)
+    parseData() {
+        this.data = JSON.parse(FileLib.read("NwjnAddons", "features/Mining/MineshaftWaypointsData.json"))
+        delete this.parseData
+    }
 
-    .addSubEvent("interval", () => {
-        const canDelete = currentCorpses.findIndex(([x, y, z]) => Player.asPlayerMP().distanceTo(x, y, z) > 5)
-        if (~canDelete) return currentCorpses.splice(canDelete, 1)
-    }, 1 / 3, () => currentRoom)
-    
-    .addSubEvent("renderWorld", () => {
-        const [xi, yi, zi] = currentRoom.exit
-        RenderUtil.renderWaypoint("§bExit", xi, yi, zi, 255, 0, 0, 255)
+    onRegister() {
+        this.waypoints = new Set()
+    }
 
-        currentCorpses.forEach(([x, y, z]) => RenderUtil.renderWaypoint("§cGuess", x, y, z, 255, 0, 0, 255))
-    }, () => currentRoom)
-    
-    .onUnregister(() => {
-        currentRoom = null
-        currentCorpses.length = 0
-    })
+    onUnregister() {
+        this.hasChecked = null
+        this.waypoints = null
+    }
+}
