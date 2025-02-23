@@ -1,7 +1,7 @@
 // Credit: BloomCore
 import Feature from "../libs/Features/Feature"
 import { scheduleTask } from "../libs/Time/ServerTime"
-import Second from "../libs/Time/Second"
+import Seconds from "../libs/Time/Seconds"
 import TextUtil from "../core/static/TextUtil"
 
 export default new class Party extends Feature {
@@ -9,7 +9,7 @@ export default new class Party extends Feature {
         this.members = new Set()
         this.leader = null
 
-        super(); this
+        super(), this
             .addEvent("serverChat", (member) => {
                 const ign = TextUtil.getSenderName(member)
                 ign && this.members.add(ign)
@@ -59,7 +59,7 @@ export default new class Party extends Feature {
             
             .addSubEvent("serverChat", (event) => cancel(event), /^(?:-{53}|Party (?:Members|Moderators|Leader)\:?.*|You are not currently in a party\.)$/)
             
-            .addSubEvent("messageSent", (_, event) => cancel(event), /^\/(?:pl|party list)$/i)
+            .addSubEvent("messageSent", (msg, event) => /^\/(?:pl|party list)$/i.test(msg) && cancel(event))
 
         this.checkParty()
 	}
@@ -73,7 +73,7 @@ export default new class Party extends Feature {
         scheduleTask(() => {
             this.checkingParty = false
             this.unregisterSubEvents()
-        }, new Second(1))
+        }, Seconds.of(1))
     }
 
 	disbandParty() {
