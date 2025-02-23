@@ -2,7 +2,7 @@ import GuiFeature from "../../libs/Features/GuiFeature";
 import ItemUtil from "../../core/static/ItemUtil";
 import { data } from "../../data/Data";
 import { addCountdown } from "../../libs/Time/ServerTime";
-import Second from "../../libs/Time/Second";
+import Seconds from "../../libs/Time/Seconds";
 
 const prefix = "Reaper:"
 const ReaperOverlay = new GuiFeature({
@@ -21,6 +21,6 @@ const ReaperOverlay = new GuiFeature({
         
         addCountdown(
             (time) => ReaperOverlay.text = time ? `${prefix} ${time.toFixed(2)}s` : null, 
-            new Second(6)
+            Seconds.of(6)
         )
     }, "mob.zombie.remedy")

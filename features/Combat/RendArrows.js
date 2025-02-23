@@ -1,7 +1,7 @@
 import Feature from "../../libs/Features/Feature";
 import ItemUtil from "../../core/static/ItemUtil";
 import { scheduleTask } from "../../libs/Time/ServerTime";
-import Tick from "../../libs/Time/Tick";
+import Ticks from "../../libs/Time/Ticks";
 
 let arrows = 0
 
@@ -15,5 +15,5 @@ new Feature({setting: "rendArrows"})
         scheduleTask(() => {
             ChatLib.chat(`Rend Arrows: ${ arrows - 1 }`);
             arrows = 0
-        }, new Tick(5))
+        }, Ticks.of(5))
     }, "game.neutral.hurt")

@@ -1,4 +1,4 @@
-import Second from "../Time/Second"
+import Seconds from "../Time/Seconds"
 import {scheduleTask} from "../Time/ServerTime"
 import RenderUtil from "./RenderUtil"
 
@@ -10,7 +10,7 @@ export default class Waypoint {
         this.removalRadius = removalRadius
         this.distance = ~~Player.asPlayerMP().distanceTo(this.blockPos)
 
-        if (lifespan) scheduleTask(() => this.dirty = true, new Second(lifespan))
+        if (lifespan) scheduleTask(() => this.dirty = true, Seconds.of(lifespan))
 
         this.update()
     }
