@@ -49,7 +49,8 @@ export default class Feature {
         }
         this.events.push(new Event(triggerType, methodFn, args, false))
 
-        return this._updateRegister()
+        this._updateRegister()
+        return this
     }
 
     /**
@@ -64,7 +65,8 @@ export default class Feature {
         }
         this.subEvents.push([new Event(triggerType, methodFn, args, false), condition])
 
-        return this._updateRegister()
+        this._updateRegister()
+        return this
     }
 
     /**
