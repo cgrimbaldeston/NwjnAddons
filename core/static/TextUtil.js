@@ -109,10 +109,6 @@ export default class TextUtil {
         if (typeof(string) !== "string") return null
         return string.removeFormatting().split("] ").slice(-1).toString().replace(/\W/g, "")
     }
-
-    static getKeyFromValue(obj, value) {
-        return Object.keys(obj).find(k => obj[k] === value)
-    }
 }
 
 // internal mod fns

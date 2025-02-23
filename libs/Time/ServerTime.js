@@ -1,59 +1,67 @@
 import Event from "../Events/Event"
-import Tick from "./Tick"
-import Second from "./Second"
+import Ticks from "./Ticks"
+import Seconds from "./Seconds"
 
-/** @returns {Tick|Second|Number} */
+/** @returns {Ticks} */
 const normalize = (val) => {
-    if (val instanceof Tick) return val
-    if (val instanceof Second) return Tick.fromSeconds(val)
-    else return new Tick(val)
+    if (val instanceof Ticks) return val
+    return Ticks.of(val)
 }
 
-/** @type {Map<String, Tick>} */
+/** @type {Map<String, Ticks>} */
 const scheduledTasks = new Map()
 /**
  * @param {Function} onEnd
- * @param {Tick|Second} delay
+ * @param {Ticks|Seconds} delay
  */
-export const scheduleTask = (onEnd, delay = new Tick(1)) => {
+export const scheduleTask = (onEnd, delay = Ticks.of(1)) => {
     const id = onEnd.toString()
     const tick = normalize(delay)
-        .atTick(0, () => {
-            scheduledTasks.delete(id)
-            onEnd()
-        })
+
+    tick.onChange = (value) => {
+        if (value !== 0) return
+        scheduledTasks.delete(id)
+        onEnd()
+    }
     
     scheduledTasks.set(id, tick)
 }
 
 
-/** @type {Map<String, Tick>} */
+/** @type {Map<String, Ticks>} */
 const countdowns = new Map()
 
 /**
  * @param {Function} onTick
- * @param {Tick|Second} lifespan
+ * @param {Ticks|Seconds} lifespan
  */
 export const addCountdown = (onTick, lifespan) => {
     const id = onTick.toString()
     const tick = normalize(lifespan)
-        .onChange(onTick)
-        .atTick(0, () => countdowns.delete(id))
+
+    tick.onChange = (value) => {
+        onTick(value)
+
+        if (value === 0) countdowns.delete(id)
+    }
     
     countdowns.set(id, tick)
 }
 
 
-/** @type {Map<Symbol, Tick>} */
+/** @type {Map<Symbol, Ticks>} */
 const timers = new Map()
 /**
  * @param {Function} onTick
- * @param {Number} start
+ * @param {Ticks|Seconds} start
  */
-export const addTimer = (onTick, start = new Tick(0)) => {
+export const addTimer = (onTick, start = Ticks.of(0)) => {
     const id = onTick.toString()
     const tick = normalize(start)
-        .onChange(onTick)
+
+    tick.onChange = (value) => {
+        onTick(value)
+    }
 
     timers.set(id, tick)
 }
@@ -65,9 +73,9 @@ let tick = 0, lastSec = 0
 export const getTPS = () => MathLib.clampFloat(history.reduce((a,b) => a+b) / 5, 0, 20).toFixed(2)
 
 new Event("serverTick", () => {
-    scheduledTasks.forEach(tick => tick.value--)
-    countdowns.forEach(tick => tick.value--)
-    timers.forEach(tick => tick.value++)
+    scheduledTasks.forEach(tick => tick.setValue(tick.getValue() - 1))
+    countdowns.forEach(tick => tick.setValue(tick.getValue() - 1))
+    timers.forEach(tick => tick.setValue(tick.getValue() + 1))
 
     if (tick++ % 20) return
     history.push(20000 / (-lastSec + (lastSec = Date.now())))
