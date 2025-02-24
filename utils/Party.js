@@ -1,85 +1,56 @@
-// Credit: BloomCore
-import Feature from "../libs/Features/Feature"
-import { scheduleTask } from "../libs/Time/ServerTime"
-import Seconds from "../libs/Time/Seconds"
-import TextUtil from "../core/static/TextUtil"
+/**
+ * Regexes from BloomCore
+ * @credits BloomCore by UnclaimedBloom6
+ */
+import Event from "../libs/Events/Event"
 
-export default new class Party extends Feature {
+export default new class Party {
 	constructor() {
         this.members = new Set()
         this.leader = null
 
-        super(), this
-            .addEvent("serverChat", (member) => {
-                const ign = TextUtil.getSenderName(member)
-                ign && this.members.add(ign)
-            }, /^(?:(.+) joined the party\.|.+ invited (.+) to the party! They have 60 seconds to accept\.|Party Finder > (.+) joined the (dungeon )?group! \(.+\))$/)
+        new Event("serverChat", (member) => this.add(member), /^(?:(.+) joined the party\.|.+ invited (.+) to the party! They have 60 seconds to accept\.|Party Finder > (.+) joined the (dungeon )?group! \(.+\))$/)
             
-            .addEvent("serverChat", (member) => {
-                this.members.delete(TextUtil.getSenderName(member))
-            }, /^(?:(.+) has been removed from the party\.|(.+) has left the party\.|(.+) was removed from your party because they disconnected\.|Kicked (.+) because they were offline\.)$/)
+        new Event("serverChat", (member) => this.members.delete(this.getUsername(member)), /^(?:(.+) has been removed from the party\.|(.+) has left the party\.|(.+) was removed from your party because they disconnected\.|Kicked (.+) because they were offline\.)$/)
             
-            .addEvent("serverChat", () => {
-                this.disbandParty()
-            }, /^(?:.+ has disbanded the party!|The party was disbanded because all invites expired and the party was empty|You left the party\.|You are not currently in a party\.|You have been kicked from the party by .+|he party was disbanded because the party leader disconnected\.)$/)
+        new Event("serverChat", () => this.clear(), /^(?:.+ has disbanded the party!|The party was disbanded because all invites expired and the party was empty|You left the party\.|You are not currently in a party\.|You have been kicked from the party by .+|The party was disbanded because the party leader disconnected\.)$/)
             
-            .addEvent("serverChat", (lead) => {
-                this.leader = TextUtil.getSenderName(lead)
-            }, /^(?:Party Leader: (.+) ●|You have joined (.+)'s? party!|The party was transferred to (.+) by .+)$/)
+        new Event("serverChat", (leader) => this.leader = this.getUsername(leader), /^(?:Party Leader: (.+) ●|You have joined (.+)'s? party!|The party was transferred to (.+) by .+)$/)
             
-            .addEvent("serverChat", (pList) => {
-                pList.split(", ").forEach(p => {
-                    const ign = TextUtil.getSenderName(p)
-                    ign && this.members.add(ign)
-                })
-            }, /You'll be partying with: (.+)/)
+        new Event("serverChat", (list) => list.split(", ").forEach(member => this.add(member)), /You'll be partying with: (.+)/)
             
-            .addEvent("serverChat", (pList) => {
-                pList.split(/ ?● ?/).forEach(p => {
-                    const ign = TextUtil.getSenderName(p)
-                    ign && this.members.add(ign)
-                })
-            }, /^Party .+: (.+)/)
+        new Event("serverChat", (list) => list.split(/ ?● ?/).forEach(member => this.add(member)), /^Party .+: (.+)/)
             
-            .addEvent("serverChat", () => {
-                this.checkParty()
-            }, /^Party Finder > Your party has been queued in the (dungeon|party) finder!$/)
-            
-            .addEvent("serverChat", () => {
-                if (!this.members.size) this.leader = Player.getName()
-            }, /^.+ invited .+ to the party! They have 60 seconds to accept\.$/)
-            
-            .addEvent("serverChat", (lead, left) => {
-                const ignLead = TextUtil.getSenderName(lead)
-                if (ignLead === Player.getName()) return this.disbandParty()
+        new Event("serverChat", () => ChatLib.command("pl"), /^Party Finder > Your party has been queued in the (dungeon|party) finder!$/)
+        
+        new Event("serverChat", () => !this.members.size && (this.leader = Player.getName()), /^.+ invited .+ to the party! They have 60 seconds to accept\.$/)
+        
+        new Event("serverChat", (leader, member) => {
+            const LeaderIgn = this.getUsername(leader)
+            if (LeaderIgn === Player.getName()) return this.clear()
 
-                this.leader = ignLead
-                this.members.delete(TextUtil.getSenderName(left))
-            }, /The party was transferred to (.+) because (.+) left/)
-            
-            .addSubEvent("serverChat", (event) => cancel(event), /^(?:-{53}|Party (?:Members|Moderators|Leader)\:?.*|You are not currently in a party\.)$/)
-            
-            .addSubEvent("messageSent", (msg, event) => /^\/(?:pl|party list)$/i.test(msg) && cancel(event))
+            this.leader = LeaderIgn
+            this.members.delete(this.getUsername(member))
+        }, /The party was transferred to (.+) because (.+) left/)
 
-        this.checkParty()
+        if (World.isLoaded()) ChatLib.command("pl")
 	}
 
-    checkParty() {
-        if (!World.isLoaded()) return
-
-        this.updateSubEvents()
-        ChatLib.command("pl")
-
-        scheduleTask(() => {
-            this.checkingParty = false
-            this.unregisterSubEvents()
-        }, Seconds.of(1))
+    add(member) {
+        const Username = this.getUsername(member)
+        if (Username) this.members.add(Username)
     }
 
-	disbandParty() {
-		this.members.clear()
-		this.leader = null
+	clear() {
+        this.members.clear()
+        this.leader = null
+    }
+
+    getUsername(string) {
+        const match = string.match(/(\w{1,16})/)
+        if (match) return match[1]
     }
     
     amILeader = () => this.leader === Player.getName()
+
 }

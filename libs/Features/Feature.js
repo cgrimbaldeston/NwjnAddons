@@ -29,7 +29,10 @@ export default class Feature {
         if (setting in Settings()) {
             this.isSettingEnabled = Settings()[setting]
     
-            Settings().getConfig().registerListener(setting, (_, val) => this.isSettingEnabled = val, this._updateRegister())
+            Settings().getConfig().registerListener(setting, (_, val) => {
+                this.isSettingEnabled = val 
+                this._updateRegister()
+            })
         }
 
         // Will always update on world changes
