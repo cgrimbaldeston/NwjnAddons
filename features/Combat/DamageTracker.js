@@ -2,7 +2,7 @@ import Feature from "../../libs/Features/Feature";
 
 new class DamageTracker extends Feature {
     constructor() {
-        super({settings: "damageTracker"}), this
+        super({setting: "damageTracker"}), this
             .addEvent("packetReceived", (packet) => {
                 if (packet./* getEntityType */func_149025_e() !== 30) return
 

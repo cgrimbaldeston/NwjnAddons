@@ -29,7 +29,7 @@ export default class Feature {
         if (setting in Settings()) {
             this.isSettingEnabled = Settings()[setting]
     
-            Settings().getConfig().registerListener(setting, (_, val) => this._updateRegister(this.isSettingEnabled = val))
+            Settings().getConfig().registerListener(setting, (_, val) => this.isSettingEnabled = val, this._updateRegister())
         }
 
         // Will always update on world changes
@@ -74,7 +74,7 @@ export default class Feature {
      * - Location#inWorld and Location#inZone return true if param is nullish
      */
     _updateRegister() {
-        if (("settingValue" in this) && !this.settingValue) return this._unregister()
+        if (("isSettingEnabled" in this) && !this.isSettingEnabled) return this._unregister()
         if (!(Location.inWorld(this.worlds) && Location.inZone(this.zones))) return this._unregister()
         
         return this._register()
