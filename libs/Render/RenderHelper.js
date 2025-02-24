@@ -17,7 +17,7 @@ export default class RenderHelper {
     }
     
     static getRenderDistanceBlocks() {
-        return World.getWorld()./* getRenderDistanceChunks */func_152379_p() * 16
+        return Client.settings.video.getRenderDistance() * 16
     }
 
     static getAxisCoords(aabb) {
