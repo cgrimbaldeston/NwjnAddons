@@ -2,10 +2,11 @@ import Feature from "../../libs/Features/Feature";
 import Party from "../../utils/Party";
 import { data } from "../../data/Data";
 import TextUtil from "../../core/static/TextUtil";
-import Time from "../../libs/Time/Util"
 import Location from "../../utils/Location";
 import Settings from "../../data/Settings";
 import { getTPS, scheduleTask } from "../../libs/Time/ServerTime";
+
+const TIME_LONG = new java.text.SimpleDateFormat("E hh:mm:ss a z", java.util.Locale.US)
 
 const commands = {
     "help": {
@@ -17,7 +18,7 @@ const commands = {
     "time": {
         matches: /^time$/,
         access: () => Settings().pcTime,
-        fn: () => "pc " + Time.getLongTime()
+        fn: () => "pc " + TIME_LONG.format(Date.now())
     },
 
     "coords": {

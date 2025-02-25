@@ -1,4 +1,4 @@
-import Seconds from "../Time/Seconds"
+import Seconds from "../Time/Units/Seconds"
 import {scheduleTask} from "../Time/ServerTime"
 import RenderUtil from "./RenderUtil"
 

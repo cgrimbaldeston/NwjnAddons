@@ -1,7 +1,7 @@
 import Feature from "../../libs/Features/Feature";
 import {log} from "../../core/static/TextUtil";
 import { scheduleTask } from "../../libs/Time/ServerTime";
-import Seconds from "../../libs/Time/Seconds";
+import Seconds from "../../libs/Time/Units/Seconds";
 
 const SkyblockXP = new Feature({setting: "skyblockXP"})
     .addEvent("actionBarChange", (xp, category, progress) => {

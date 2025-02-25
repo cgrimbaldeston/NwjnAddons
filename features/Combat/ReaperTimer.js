@@ -2,7 +2,7 @@ import GuiFeature from "../../libs/Features/GuiFeature";
 import ItemUtil from "../../core/static/ItemUtil";
 import { data } from "../../data/Data";
 import { addCountdown } from "../../libs/Time/ServerTime";
-import Seconds from "../../libs/Time/Seconds";
+import Seconds from "../../libs/Time/Units/Seconds";
 
 const prefix = "Reaper:"
 const ReaperOverlay = new GuiFeature({

@@ -1,6 +1,6 @@
 import Event from "../Events/Event"
-import Ticks from "./Ticks"
-import Seconds from "./Seconds"
+import Ticks from "./Units/Ticks"
+import Seconds from "./Units/Seconds"
 
 /** @returns {Ticks} */
 const normalize = (val) => {

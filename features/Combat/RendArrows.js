@@ -1,7 +1,7 @@
 import Feature from "../../libs/Features/Feature";
 import ItemUtil from "../../core/static/ItemUtil";
 import { scheduleTask } from "../../libs/Time/ServerTime";
-import Ticks from "../../libs/Time/Ticks";
+import Ticks from "../../libs/Time/Units/Ticks";
 
 let arrows = 0
 

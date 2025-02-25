@@ -2,7 +2,7 @@ import TextUtil, {notify} from "../core/static/TextUtil"
 import Event from "../libs/Events/Event"
 import { data } from "../data/Data"
 import { scheduleTask } from "../libs/Time/ServerTime"
-import Ticks from "../libs/Time/Ticks"
+import Ticks from "../libs/Time/Units/Ticks"
 import { addCommand } from "./Command"
 
 // [Power Stone]
