@@ -1,6 +1,24 @@
+/** Optimized by PerseusPotter */
+
 export default new class Frustum {
-    /** @override Should be overridden when Frustum is created */ isAABBInFrustum() {}
-    /** @override Should be overridden when Frustum is created */ isBoxInFrustum() {}
+    /**
+     * @override Should be overridden when Frustum is created
+     * @param AxisAlignedBB net.minecraft.util.AxisAlignedBB
+     * @returns {Boolean} true if any corner of the aabb is within the frustum
+     */
+    isAABBInFrustum(AxisAlignedBB) {}
+        
+    /**
+     * @override Should be overridden when Frustum is created
+     * @param {Number} minX
+     * @param {Number} minY
+     * @param {Number} minZ
+     * @param {Number} maxX
+     * @param {Number} maxY
+     * @param {Number} maxZ
+     * @returns {Boolean} true if any corner of the aabb is within the frustum
+     */
+    isBoxInFrustum(minX, minY, minZ, maxX, maxY, maxZ) {}
 
     constructor() {
         // Needs to be called from within the Minecraft Thread to initialize the Frustum class
@@ -20,15 +38,16 @@ export default new class Frustum {
             this.isBoxInFrustum = (minX, minY, minZ, maxX, maxY, maxZ) => frustum./* isBoxInFrustum */func_78548_b(minX, minY, minZ, maxX, maxY, maxZ)
 
             // Updates frustum position on preRenderTicks, all view angle changes are handled within GL
+            const PRE = net.minecraftforge.fml.common.gameevent.TickEvent.Phase.START
             register(net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent, ({phase}) => {
-                if (phase.equals(net.minecraftforge.fml.common.gameevent.TickEvent.Phase.START)) return
+                if (phase.equals(PRE)) return
 
                 frustum./* setPos */func_78547_a(
                     renderPosX.get(RenderManager), 
                     renderPosY.get(RenderManager), 
                     renderPosZ.get(RenderManager)
                 )
-            }).setFilteredClass(net.minecraft.network.play.client.C03PacketPlayer$C04PacketPlayerPosition)
+            })
         })
     }
 }
