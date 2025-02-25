@@ -13,7 +13,7 @@ new class JunkSpawnAborter extends Feature {
             .registerListener("removeFallingBlocks", (_, val) => this.blacklist?.set(70, val))
     }
 
-    onRegister() {
+    onEnabled() {
         /** 
          * Check link for type list, notify me on discord if any of these types not to be edited or changed to have a setting
          * @see {https://github.com/Marcelektro/MCP-919/blob/1717f75902c6184a1ed1bfcd7880404aab4da503/src/minecraft/net/minecraft/entity/EntityTrackerEntry.java} ctrl-f S0EPacketSpawnObject
@@ -42,7 +42,7 @@ new class JunkSpawnAborter extends Feature {
         this.blacklist.set(70, Settings().removeFallingBlocks)
     }
 
-    onUnregister() { 
+    onDisabled() { 
         this.blacklist = null
     }
 }

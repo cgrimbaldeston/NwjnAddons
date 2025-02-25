@@ -30,16 +30,21 @@ new class BlockHighlight extends Feature {
         Settings().getConfig().registerListener("highlightColor", (_, val) => this.Color = val)
     }
 
-    onRegister() {
+    onEnabled() {
         const MovingObjectType$BLOCK = net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK
         this.isTargetingBlock = (typeOfHit) => typeOfHit.equals(MovingObjectType$BLOCK)
+    }
 
+    onDisabled() {
+        this.isTargetingBlock = null
+    }
+
+    onRegister() {
         this.World = World.getWorld()
         this.Color = Settings().highlightColor
     }
 
     onUnregister() {
-        this.isTargetingBlock = null
         this.World = null
         this.Color = null
     }

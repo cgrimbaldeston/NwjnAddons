@@ -10,8 +10,10 @@ import Location from "../../utils/Location"
 import Event from "../Events/Event";
 
 export default class Feature {
-    /** @override Listener function that's called when this [Feature] is registered */ onRegister() {}
-    /** @override Listener function that's called when this [Feature] is unregistered */ onUnregister() {}
+    /** @override Function called when this is registered */ onRegister() {}
+    /** @override Function called when this is unregistered */ onUnregister() {}
+    /** @override Function called when this is enabled by setting */ onEnabled() {}
+    /** @override Function called when this is disabled by setting */ onDisabled() {}
 
     /**
      * - Utility that handles registering various events and listeners to make complex, functional, and performative features
@@ -28,9 +30,11 @@ export default class Feature {
         // Main setting enables/disables entire [Feature]
         if (setting in Settings()) {
             this.isSettingEnabled = Settings()[setting]
+            Client.scheduleTask(() => this.isSettingEnabled ? this.onEnabled() : this.onDisabled())
     
             Settings().getConfig().registerListener(setting, (_, val) => {
                 this.isSettingEnabled = val 
+                this.isSettingEnabled ? this.onEnabled() : this.onDisabled()
                 this._updateRegister()
             })
         }
@@ -38,6 +42,8 @@ export default class Feature {
         // Will always update on world changes
         Location.onWorldChange(() => this._updateRegister())
         if (zones) Location.onZoneChange(() => this._updateRegister())
+
+        Client.scheduleTask(() => this._updateRegister())
     }
 
     /**
@@ -52,7 +58,6 @@ export default class Feature {
         }
         this.events.push(new Event(triggerType, methodFn, args, false))
 
-        this._updateRegister()
         return this
     }
 
@@ -68,7 +73,6 @@ export default class Feature {
         }
         this.subEvents.push([new Event(triggerType, methodFn, args, false), condition])
 
-        this._updateRegister()
         return this
     }
 

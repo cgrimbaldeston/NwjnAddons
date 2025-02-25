@@ -13,13 +13,13 @@ new class Clock extends GuiFeature {
             .addEvent("interval", () => this.setText(this?.getTime()), 1)
     }
 
-    onRegister() {
+    onEnabled() {
         const TimeFormatter = new java.text.SimpleDateFormat("hh:mm:ss a", java.util.Locale.US)
 
         this.getTime = () => TimeFormatter.format(Date.now())
     }
 
-    onUnregister() {
+    onDisabled() {
         this.getTime = null
     }
 }

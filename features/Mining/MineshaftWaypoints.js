@@ -48,14 +48,14 @@ new class MineshaftWaypoints extends Feature {
                     !it.dirty && it.render([255, 0, 0, 255])
                 )
             )
-
-        if (Settings().mineshaftWaypoints) this.parseData()
-        else Settings().getConfig().registerListener("mineshaftWaypoints", (_, val) => val && this?.parseData())
     }
 
-    parseData() {
+    onEnabled() {
         this.data = JSON.parse(FileLib.read("NwjnAddons", "features/Mining/MineshaftWaypointsData.json"))
-        delete this.parseData
+    }
+
+    onDisabled() {
+        this.data = null
     }
 
     onRegister() {

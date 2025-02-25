@@ -23,14 +23,14 @@ new class DeadNameDeletor extends Feature {
             }, net.minecraft.network.play.server.S1CPacketEntityMetadata)
     }
 
-    onRegister() {
+    onEnabled() {
         const NAMETAG_REGEX = / (§.)*0(§.)*[\/❤]/
         const JavaString = java.lang.String
 
         this.isNametag = (object) => object instanceof JavaString && NAMETAG_REGEX.test(object)
     }
 
-    onUnregister() {
+    onDisabled() {
         this.isNametag = null
     }
 }
