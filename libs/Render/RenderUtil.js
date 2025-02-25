@@ -268,13 +268,16 @@ export default class RenderUtil {
     static renderWaypoint(text, x, y, z, r, g, b, a, phase = true, checkFrustum = true) {
         [x, y, z] = RenderHelper.coerceToRenderDist(x, y, z)
 
-        const aabb = RenderHelper.toAABB(x, y, z, 1, 1)
-        this.renderBeaconBeam(x - 0.5, y, z - 0.5, r, g, b, 150, phase, checkFrustum)
-        if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
+        const BeaconBB = RenderHelper.toAABB(x, y, z, 1, 150)
+        if (checkFrustum && !RenderHelper.inFrustum(BeaconBB)) return
+        this.renderBeaconBeam(x - 0.5, y, z - 0.5, r, g, b, 150, phase, 150, false)
 
-        this.drawOutlinedAABB(aabb, r, g, b, a, phase, 2, false)
-        this.drawFilledAABB(aabb, r, g, b, 50, phase, false)
-        this.drawString(text, x, y + 3, z, false)
+        const BlockBB = RenderHelper.toAABB(x, y, z, 1, 1)
+        if (checkFrustum && !RenderHelper.inFrustum(BlockBB)) return
+
+        this.drawOutlinedAABB(BlockBB, r, g, b, a, phase, 2, false)
+        this.drawFilledAABB(BlockBB, r, g, b, 50, phase, false)
+        this.drawString(text, x, y + 3, z, 0xffffff, true, 1, true, true, true, false)
     }
     
     /**

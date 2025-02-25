@@ -74,5 +74,5 @@ export default class RenderHelper {
         ]
     }
 
-    static inFrustum = (aabb) => Frustum?.inFrustum(aabb)
+    static inFrustum = (aabb) => Frustum.isAABBInFrustum(aabb)
 }

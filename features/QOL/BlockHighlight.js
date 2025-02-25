@@ -32,7 +32,7 @@ new class BlockHighlight extends Feature {
 
     onRegister() {
         const MovingObjectType$BLOCK = net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK
-        this.isTargetingBlock = (typeOfHit) => typeOfHit == MovingObjectType$BLOCK
+        this.isTargetingBlock = (typeOfHit) => typeOfHit.equals(MovingObjectType$BLOCK)
 
         this.World = World.getWorld()
         this.Color = Settings().highlightColor
