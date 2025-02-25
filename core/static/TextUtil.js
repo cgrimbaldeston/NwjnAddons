@@ -25,18 +25,6 @@ export default class TextUtil {
     static NWJN = "§0§l[§c§lNwjn§0§l]§r"
     static NWJNADDONS = "§0§l[§c§lNwjnAddons§0§l]§r"
     // }
-    
-    /**
-     * - Returns the matches of the regex
-     * - For assignments
-     * @param {RegExp} regex 
-     * @param {String} string
-     * @param {Number} vars the number of vars to be assigned 
-     * @returns {RegExpMatchArray|null[]} matches 
-     */
-    static getMatches(regex, string, vars = 1) {
-        return string?.match(regex)?.slice(1) ?? Array(vars)
-    }
 
     /**
      * - Check if the criteria is a regex or a string

@@ -6,55 +6,62 @@
  */
 
 import Event from "../libs/Events/Event"
-import TextUtil from "../core/static/TextUtil"
 
 export default new class Location {
-  constructor() {
-    this.worldListeners = []
-    this.zoneListeners = []
+    constructor() {
+        this._worldListeners = []
+        this._zoneListeners = []
 
-    new Event("tabAdd", (world) => this._triggerWorldEvents(world), /^(?:Area|Dungeon): (.+)$/)
-    new Event("sidebarChange", (zone) => this._triggerZoneEvents(zone), /^ [⏣ф] (.+)$/)
-    new Event("worldUnload", () => this._triggerWorldEvents(), this._triggerZoneEvents())
+        new Event("tabAdd", (world) => this._triggerWorldEvents(world), /^(?:Area|Dungeon): (.+)$/)
+        new Event("sidebarChange", (zone) => this._triggerZoneEvents(zone), /^ [⏣ф] (.+)$/)
+        new Event("worldUnload", () => this._triggerWorldEvents(), this._triggerZoneEvents())
 
-    // For CT Reload while playing
-    if (World.isLoaded()) {
-      TabList.getNames().find(it => {
-        [it] = TextUtil.getMatches(/^(?:Area|Dungeon): (.+)$/, it.removeFormatting())
-        return it ? this._triggerWorldEvents(it) : false
-      })
-      Scoreboard.getLines().find(it => {
-        [it] = TextUtil.getMatches(/^ [⏣ф] (.+)$/, it.getName().removeFormatting().replace(/[^\w\s]/g, "").trim())
-        return it ? this._triggerZoneEvents(it) : false
-      })
+        // For CT Reload while playing
+        if (World.isLoaded()) {
+            TabList.getNames().find(it => {
+                const [_, world] = it.removeFormatting().match(/^(?:Area|Dungeon): (.+)$/)
+
+                if (world) {
+                    this._triggerWorldEvents(world)
+                    return true
+                }
+            })
+            Scoreboard.getLines().find(it => {
+                const [_, zone] = it.getName().removeFormatting().replace(/[^\w\s]/g, "").match(/^ [⏣ф] (.+)$/)
+                
+                if (zone) {
+                    this._triggerZoneEvents(zone)
+                    return true
+                }
+            })
+        }
     }
-  }
 
-  onWorldChange = (fn) => this.worldListeners.push(fn)
-  
-  onZoneChange = (fn) => this.zoneListeners.push(fn)
+    onWorldChange = (fn) => this._worldListeners.push(fn)
+    
+    onZoneChange = (fn) => this._zoneListeners.push(fn)
 
-  /** @returns {Boolean} */
-  inWorld(world) {
-    if (Array.isArray(world)) return world.includes(this.world)
-    if (typeof(world) === "string") return world === this.world
-    return true
-  }
+    /** @returns {Boolean} */
+    inWorld(world) {
+        if (Array.isArray(world)) return world.includes(this.world)
+        if (typeof(world) === "string") return world === this.world
+        return true
+    }
 
-  /** @returns {Boolean} */
-  inZone(zone) {
-    if (Array.isArray(zone)) return zone.includes(this.zone)
-    if (typeof(zone) === "string") return zone === this.zone
-    return true
-  }
+    /** @returns {Boolean} */
+    inZone(zone) {
+        if (Array.isArray(zone)) return zone.includes(this.zone)
+        if (typeof(zone) === "string") return zone === this.zone
+        return true
+    }
 
-  _triggerWorldEvents(world) {
-    this.world = world
-    this.worldListeners.forEach(fn => fn(world))
-  }
+    _triggerWorldEvents(world) {
+        this.world = world
+        this._worldListeners.forEach(fn => fn(world))
+    }
 
-  _triggerZoneEvents(zone) {
-    this.zone = zone
-    this.zoneListeners.forEach(fn => fn(zone))
-  }
+    _triggerZoneEvents(zone) {
+        this.zone = zone
+        this._zoneListeners.forEach(fn => fn(zone))
+    }
 }

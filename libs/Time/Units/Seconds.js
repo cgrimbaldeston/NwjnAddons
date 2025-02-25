@@ -17,6 +17,6 @@ export default class Seconds {
     setValue(seconds) {
         this.value = seconds
 
-        this?.onChange(this.value)
+        this.onChange(this.value)
     }
 }

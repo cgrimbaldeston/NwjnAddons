@@ -32,7 +32,7 @@ new Event("containerClick", (window) => {
         const tuning = lore.match(/\+(\d+.) /g)
         data.tuning = tuning?.join(" ") ?? "Unknown"
 
-        const [magPow] = TextUtil.getMatches(/Magical Power: (.+)/, lore)
+        const [_, magPow] = lore.match(/Magical Power: (.+)/)
         data.mp = magPow ?? "Unknown"
     }, Ticks.of(2))
 }, null, true)

@@ -87,8 +87,9 @@ const commands = {
         matches: /^([fmt]) ?([1-7])$/,
         access: () => Settings().pcInstance && Party.amILeader(),
         fn: (_, cmd) => {
-            const [type, number] = TextUtil.getMatches(/^([fmt]) ?([1-7])$/, cmd)
+            const [_, type, number] = cmd.match(/^([fmt]) ?([1-7])$/)
 
+            if (!_) return
             switch (type) {
                 case "f":
                     return `joininstance catacombs_floor_${ TextUtil.getFloorWord(number) }`;

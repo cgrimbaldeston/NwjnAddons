@@ -17,6 +17,6 @@ export default class Ticks {
     setValue(value) {
         this.value = value
 
-        this?.onChange(this.value)
+        this.onChange(this.value)
     }
 }
