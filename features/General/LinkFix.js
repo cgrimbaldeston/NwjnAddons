@@ -5,6 +5,7 @@
  */
 
 import Feature from "../../libs/Features/Feature";
+import TextUtil from "../../core/static/TextUtil";
 
 new class LinkFix extends Feature {
     /**
@@ -43,8 +44,8 @@ new class LinkFix extends Feature {
     constructor() {
         super({setting: "linkFix"}), this
             .addEvent("messageSent", (msg, event) => {
-                const [_, link] = msg.match(/([a-z\d]{2,}:\/\/[-\w.]+\.[a-z]{2,}\/(?:$|\S+\.\w+|\S+))/)
-                if (!_) return
+                const [link] = TextUtil.getMatches(/([a-z\d]{2,}:\/\/[-\w.]+\.[a-z]{2,}\/(?:$|\S+\.\w+|\S+))/, link)
+                if (!link) return
         
                 const encoded = this.encode(link)
                 if (!encoded) return
@@ -112,8 +113,8 @@ new class LinkFix extends Feature {
         }
 
         this.decode = (encoded) => {
-            const [_, scheme, extension, dots, body] = encoded.match(/^l\$(\S)?(\S)?(\d+)\|(\S+)$/)
-            if (!_) return
+            const [matched, scheme, extension, dots, body] = TextUtil.getMatches(/^(l\$(\S)?(\S)?(\d+)\|(\S+))$/, encoded)
+            if (!matched) return
     
             const dotsLen = 9 - dots.length
     
@@ -136,8 +137,8 @@ new class LinkFix extends Feature {
         this.encode = (url) => {
             let encoded = "l$"
     
-            const [_, scheme, host, dir] = url.matches(/^(([a-z\d]{2,}:\/\/)([-\w.]+\.[a-z]{2,})(\/\S*))$/)
-            if (!_) return
+            const [matched, scheme, host, dir] = TextUtil.getMatches(/^(([a-z\d]{2,}:\/\/)([-\w.]+\.[a-z]{2,})(\/\S*))$/, url)
+            if (!matched) return
     
             const prefix = (encoded == (encoded += schemes[scheme] ?? "")) ? scheme : ""
             const suffix = (encoded == (encoded += extensions[dir.slice(-5)] ?? "")) ? (encoded += 0, dir) : dir.slice(0, -5)

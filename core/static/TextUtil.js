@@ -27,6 +27,21 @@ export default class TextUtil {
     // }
 
     /**
+     * - Returns the matches of the regex
+     * - For assignments
+     * @param {RegExp} regex 
+     * @param {String} string
+     * @param {Number} vars the number of vars to be assigned 
+     * @returns {RegExpMatchArray|[]} matches 
+     */
+    static getMatches(regex, string) {
+        const match = string?.match(regex)
+
+        if (match && match?.shift()) return match
+        return []
+    }
+    
+    /**
      * - Check if the criteria is a regex or a string
      * - Regex is way more intensive so only use that if needed
      * - Credit: https://github.com/DocilElm/Doc/blob/main/shared/TextHelper.js#L64

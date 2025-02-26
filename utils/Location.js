@@ -6,6 +6,7 @@
  */
 
 import Event from "../libs/Events/Event"
+import TextUtil from "../core/static/TextUtil"
 
 export default new class Location {
     constructor() {
@@ -19,7 +20,7 @@ export default new class Location {
         // For CT Reload while playing
         if (World.isLoaded()) {
             TabList.getNames().find(it => {
-                const [_, world] = it.removeFormatting().match(/^(?:Area|Dungeon): (.+)$/)
+                const [world] = TextUtil.getMatches(/^(?:Area|Dungeon): (.+)$/, it.removeFormatting())
 
                 if (world) {
                     this._triggerWorldEvents(world)
@@ -27,7 +28,7 @@ export default new class Location {
                 }
             })
             Scoreboard.getLines().find(it => {
-                const [_, zone] = it.getName().removeFormatting().replace(/[^\w\s]/g, "").match(/^ [⏣ф] (.+)$/)
+                const [zone] = TextUtil.getMatches(/^ [⏣ф] (.+)$/, it.getName().removeFormatting().replace(/[^\w\s]/g, ""))
                 
                 if (zone) {
                     this._triggerZoneEvents(zone)

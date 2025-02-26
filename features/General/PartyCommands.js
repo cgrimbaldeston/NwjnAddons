@@ -1,6 +1,7 @@
 import Feature from "../../libs/Features/Feature";
 import Party from "../../utils/Party";
 import { data } from "../../data/Data";
+import { isBlacklisted } from "../../utils/Profile";
 import TextUtil from "../../core/static/TextUtil";
 import Location from "../../utils/Location";
 import Settings from "../../data/Settings";
@@ -104,14 +105,17 @@ const commands = {
     }
 }
 
-new Feature({setting: "partyCommands"})
-    .addEvent("serverChat", (player, command, event) => {
-        const ign = TextUtil.getSenderName(player).toLowerCase()
-        const cmd = command.toLowerCase()
+new class PartyCommands extends Feature {
+    constructor() {
+        super({setting: "partyCommands"}), this
+            .addEvent("serverChat", (player, command, event) => {
+                const ign = TextUtil.getSenderName(player).toLowerCase()
+                const cmd = command.toLowerCase().trim()
 
-        if (ign in data.blacklist) return TextUtil.append(event.func_148915_c(), "&cBlacklisted")
-        
-        const response = Object.values(commands).find(obj => obj.matches.test(cmd) && obj.access())
-
-        if (response) scheduleTask(() => ChatLib.command(response.fn(ign, cmd)))
-    }, /^Party > (.+): [,.?!](.+)$/)
+                if (isBlacklisted(ign)) return TextUtil.append(event.func_148915_c(), "&cBlacklisted")
+                
+                const response = Object.values(commands).find(obj => obj.matches.test(cmd) && obj.access())
+                if (response) scheduleTask(() => ChatLib.command(response.fn(ign, cmd)))
+            }, /^Party > (.+): [,.?!](.+)$/)
+    }
+}

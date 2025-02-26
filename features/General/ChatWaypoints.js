@@ -1,8 +1,8 @@
 import Feature from "../../libs/Features/Feature";
 import TextUtil from "../../core/static/TextUtil";
-import { data } from "../../data/Data";
 import Settings from "../../data/Settings";
 import Waypoint from "../../libs/Render/TempWaypoint";
+import { isBlacklisted } from "../../utils/Profile";
 
 new class ChatWaypoints extends Feature {
     constructor() {
@@ -10,9 +10,10 @@ new class ChatWaypoints extends Feature {
             .addEvent("serverChat", (displayName, x, y, z, text = "", event, formatted) => {
                 const ign = TextUtil.getSenderName(displayName).toLowerCase()
                 
-                if (ign in data.blacklist) return TextUtil.append(event.func_148915_c(), "§cBlacklisted")
+                if (isBlacklisted(ign)) return TextUtil.append(event.func_148915_c(), "§cBlacklisted")
                 
                 const [mainText] = TextUtil.getMatches(/^(.+)§.:/, formatted)
+                if (!mainText) return
         
                 this.waypoints.set(ign, new Waypoint(mainText, text, x, y, z, 5, Settings().wpTime))
                 this.updateSubEvents()
@@ -33,12 +34,12 @@ new class ChatWaypoints extends Feature {
         Settings().getConfig().registerListener("wpColor", (_, val) => this.Color = val)
     }
 
-    onRegister() {
+    onEnabled() {
         this.waypoints = new Map()
         this.Color = Settings().wpColor
     }
 
-    onUnregister() {
+    onDisabled() {
         this.waypoints = null
         this.Color = null
     }

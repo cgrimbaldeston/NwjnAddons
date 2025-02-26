@@ -32,7 +32,7 @@ new Event("containerClick", (window) => {
         const tuning = lore.match(/\+(\d+.) /g)
         data.tuning = tuning?.join(" ") ?? "Unknown"
 
-        const [_, magPow] = lore.match(/Magical Power: (.+)/)
+        const [magPow] = TextUtil.getMatches(/Magical Power: (.+)/, lore)
         data.mp = magPow ?? "Unknown"
     }, Ticks.of(2))
 }, null, true)
@@ -42,7 +42,7 @@ const INVALID = () => notify("&cInvalid. &aAdd and remove need name entry. List 
 
 addCommand("bl", "Blacklist <add, remove, list, clear> <name?> <reason?>", (type, name, reason) => {
     if (!type) return INVALID()
-    [type, name] = [type?.toLowerCase(), name?.toLowerCase()]
+    name = name?.toLowerCase()
 
     switch (type.toLowerCase()) {
         case "add": {
@@ -79,3 +79,5 @@ addCommand("bl", "Blacklist <add, remove, list, clear> <name?> <reason?>", (type
         }
     }
 })
+
+export const isBlacklisted = (ign) => ign && ign in data.blacklist
