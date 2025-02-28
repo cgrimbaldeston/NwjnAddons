@@ -59,11 +59,11 @@ new class LinkFix extends Feature {
                 if (!decoded) return
         
                 component./* getSiblings */func_150253_a().find(comp => {
-                    const text = comp.text
+                    const text = this.textField?.get(comp)
                     if (!text.includes(url)) return false
         
                     // Bypass CT messing up link text in new TextComponent & setText
-                    comp.text = text.replace(url, decoded)
+                    this.textField?.set(comp, text.replace(url, decoded))
         
                     // Now use CT's TextComponent with MC's TextComponent
                     comp = new TextComponent(comp)
@@ -77,6 +77,10 @@ new class LinkFix extends Feature {
     }
 
     onEnabled() {
+        const ChatComponentText = net.minecraft.util.ChatComponentText
+        this.textField = ChatComponentText.class.getDeclaredField("field_150267_b")
+        this.textField.setAccessible(true)
+
         const schemes = {
             "h": "http://",
             "H": "https://",
@@ -160,5 +164,6 @@ new class LinkFix extends Feature {
         this.translate = null
         this.decode = null
         this.encode = null
+        this.textField = null
     }
 }
