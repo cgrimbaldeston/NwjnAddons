@@ -44,7 +44,7 @@ new class LinkFix extends Feature {
     constructor() {
         super({setting: "linkFix"}), this
             .addEvent("messageSent", (msg, event) => {
-                const [link] = TextUtil.getMatches(/([a-z\d]{2,}:\/\/[-\w.]+\.[a-z]{2,}\/(?:$|\S+\.\w+|\S+))/, link)
+                const [link] = TextUtil.getMatches(/([a-z\d]{2,}:\/\/[-\w.]+\.[a-z]{2,}\/(?:$|\S+\.\w+|\S+))/, msg)
                 if (!link) return
         
                 const encoded = this.encode(link)
@@ -59,9 +59,7 @@ new class LinkFix extends Feature {
                 if (!decoded) return
         
                 component./* getSiblings */func_150253_a().find(comp => {
-                    ChatLib.chat(comp.text)
-                    ChatLib.chat(comp.field_150267_b)
-                    const { text } = comp
+                    const text = comp.text
                     if (!text.includes(url)) return false
         
                     // Bypass CT messing up link text in new TextComponent & setText
