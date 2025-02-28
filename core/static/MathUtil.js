@@ -1,4 +1,6 @@
 // Credit: https://github.com/DocilElm/Doc/blob/main/shared/TextHelper.js
+import TextUtil from "./TextUtil";
+
 const numberFormat = { undefined: 1, "k": 1_000, "m": 1_000_000, "b": 1_000_000_000 };
 
 export default class MathUtil {
@@ -10,7 +12,7 @@ export default class MathUtil {
      * @returns {Number}
      */
     static convertToNumber(string) {
-        const [ _, number, format ] = string.toLowerCase().match(/([\d\.,]+)([kmb])?/)
+        const [number, format] = TextUtil.getMatches(/([\d\.,]+)([kmb])?/, string.toLowerCase())
 
         return parseFloat(number) * numberFormat[format]
     }
