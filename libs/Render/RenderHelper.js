@@ -8,13 +8,15 @@ export default class RenderHelper {
 
     static getRenderPitch = () => RenderManager./* playerViewY */field_78735_i
 
-    static getRenderPos() {
-        return [
-            RenderManager./* field_78725_b */renderPosX, 
-            RenderManager./* field_78726_c */renderPosY, 
-            RenderManager./* field_78723_d */renderPosZ
-        ]
+    static getRenderPos = () => {
+        return {
+            rx: Frustum.getRenderX(),
+            ry: Frustum.getRenderY(),
+            rz: Frustum.getRenderZ()
+        }
     }
+
+    static inFrustum = (aabb) => Frustum.isAABBInFrustum(aabb)
     
     static getRenderDistanceBlocks() {
         return Client.settings.video.getRenderDistance() * 16
@@ -22,12 +24,12 @@ export default class RenderHelper {
 
     static getAxisCoords(aabb) {
         return [
-            aabb./* minX */field_72340_a, // Min X
-            aabb./* minY */field_72338_b, // Min Y
-            aabb./* minZ */field_72339_c, // Min Z
-            aabb./* maxX */field_72336_d, // Max X
-            aabb./* maxY */field_72337_e, // Max Y
-            aabb./* maxZ */field_72334_f // Max Z
+            aabb./* minX */field_72340_a,
+            aabb./* minY */field_72338_b,
+            aabb./* minZ */field_72339_c,
+            aabb./* maxX */field_72336_d,
+            aabb./* maxY */field_72337_e,
+            aabb./* maxZ */field_72334_f
         ]
     }
 
@@ -60,7 +62,7 @@ export default class RenderHelper {
 
     static coerceToRenderDist(x, y, z) {
         const renderDistBlocks = this.getRenderDistanceBlocks()
-        const [rx, ry, rz] = this.getRenderPos()
+        const {rx, ry, rz} = this.getRenderPos()
         const distTo = Math.hypot(rx - x, ry - y, rz - z)
 
         if (distTo < renderDistBlocks) return [x, y, z]
@@ -73,6 +75,4 @@ export default class RenderHelper {
             rz + (z - rz) * scale
         ]
     }
-
-    static inFrustum = (aabb) => Frustum.isAABBInFrustum(aabb)
 }

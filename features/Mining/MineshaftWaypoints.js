@@ -1,6 +1,5 @@
 import Feature from "../../libs/Features/Feature";
 import { notify } from "../../core/static/TextUtil";
-import Settings from "../../data/Settings";
 import Waypoint from "../../libs/Render/TempWaypoint";
 
 /** @todo make a quick check for vang which immediately checks for a gold block at a coord relative to the player's location */

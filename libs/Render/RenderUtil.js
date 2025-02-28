@@ -29,10 +29,10 @@ export default class RenderUtil {
     static drawOutlinedAABB(aabb, r, g, b, a, phase = false, lineWidth = 3, checkFrustum = true) {
         if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
 
-        const [rx, ry, rz] = RenderHelper.getRenderPos()
+        const {rx, ry, rz} = RenderHelper.getRenderPos()
 
         Tessellator.pushMatrix()
-        GlStateManager.func_179129_p()
+        GlStateManager./* disableCull */func_179129_p()
         Tessellator
             .disableTexture2D()
             .enableBlend()
@@ -44,7 +44,11 @@ export default class RenderUtil {
         
         if (phase) Tessellator.disableDepth()
 
-        RenderGlobal.func_181561_a(aabb.func_72314_b(0.002, 0.002, 0.002).func_72317_d(-rx, -ry, -rz)) // drawSelectionBoundingBox
+        RenderGlobal./* drawSelectionBoundingBox */func_181561_a(
+            aabb
+                ./* expand */func_72314_b(0.002, 0.002, 0.002)
+                ./* offset */func_72317_d(-rx, -ry, -rz)
+        )
 
         if (phase) Tessellator.enableDepth()
         
@@ -54,7 +58,7 @@ export default class RenderUtil {
             .enableTexture2D()
             .colorize(1, 1, 1, 1)
         
-            GlStateManager.func_179089_o()
+            GlStateManager./* enableCull */func_179089_o()
             Tessellator
                 .enableLighting()
                 .popMatrix()
@@ -75,7 +79,8 @@ export default class RenderUtil {
      */
     static drawOutlinedBox(x, y, z, w, h, r, g, b, a, phase = false, lineWidth = 3, checkFrustum = true) {
         const aabb = RenderHelper.toAABB(x, y, z, w, h)
-        this.drawOutlinedAABB(aabb, r, g, b, a, phase, lineWidth, checkFrustum)
+        if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
+        this.drawOutlinedAABB(aabb, r, g, b, a, phase, lineWidth, false)
     }
 
     static drawFilledAABB(aabb, r, g, b, a, phase = true, checkFrustum = true) {
@@ -83,10 +88,10 @@ export default class RenderUtil {
 
         const [ x0, y0, z0, x1, y1, z1 ] = RenderHelper.getAxisCoords(aabb)
         
-        const [ rx, ry, rz ] = RenderHelper.getRenderPos()
+        const {rx, ry, rz} = RenderHelper.getRenderPos()
 
         Tessellator.pushMatrix()
-        GlStateManager.func_179129_p()
+        GlStateManager./* disableCull */func_179129_p()
         Tessellator
             .disableTexture2D()
             .enableBlend()
@@ -99,29 +104,29 @@ export default class RenderUtil {
 
         Tessellator.colorize(r / 255, g / 255, b / 255, a / 255)
 
-        WorldRenderer.func_181668_a(5, DefaultVertexFormats.field_181705_e)
-        WorldRenderer.func_181662_b(x0, y0, z0).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y0, z0).func_181675_d()
-        WorldRenderer.func_181662_b(x0, y0, z1).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y0, z1).func_181675_d()
-        WorldRenderer.func_181662_b(x0, y1, z1).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y1, z1).func_181675_d()
-        WorldRenderer.func_181662_b(x0, y1, z0).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y1, z0).func_181675_d()
-        WorldRenderer.func_181662_b(x0, y0, z0).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y0, z0).func_181675_d()
-        MCTessellator.func_78381_a()
+        WorldRenderer./* begin */func_181668_a(5, DefaultVertexFormats./* POSITION */field_181705_e)
+        WorldRenderer./* pos */func_181662_b(x0, y0, z0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y0, z0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x0, y0, z1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y0, z1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x0, y1, z1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y1, z1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x0, y1, z0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y1, z0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x0, y0, z0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y0, z0)./* endVertex */func_181675_d()
+        MCTessellator./* draw */func_78381_a()
 
-        WorldRenderer.func_181668_a(7, DefaultVertexFormats.field_181705_e)
-        WorldRenderer.func_181662_b(x0, y0, z0).func_181675_d()
-        WorldRenderer.func_181662_b(x0, y0, z1).func_181675_d()
-        WorldRenderer.func_181662_b(x0, y1, z1).func_181675_d()
-        WorldRenderer.func_181662_b(x0, y1, z0).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y0, z0).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y0, z1).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y1, z1).func_181675_d()
-        WorldRenderer.func_181662_b(x1, y1, z0).func_181675_d()
-        MCTessellator.func_78381_a()
+        WorldRenderer./* begin */func_181668_a(7, DefaultVertexFormats./* POSITION */field_181705_e)
+        WorldRenderer./* pos */func_181662_b(x0, y0, z0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x0, y0, z1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x0, y1, z1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x0, y1, z0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y0, z0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y0, z1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y1, z1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x1, y1, z0)./* endVertex */func_181675_d()
+        MCTessellator./* draw */func_78381_a()
 
         if (phase) Tessellator.enableDepth()
             
@@ -132,7 +137,7 @@ export default class RenderUtil {
             .enableTexture2D()
             .colorize(1, 1, 1, 1)
 
-        GlStateManager.func_179089_o()
+        GlStateManager./* enableCull */func_179089_o()
         Tessellator
             .enableLighting()
             .popMatrix()
@@ -184,13 +189,13 @@ export default class RenderUtil {
         b = b / 255
         a = a / 255
 
-        Client.getMinecraft().func_110434_K().func_110577_a(beaconBeam) //getTextureManager().bindTexture()
+        Client.getMinecraft()./* getTextureManager */func_110434_K()./* bindTexture */func_110577_a(beaconBeam)
 
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT)
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT)
 
         Tessellator.disableLighting()
-        GlStateManager.func_179089_o()
+        GlStateManager./* enableCull */func_179089_o()
             
         Tessellator
             .enableTexture2D()
@@ -213,49 +218,49 @@ export default class RenderUtil {
         const d14 = -1 + d1
         const d15 = height * 2.5 + d14
 
-        WorldRenderer.func_181668_a(GL11.GL_QUADS, DefaultVertexFormats.field_181709_i)
-        WorldRenderer.func_181662_b(x + d4, y + height, z + d5).func_181673_a(1, d15).func_181666_a(r, g, b, a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d4, y, z + d5).func_181673_a(0, d14).func_181666_a(r, g, b, a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d6, y, z + d7).func_181673_a(0, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d6, y + height, z + d7).func_181673_a(0, d15).func_181666_a(r, g, b, a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d10, y + height, z + d11).func_181673_a(1, d15).func_181666_a(r, g, b, a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d10, y, z + d11).func_181673_a(1, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d8, y, z + d9).func_181673_a(0, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d8, y + height, z + d9).func_181673_a(0, d15).func_181666_a(r, g, b, a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d6, y + height, z + d7).func_181673_a(1, d15).func_181666_a(r, g, b, a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d6, y, z + d7).func_181673_a(1, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d10, y, z + d11).func_181673_a(0, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d10, y + height, z + d11).func_181673_a(0, d15).func_181666_a(r, g, b, a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d8, y + height, z + d9).func_181673_a(1, d15).func_181666_a(r, g, b, a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d8, y, z + d9).func_181673_a(1, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d4, y, z + d5).func_181673_a(0, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d4, y + height, z + d5).func_181673_a(0, d15).func_181666_a(r, g, b, a).func_181675_d()
-        MCTessellator.func_78381_a()
+        WorldRenderer./* begin */func_181668_a(GL11.GL_QUADS, DefaultVertexFormats./* POSITION_TEX_COLOR */field_181709_i)
+        WorldRenderer./* pos */func_181662_b(x + d4, y + height, z + d5)./* tex */func_181673_a(1, d15)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d4, y, z + d5)./* tex */func_181673_a(0, d14)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d6, y, z + d7)./* tex */func_181673_a(0, d14)./* color */func_181666_a(r, g, b, 1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d6, y + height, z + d7)./* tex */func_181673_a(0, d15)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d10, y + height, z + d11)./* tex */func_181673_a(1, d15)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d10, y, z + d11)./* tex */func_181673_a(1, d14)./* color */func_181666_a(r, g, b, 1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d8, y, z + d9)./* tex */func_181673_a(0, d14)./* color */func_181666_a(r, g, b, 1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d8, y + height, z + d9)./* tex */func_181673_a(0, d15)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d6, y + height, z + d7)./* tex */func_181673_a(1, d15)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d6, y, z + d7)./* tex */func_181673_a(1, d14)./* color */func_181666_a(r, g, b, 1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d10, y, z + d11)./* tex */func_181673_a(0, d14)./* color */func_181666_a(r, g, b, 1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d10, y + height, z + d11)./* tex */func_181673_a(0, d15)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d8, y + height, z + d9)./* tex */func_181673_a(1, d15)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d8, y, z + d9)./* tex */func_181673_a(1, d14)./* color */func_181666_a(r, g, b, 1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d4, y, z + d5)./* tex */func_181673_a(0, d14)./* color */func_181666_a(r, g, b, 1)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + d4, y + height, z + d5)./* tex */func_181673_a(0, d15)./* color */func_181666_a(r, g, b, a)./* endVertex */func_181675_d()
+        MCTessellator./* draw */func_78381_a()
 
-        GlStateManager.func_179129_p()
+        GlStateManager./* disableCull */func_179129_p()
 
         const d12 = -1 + d1
         const d13 = height + d12
 
         const rA = a * 0.25
-        WorldRenderer.func_181668_a(GL11.GL_QUADS, DefaultVertexFormats.field_181709_i)
-        WorldRenderer.func_181662_b(x + 0.2, y + height, z + 0.2).func_181673_a(1, d13).func_181666_a(r, g, b, rA).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.2, y, z + 0.2).func_181673_a(1, d12).func_181666_a(r, g, b, 0.25).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.8, y, z + 0.2).func_181673_a(0, d12).func_181666_a(r, g, b, 0.25).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.8, y + height, z + 0.2).func_181673_a(0, d13).func_181666_a(r, g, b, rA).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.8, y + height, z + 0.8).func_181673_a(1, d13).func_181666_a(r, g, b, rA).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.8, y, z + 0.8).func_181673_a(1, d12).func_181666_a(r, g, b, 0.25).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.2, y, z + 0.8).func_181673_a(0, d12).func_181666_a(r, g, b, 0.25).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.2, y + height, z + 0.8).func_181673_a(0, d13).func_181666_a(r, g, b, rA).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.8, y + height, z + 0.2).func_181673_a(1, d13).func_181666_a(r, g, b, rA).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.8, y, z + 0.2).func_181673_a(1, d12).func_181666_a(r, g, b, 0.25).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.8, y, z + 0.8).func_181673_a(0, d12).func_181666_a(r, g, b, 0.25).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.8, y + height, z + 0.8).func_181673_a(0, d13).func_181666_a(r, g, b, rA).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.2, y + height, z + 0.8).func_181673_a(1, d13).func_181666_a(r, g, b, rA).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.2, y, z + 0.8).func_181673_a(1, d12).func_181666_a(r, g, b, 0.25).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.2, y, z + 0.2).func_181673_a(0, d12).func_181666_a(r, g, b, 0.25).func_181675_d()
-        WorldRenderer.func_181662_b(x + 0.2, y + height, z + 0.2).func_181673_a(0, d13).func_181666_a(r, g, b, rA).func_181675_d()
-        MCTessellator.func_78381_a()
+        WorldRenderer./* begin */func_181668_a(GL11.GL_QUADS, DefaultVertexFormats./* POSITION_TEX_COLOR */field_181709_i)
+        WorldRenderer./* pos */func_181662_b(x + 0.2, y + height, z + 0.2)./* tex */func_181673_a(1, d13)./* color */func_181666_a(r, g, b, rA)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.2, y, z + 0.2)./* tex */func_181673_a(1, d12)./* color */func_181666_a(r, g, b, 0.25)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.8, y, z + 0.2)./* tex */func_181673_a(0, d12)./* color */func_181666_a(r, g, b, 0.25)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.8, y + height, z + 0.2)./* tex */func_181673_a(0, d13)./* color */func_181666_a(r, g, b, rA)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.8, y + height, z + 0.8)./* tex */func_181673_a(1, d13)./* color */func_181666_a(r, g, b, rA)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.8, y, z + 0.8)./* tex */func_181673_a(1, d12)./* color */func_181666_a(r, g, b, 0.25)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.2, y, z + 0.8)./* tex */func_181673_a(0, d12)./* color */func_181666_a(r, g, b, 0.25)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.2, y + height, z + 0.8)./* tex */func_181673_a(0, d13)./* color */func_181666_a(r, g, b, rA)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.8, y + height, z + 0.2)./* tex */func_181673_a(1, d13)./* color */func_181666_a(r, g, b, rA)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.8, y, z + 0.2)./* tex */func_181673_a(1, d12)./* color */func_181666_a(r, g, b, 0.25)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.8, y, z + 0.8)./* tex */func_181673_a(0, d12)./* color */func_181666_a(r, g, b, 0.25)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.8, y + height, z + 0.8)./* tex */func_181673_a(0, d13)./* color */func_181666_a(r, g, b, rA)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.2, y + height, z + 0.8)./* tex */func_181673_a(1, d13)./* color */func_181666_a(r, g, b, rA)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.2, y, z + 0.8)./* tex */func_181673_a(1, d12)./* color */func_181666_a(r, g, b, 0.25)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.2, y, z + 0.2)./* tex */func_181673_a(0, d12)./* color */func_181666_a(r, g, b, 0.25)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + 0.2, y + height, z + 0.2)./* tex */func_181673_a(0, d13)./* color */func_181666_a(r, g, b, rA)./* endVertex */func_181675_d()
+        MCTessellator./* draw */func_78381_a()
 
         if (phase) Tessellator.enableDepth()
 
@@ -317,7 +322,7 @@ export default class RenderUtil {
         const lScale = autoScale 
             ? iScale * Math.hypot(x, y, z) / RenderHelper.getRenderDistanceBlocks()
             : iScale
-        const xMulti = Client.getMinecraft().field_71474_y.field_74320_O == 2 ? -1 : 1; //perspective
+        const xMulti = Client.getMinecraft()./* gameSettings */field_71474_y./* thirdPersonView */field_74320_O == 2 ? -1 : 1
         
         Tessellator
             .colorize(1, 1, 1, 0.5)
@@ -348,18 +353,18 @@ export default class RenderUtil {
 
         if (renderBlackBox) {
             Tessellator.disableTexture2D()
-            WorldRenderer.func_181668_a(7, DefaultVertexFormats.field_181706_f)
-            WorldRenderer.func_181662_b(maxWidth - 1, -1 * l, 0).func_181666_a(0, 0, 0, 0.25).func_181675_d()
-            WorldRenderer.func_181662_b(maxWidth - 1, 9 * l, 0).func_181666_a(0, 0, 0, 0.25).func_181675_d()
-            WorldRenderer.func_181662_b(-maxWidth + 1, 9 * l, 0).func_181666_a(0, 0, 0, 0.25).func_181675_d()
-            WorldRenderer.func_181662_b(-maxWidth + 1, -1 * l, 0).func_181666_a(0, 0, 0, 0.25).func_181675_d()
-            MCTessellator.func_78381_a()
+            WorldRenderer./* begin */func_181668_a(7, DefaultVertexFormats./* POSITION_COLOR */field_181706_f)
+            WorldRenderer./* pos */func_181662_b(maxWidth - 1, -1 * l, 0)./* color */func_181666_a(0, 0, 0, 0.25)./* endVertex */func_181675_d()
+            WorldRenderer./* pos */func_181662_b(maxWidth - 1, 9 * l, 0)./* color */func_181666_a(0, 0, 0, 0.25)./* endVertex */func_181675_d()
+            WorldRenderer./* pos */func_181662_b(-maxWidth + 1, 9 * l, 0)./* color */func_181666_a(0, 0, 0, 0.25)./* endVertex */func_181675_d()
+            WorldRenderer./* pos */func_181662_b(-maxWidth + 1, -1 * l, 0)./* color */func_181666_a(0, 0, 0, 0.25)./* endVertex */func_181675_d()
+            MCTessellator./* draw */func_78381_a()
             Tessellator.enableTexture2D()
         }
 
         const fr = Renderer.getFontRenderer()
         lines.forEach(([it, width, height]) => 
-            fr.func_175065_a(it, width, height, color, shadow)
+            fr./* drawString */func_175065_a(it, width, height, color, shadow)
         )
 
         Tessellator

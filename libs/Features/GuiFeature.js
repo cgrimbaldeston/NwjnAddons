@@ -44,7 +44,7 @@ export default class GuiFeature extends Feature {
         this.gui = new Gui()
         this.gui.registerScrolled((_, __, dir) => this.data.scale += (dir * 0.02))
         this.gui.registerMouseDragged((mx, my) => {this.data.x = mx; this.data.y = my})
-        this.gui.registerDraw(() => this._draw(this.message || baseText))
+        this.gui.registerDraw(() => this._draw(this.message || initText))
         guis.put(this.name = name, this.gui)
 
         if (color && color in Settings()) {

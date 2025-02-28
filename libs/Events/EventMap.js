@@ -25,23 +25,23 @@ createEvent("packetSent", (fn, clazz) => register("packetSent", fn).setFilteredC
 createEvent("packetReceived", (fn, clazz) => register("packetReceived", fn).setFilteredClass(clazz))
 
 createEvent("serverTick", (fn) => 
-    register("packetReceived", (packet) => packet./* getWindowId */func_148890_d() <= 0 && fn())
+    register("packetReceived", (packet) => packet./* getActionNumber */func_148890_d() <= 0 && fn())
         .setFilteredClass(net.minecraft.network.play.server.S32PacketConfirmTransaction)
 )
 
 createEvent("spawnObject", (fn) =>
     register("packetReceived", (packet, event) => 
-        fn(packet.func_148993_l(), event)
+        fn(packet./* getType */func_148993_l(), event)
     ).setFilteredClass(net.minecraft.network.play.server.S0EPacketSpawnObject)
 )
 
 createEvent("serverChat", (fn, criteria = "") => 
     register("packetReceived", (packet, event) => {
         // Check if the packet is for the actionbar
-        if (packet.func_148916_d()) return
+        if (packet./* isChat */func_148916_d()) return
 
-        const chatComponent = packet.func_148915_c()        
-        const formatted = chatComponent?.func_150254_d()
+        const chatComponent = packet./* getChatComponent */func_148915_c()        
+        const formatted = chatComponent?./* getFormattedText */func_150254_d()
         const unformatted = formatted?.removeFormatting()
     
         if (!unformatted) return
@@ -52,10 +52,10 @@ createEvent("serverChat", (fn, criteria = "") =>
 
 createEvent("actionBarChange", (fn, criteria) => 
     register("packetReceived", (packet, event) => {
-        if (!packet["isChat", "func_148916_d"]()) return
+        if (!packet./* isChat */func_148916_d()) return
 
-        const chatComponent = packet["getChatComponent", "func_148915_c"]()
-        const formatted = chatComponent["getFormattedText", "func_150254_d"]()
+        const chatComponent = packet./* getChatComponent */func_148915_c()
+        const formatted = chatComponent./* getFormattedText */func_150254_d()
         const unformatted = formatted.removeFormatting()
         
         if (!unformatted) return
@@ -66,16 +66,16 @@ createEvent("actionBarChange", (fn, criteria) =>
 
 createEvent("sideBarChange", (fn, criteria) => 
     register("packetReceived", (packet, event) => {
-        const channel = packet.func_149307_h()
+        const channel = packet./* getAction */func_149307_h()
 
         if (channel !== 2) return
 
-        const teamStr = packet.func_149312_c()
+        const teamStr = packet./* getName */func_149312_c()
         const teamMatch = teamStr.match(/^team_(\d+)$/)
 
         if (!teamMatch) return
 
-        const formatted = packet.func_149311_e().concat(packet.func_149309_f())
+        const formatted = packet./* getPrefix */func_149311_e().concat(packet./* getSuffix */func_149309_f())
         const unformatted = formatted.removeFormatting()
 
         if (!unformatted) return
@@ -86,16 +86,16 @@ createEvent("sideBarChange", (fn, criteria) =>
 
 createEvent("tabAdd", (fn, criteria) => 
     register("packetReceived", (packet, event) => {
-        const players = packet.func_179767_a() // .getPlayers()
-        const action = packet.func_179768_b() // .getAction()
+        const players = packet./* getEntries */func_179767_a()
+        const action = packet./* getAction */func_179768_b()
 
         if (action !== S38PacketPlayerListItem.Action.ADD_PLAYER) return
 
         players.forEach(addPlayerData => {
-            const name = addPlayerData.func_179961_d() // .getDisplayName()
+            const name = addPlayerData./* getDisplayName */func_179961_d()
             
             if (!name) return
-            const formatted = name.func_150254_d() // .getFormattedText()
+            const formatted = name./* getFormattedText */func_150254_d()
             const unformatted = formatted.removeFormatting()
         
             if (action !== S38PacketPlayerListItem.Action.ADD_PLAYER) return
@@ -107,7 +107,7 @@ createEvent("tabAdd", (fn, criteria) =>
 
 createEvent("worldSound", (fn, criteria) => 
     register("packetReceived", (packet, event) => {
-        const name = packet.func_149212_c()
+        const name = packet./* getSoundName */func_149212_c()
 
         TextUtil.matchesCriteria(fn, criteria, name, event)
     }).setFilteredClass(net.minecraft.network.play.server.S29PacketSoundEffect)
@@ -116,7 +116,7 @@ createEvent("worldSound", (fn, criteria) =>
 createEvent("containerClick", (fn) => 
     register("packetSent", (packet) => {
         // Container name, Slot clicked
-        fn(Player.getContainer().getName(), packet.func_149544_d())
+        fn(Player.getContainer().getName(), packet./* getSlotId */func_149544_d())
     }).setFilteredClass(net.minecraft.network.play.client.C0EPacketClickWindow)
 )
 

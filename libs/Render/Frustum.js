@@ -20,15 +20,23 @@ export default new class Frustum {
      */
     isBoxInFrustum(minX, minY, minZ, maxX, maxY, maxZ) {}
 
+    getRenderX() {}
+    getRenderY() {}
+    getRenderZ() {}
+
     constructor() {
         // Needs to be called from within the Minecraft Thread to initialize the Frustum class
         Client.scheduleTask(() => {
             const RenderManager = Renderer.getRenderManager()
             const RenderManagerClass = RenderManager.class
-            const renderPosX = RenderManagerClass.getDeclaredField("field_78725_b")
-            const renderPosY = RenderManagerClass.getDeclaredField("field_78726_c")
-            const renderPosZ = RenderManagerClass.getDeclaredField("field_78723_d")
+            const renderPosX = RenderManagerClass.getDeclaredField(/* renderPosX */"field_78725_b")
+            const renderPosY = RenderManagerClass.getDeclaredField(/* renderPosY */"field_78726_c")
+            const renderPosZ = RenderManagerClass.getDeclaredField(/* renderPosZ */"field_78723_d")
             renderPosX.setAccessible(true), renderPosY.setAccessible(true), renderPosZ.setAccessible(true)
+            this.getRenderX = () => renderPosX.get(RenderManager)
+            this.getRenderY = () => renderPosY.get(RenderManager)
+            this.getRenderZ = () => renderPosZ.get(RenderManager)
+
 
             // Needs to be called from within the Minecraft Thread to initialize the Frustum class
             // Otherwise you will get this error: Java.lang.RuntimeException: No OpenGL context found in the current thread.

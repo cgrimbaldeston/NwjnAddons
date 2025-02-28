@@ -112,7 +112,7 @@ new class PartyCommands extends Feature {
                 const ign = TextUtil.getSenderName(player).toLowerCase()
                 const cmd = command.toLowerCase().trim()
 
-                if (isBlacklisted(ign)) return TextUtil.append(event.func_148915_c(), "&cBlacklisted")
+                if (isBlacklisted(ign)) return TextUtil.append(event./* getChatComponent */func_148915_c(), "&cBlacklisted")
                 
                 const response = Object.values(commands).find(obj => obj.matches.test(cmd) && obj.access())
                 if (response) scheduleTask(() => ChatLib.command(response.fn(ign, cmd)))

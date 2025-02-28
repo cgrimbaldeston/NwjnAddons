@@ -15,12 +15,12 @@ new class BlockHighlight extends Feature {
                 const BlockPos = target./* getBlockPos */func_178782_a()
                 if (!BlockPos) return
 
-                const BlockState = this.World./* getStateAt */func_180495_p(BlockPos) 
+                const BlockState = this.World./* getBlockState */func_180495_p(BlockPos) 
                 if (RenderHelper.isAir(BlockState)) return
         
                 // Accurately retrieve the Block's bounds
                 const Block = BlockState./* getBlock */func_177230_c()
-                Block./* setBoundsBasedOnState */func_180654_a(this.World, BlockPos)
+                Block./* setBlockBoundsBasedOnState */func_180654_a(this.World, BlockPos)
                 const BlockBounds = Block./* getSelectedBoundingBox */func_180646_a(this.World, BlockPos)
         
                 const [r, g, b, a] = this.Color

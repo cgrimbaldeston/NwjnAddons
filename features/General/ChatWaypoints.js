@@ -10,7 +10,7 @@ new class ChatWaypoints extends Feature {
             .addEvent("serverChat", (displayName, x, y, z, text = "", event, formatted) => {
                 const ign = TextUtil.getSenderName(displayName).toLowerCase()
                 
-                if (isBlacklisted(ign)) return TextUtil.append(event.func_148915_c(), "§cBlacklisted")
+                if (isBlacklisted(ign)) return TextUtil.append(event./* getChatComponent */func_148915_c(), "§cBlacklisted")
                 
                 const [mainText] = TextUtil.getMatches(/^(.+)§.:/, formatted)
                 if (!mainText) return
