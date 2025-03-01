@@ -12,8 +12,8 @@ import Event from "../Events/Event";
 export default class Feature {
     /** @override Function called when this is registered */ onRegister() {}
     /** @override Function called when this is unregistered */ onUnregister() {}
-    /** @override Function called when this is enabled by setting */ onEnabled() {}
-    /** @override Function called when this is disabled by setting */ onDisabled() {}
+    /** @override Function called when this is enabled by setting */ onEnabled(previousValue) {}
+    /** @override Function called when this is disabled by setting */ onDisabled(previousValue) {}
 
     /**
      * - Utility that handles registering various events and listeners to make complex, functional, and performative features
@@ -32,10 +32,10 @@ export default class Feature {
             this.isSettingEnabled = Settings()[setting]
             Client.scheduleTask(() => this.isSettingEnabled ? this.onEnabled() : this.onDisabled())
     
-            Settings().getConfig().registerListener(setting, (_, val) => {
-                this.isSettingEnabled = val 
-                this.isSettingEnabled ? this.onEnabled() : this.onDisabled()
+            Settings().getConfig().registerListener(setting, (prev, val) => {
+                this.isSettingEnabled = val
                 this._updateRegister()
+                Client.scheduleTask(() => this.isSettingEnabled ? this.onEnabled(prev) : this.onDisabled(prev))
             })
         }
 

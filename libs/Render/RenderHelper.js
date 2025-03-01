@@ -17,6 +17,8 @@ export default class RenderHelper {
     }
 
     static inFrustum = (aabb) => Frustum.isAABBInFrustum(aabb)
+
+    static isEntityInFrustum = (entity) => Frustum.isAABBInFrustum(entity./* getEntityBoundingBox */func_174813_aQ())
     
     static getRenderDistanceBlocks() {
         return Client.settings.video.getRenderDistance() * 16

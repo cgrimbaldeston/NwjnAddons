@@ -6,6 +6,7 @@
  */
 
 import TextUtil from "../../core/static/TextUtil"
+import RenderHelper from "../Render/RenderHelper"
 
 const S38PacketPlayerListItem = net.minecraft.network.play.server.S38PacketPlayerListItem
 
@@ -20,6 +21,12 @@ createEvent("interval", (fn, interval) => {
     if (interval >= 1) return reg.setDelay(interval)
     return reg.setFps(1 / interval)
 })
+
+createEvent("entityRendered", (fn) => 
+    register(net.minecraftforge.client.event.RenderLivingEvent.Pre, (event) => 
+        RenderHelper.isEntityInFrustum(event.entity) && fn(event)
+    )
+)
 
 createEvent("packetSent", (fn, clazz) => register("packetSent", fn).setFilteredClass(clazz))
 createEvent("packetReceived", (fn, clazz) => register("packetReceived", fn).setFilteredClass(clazz))
