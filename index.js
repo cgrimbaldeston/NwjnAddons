@@ -25,6 +25,7 @@ import "./features/General/Clock"
 import "./features/General/Commands"
 
 // import "./features/HUD/BlazeTimers"
+import "./features/QOL/CullUpdates"
 import "./features/QOL/BlockHighlight"
 import "./features/QOL/DeathClutter"
 import "./features/QOL/SpawnClutter"

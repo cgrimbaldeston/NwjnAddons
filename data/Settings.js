@@ -534,6 +534,14 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
 })
 .addSwitch({
     category: "QOL",
+    subcategory: "Culling",
+    configName: "betterCulling",
+    title: "&e✯&r &bBetter Culling",
+    description: "Accurately culls entities and update logic for entities outside of screen area",
+    value: true
+})
+.addSwitch({
+    category: "QOL",
     subcategory: "Death Clutter",
     configName: "removeDyingMobs",
     title: "&e✯&r &bRemove Dying Mobs",
