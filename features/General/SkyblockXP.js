@@ -1,12 +1,10 @@
 import Feature from "../../libs/Features/Feature";
-import {log} from "../../core/static/TextUtil";
-import { scheduleTask } from "../../libs/Time/ServerTime";
-import Seconds from "../../libs/Time/Units/Seconds";
+import TextUtil from "../../core/static/TextUtil";
 
-const SkyblockXP = new Feature({setting: "skyblockXP"})
+new Feature({setting: "skyblockXP"})
     .addEvent("actionBarChange", (xp, category, progress) => {
-        log(`§b${xp} §7${category} §b${progress}`)
+        const hashCode = 30000 + (~~xp + ~~progress)
         
-        SkyblockXP._unregister()
-        scheduleTask(() => SkyblockXP._register(), Seconds.of(2))
-    }, /\s{5}(\+\d{1,3} SkyBlock XP) (\(.+\)) (\(\d{1,2}\/100\))\s{5}/)
+        ChatLib.deleteChat(hashCode)
+        new Message(`${TextUtil.NWJN} §7>§r §b+${xp} SkyBlock XP §7${category} §b(${progress}/100)`).setChatLineId(hashCode).chat()
+    }, /\s{5}\+(\d{1,3}) SkyBlock XP (\(.+\)) \((\d{1,2})\/100\)\s{5}/)
