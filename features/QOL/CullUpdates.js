@@ -14,7 +14,7 @@ new class BetterCulling extends Feature {
 
             // Cancel receiving position, rotation, and other logic updates for entities outside of screen area
             .addEvent(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent, (event) => 
-                !RenderHelper.isEntityInFrustum(event.entity) && cancel(event)
+                !RenderHelper.isEntityInFrustum(event.entity) && !event.entity./* isInvisible */func_82150_aj() && cancel(event)
             )
     }
 }

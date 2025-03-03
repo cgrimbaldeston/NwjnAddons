@@ -13,6 +13,8 @@ new class MobHighlight extends Feature {
                 const shouldRender = this.RenderList?.get(entity)
                 if (!shouldRender) return
 
+                if (entity./* isInvisible */func_82150_aj()) return
+
                 const [r, g, b, a] = this.Color
                 RenderUtil.drawOutlinedAABB(entity./* getEntityBoundingBox */func_174813_aQ(), r, g, b, a, false, 3, false)
             })
