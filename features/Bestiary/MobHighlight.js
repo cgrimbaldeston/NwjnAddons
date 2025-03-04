@@ -23,7 +23,7 @@ new class MobHighlight extends Feature {
                 RenderHelper.isEntityInFrustum(entity) && this?.validate(entity)
             )
                 
-            .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, event => this.RenderList?.remove(event.entity))
+            .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, ({entity}) => this.RenderList?.remove(entity))
 
         Settings().getConfig()
             .registerListener("mobHighlightColor", (_, val) => this.Color = val)
@@ -31,7 +31,7 @@ new class MobHighlight extends Feature {
     }
     
     onEnabled(previousValue) {
-        if (previousValue) return this.updateWhitelist()
+        if ("updateWhitelist" in this && previousValue) return this.updateWhitelist()
             
         const Whitelist = new HashMap()
         const EntityList = net.minecraft.entity.EntityList
@@ -82,7 +82,7 @@ new class MobHighlight extends Feature {
         this.Color = null
 
         this.validate = null
-        this.updateWhitelist = null
+        delete this.updateWhitelist
     }
 
     onUnregister() {
