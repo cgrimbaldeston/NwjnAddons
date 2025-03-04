@@ -17,6 +17,7 @@ import "./features/CrimsonIsle/MagmaBossMessage"
 
 import "./features/Bestiary/MobHighlight"
 // import "./features/CrimsonIsle(Move)";
+import "./features/General/BlockHighlight"
 import "./features/General/ChatWaypoints"
 import "./features/General/LinkFix"
 import "./features/General/PartyCommands"
@@ -25,10 +26,9 @@ import "./features/General/Clock"
 import "./features/General/Commands"
 
 // import "./features/HUD/BlazeTimers"
-import "./features/QOL/CullUpdates"
-import "./features/QOL/BlockHighlight"
-import "./features/QOL/DeathClutter"
-import "./features/QOL/SpawnClutter"
+import "./features/Performance/CullUpdates"
+import "./features/Performance/DeathClutter"
+import "./features/Performance/SpawnClutter"
 
 import "./features/Mining/MineshaftWaypoints"
 

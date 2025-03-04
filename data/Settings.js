@@ -4,46 +4,55 @@ import DefaultConfig from "../../Amaterasu/core/DefaultConfig"
 const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
 .addSwitch({
     category: "General",
-    configName: "waypoint",
-    title: "Draw Chat Waypoints",
-    description: "Creates waypoints taken from chat messages in patcher sendcoords format",
-    value: false
-})
-.addSlider({
-    category: "General",
-    configName: "wpTime",
-    title: "➤ Waypoint Time",
-    description: "     The amount of seconds waypoints should stay",
-    options: [0, 160],
-    value: 60,
-
-    shouldShow(data) {
-        return (data.waypoint)
-    }
-})
-.addColorPicker({
-    category: "General",
-    configName: "wpColor",
-    title: "➤ Waypoint Color",
-    description: "     Sets the color for waypoints",
-    value: [255, 88, 213, 127],
-
-    shouldShow(data) {
-        return (data.waypoint)
-    }
-})
-.addSwitch({
-    category: "General",
     configName: "linkFix",
     title: "&e✯&r &bLink Fix",
     description: "Encodes and Decodes Links to allow sending and viewing for those with the mod",
     value: true
 })
 .addSwitch({
+    category: "QOL",
+    configName: "blockHighlight",
+    title: "Toggle Block Highlight",
+    description: "Toggles block highlight",
+    value: false
+})
+.addColorPicker({
+    category: "QOL",
+    configName: "highlightColor",
+    title: "Highlight Color",
+    description: "Sets the color for block highlight",
+    value: [255, 190, 239, 255],
+    shouldShow: data => data.blockHighlight
+})
+.addSwitch({
+    category: "General",
+    configName: "waypoint",
+    title: "Draw Chat Waypoints",
+    description: "Creates waypoints taken from chat messages in patcher sendcoords format",
+    value: false
+})
+.addColorPicker({
+    category: "General",
+    configName: "wpColor",
+    title: "➤ Waypoint Color",
+    description: "     Sets the color for waypoints",
+    value: [255, 190, 239, 200],
+    shouldShow: data => data.waypoint
+})
+.addSlider({
+    category: "General",
+    configName: "wpTime",
+    title: "➤ Waypoint Time",
+    description: "     The amount of seconds waypoints should stay",
+    options: [30, 150],
+    value: 120,
+    shouldShow: data => data.waypoint
+})
+.addSwitch({
     category: "General",
     configName: "partyCommands",
     title: "Party Commands",
-    description: "Enables party commands, universally triggers on [.!?] commands",
+    description: "Enables party commands, universally triggers on [.,!?] commands",
     value: false
 })
 .addMultiCheckbox({
@@ -109,22 +118,20 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
             value: true
         }
     ],
-    shouldShow(data) {
-        return data.partyCommands
-    }
+    shouldShow: data => data.partyCommands
 })
 .addSwitch({
     category: "General",
     configName: "skyblockXP",
     title: "Skyblock XP Gain Message",
-    description: "Takes action bar skyblock xp gained message and pastes them in chat",
+    description: "Displays skyblock xp gains in chat",
     value: false
 })
 .addSwitch({
     category: "General",
     configName: "clock",
     title: "Clock Display",
-    description: "Shows your current time",
+    description: "Stay productive by keeping track of time!",
     subcategory: "Clock",
     value: false
 })
@@ -134,23 +141,21 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     title: "➤ Clock Color",
     description: "     Sets the color for the clock display",
     subcategory: "Clock",
-    value: [255, 255, 255, 255],
+    value: [255, 190, 239, 255],
 
-    shouldShow(data) {
-        return (data.clock)
-    }
+    shouldShow: data => data.clock
 })
 .addSwitch({
     category: "Combat",
     configName: "damageTracker",
     title: "Damage Tracker",
-    description: "Shows damage tags in chat",
+    description: "Displays Damage Tag values in chat",
     value: false
 })
 .addSwitch({
     category: "Combat",
     configName: "reaperTimer",
-    title: "Reaper Armor Buff Timer",
+    title: "Reaper Buff Timer",
     description: "Displays the time left on your reaper armor buff",
     value: false
 })
@@ -158,7 +163,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     category: "Combat",
     configName: "rendArrows",
     title: "Rend Arrows",
-    description: "Shows the amount or arrows pulled on rend",
+    description: "Displays the amount of arrows pulled on rend in chat",
     value: false
 })
 .addDropDown({
@@ -193,15 +198,13 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
             value: true
         }
     ],
-    shouldShow(data) {
-        return (data.fatalTempo !== 0)
-    }
+    shouldShow: data => data.fatalTempo !== 0
 })
 .addTextInput({
     category: "Bestiary",
     configName: "mobList",
     title: "Mob Highlight",
-    description: "Draws hitboxes around inputted mob entity\n&3@see &cnet.minecraft.entity.(monster|passive|boss)&r\n&bExamples: `Zombie` or `Zombie-100|120|2k|45k` or `Zombie, Skeleton` or `Zombie-100, Cow`",
+    description: "Boxes entities by input based on mob class and health\n&bExamples: `Zombie` or `Zombie-100|120|2k|45k` or `Zombie, Skeleton` or `Zombie-100, Cow`",
     value: ""
 })
 .addColorPicker({
@@ -209,7 +212,8 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     configName: "mobHighlightColor",
     title: "Mob Highlight Color",
     description: "Sets the color for monster hitboxes",
-    value: [255, 255, 255, 255]
+    value: [255, 190, 239, 255],
+    shouldShow: data => data.mobList !== ""
 })
 .addTextInput({
     category: "Bestiary",
@@ -223,7 +227,8 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     configName: "standColor",
     title: "Armor Stand Highlight Color",
     description: "Sets the color for armor stand hitboxes",
-    value: [255, 255, 255, 255]
+    value: [255, 190, 239, 255],
+    shouldShow: data => data.standList !== ""
 })
 .addTextInput({
     category: "Bestiary",
@@ -237,16 +242,15 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     configName: "playerColor",
     title: "Player Highlight Color",
     description: "Sets the color for player hitboxes",
-    value: [255, 255, 255, 255]
+    value: [255, 190, 239, 255],
+    shouldShow: data => data.playerList !== ""
 })
 .addButton({
     category: "HUD",
     configName: "gui",
     title: "Move GUI Elements",
     description: "Click to edit gui locations",
-    onClick() {
-        ChatLib.command("nwjn gui", true)
-    }
+    onClick: () => ChatLib.command("nwjn gui", true)
 })
 .addSwitch({
     category: "HUD",
@@ -280,87 +284,6 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     subcategory: "Widget",
     value: false
 })
-.addToggle({
-    category: "HUD",
-    configName: "stats",
-    title: "Stats Widget",
-    description: "Show stats widget on HUD -> /moveStats",
-    subcategory: "Widget",
-    value: false
-})
-.addToggle({
-    category: "HUD",
-    configName: "pet",
-    title: "Pet Widget",
-    description: "Show pet widget on HUD -> /movePet",
-    subcategory: "Widget",
-    value: false
-})
-.addToggle({
-    category: "HUD",
-    configName: "bestiary",
-    title: "Bestiary Widget",
-    description: "Show bestidary widget on HUD -> /moveBestiary",
-    subcategory: "Widget",
-    value: false
-})
-.addToggle({
-    category: "HUD",
-    configName: "crop",
-    title: "Crop Milestone Widget",
-    description: "Show crop milestone widget on HUD -> /moveCrop",
-    subcategory: "Widget",
-    value: false
-})
-.addToggle({
-    category: "HUD",
-    configName: "visitor",
-    title: "Visitor Widget",
-    description: "Show visitor widget on HUD -> /moveVisitor",
-    subcategory: "Widget",
-    value: false
-})
-.addToggle({
-    category: "HUD",
-    configName: "comm",
-    title: "Commission Widget",
-    description: "Show commission widget on HUD -> /moveComm",
-    subcategory: "Widget",
-    value: false
-})
-.addToggle({
-    category: "HUD",
-    configName: "powder",
-    title: "Powder Widget",
-    description: "Show powder widget on HUD -> /movePowder",
-    subcategory: "Widget",
-    value: false
-})
-.addToggle({
-    category: "HUD",
-    configName: "corpse",
-    title: "Frozen Corpse Widget",
-    description: "Show frozen corpse widget on HUD -> /moveCorpse",
-    subcategory: "Widget",
-    value: false
-})
-.addToggle({
-    category: "HUD",
-    configName: "custom",
-    title: "Custom Widget",
-    description: "Enter widget title from tablist (i.e. 'Fire Sales:' or 'Timers:' -> /moveCustom",
-    subcategory: "Widget",
-    value: false
-})
-.addTextInput({
-    category: "HUD",
-    configName: "widgetText",
-    title: "Custom Widget Text",
-    description: "Enter widget text from tablist (i.e. 'Fire Sales:' or 'Timers:')",
-    value: "",
-    subcategory: "Widget",
-    value: false
-})
 .addSwitch({
     category: "Kuudra",
     configName: "kuudraHP",
@@ -382,7 +305,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     configName: "teammateColor",
     title: "➤ Team Color",
     description: "     Sets the color for teammates",
-    value: [255, 255, 255, 255],
+    value: [255, 190, 239, 255],
     subcategory: "General"
 })
 .addSwitch({
@@ -515,25 +438,11 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     category: "Mining",
     configName: "mineshaftWaypoints",
     title: "Mineshaft Waypoints",
-    description: "Shows guesses of corpses and exit in mineshafts, walk within 3 blocks of a guess waypoint to remove it",
+    description: "Shows guesses of corpses and exit in mineshaft, walk within 3 blocks of a guess waypoint to remove it",
     value: false
 })
 .addSwitch({
-    category: "QOL",
-    configName: "blockHighlight",
-    title: "Toggle Block Highlight",
-    description: "Toggles block highlight",
-    value: false
-})
-.addColorPicker({
-    category: "QOL",
-    configName: "highlightColor",
-    title: "Highlight Color",
-    description: "Sets the color for block highlight",
-    value: [255, 88, 213, 255]
-})
-.addSwitch({
-    category: "QOL",
+    category: "Performance",
     subcategory: "Culling",
     configName: "betterCulling",
     title: "&e✯&r &bBetter Culling",
@@ -541,7 +450,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     value: true
 })
 .addSwitch({
-    category: "QOL",
+    category: "Performance",
     subcategory: "Death Clutter",
     configName: "removeDyingMobs",
     title: "&e✯&r &bRemove Dying Mobs",
@@ -549,7 +458,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     value: true
 })
 .addSwitch({
-    category: "QOL",
+    category: "Performance",
     subcategory: "Death Clutter",
     configName: "removeDeadNames",
     title: "&e✯&r &bRemove Names of Dead Mobs",
@@ -557,7 +466,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     value: true
 })
 .addSwitch({
-    category: "QOL",
+    category: "Performance",
     subcategory: "Spawn Clutter",
     configName: "abortJunkSpawns",
     title: "&e✯&r &bAbort Junk-Spawns",
@@ -565,15 +474,15 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     value: true
 })
 .addMultiCheckbox({
-    category: "QOL",
+    category: "Performance",
     subcategory: "Spawn Clutter",
     configName: "abortJunkSpawnsOptions",
     title: "➤ &e✯&r &bAbort Junk-Spawns Customization",
-    description: "     Toggle potentially wanted entities",
-    placeHolder: "Click",
+    description: "     Optional toggles for a few entities",
+    placeHolder: "Edit",
     options: [
         {
-            title: "&e✯&r Arrows",
+            title: "Arrows",
             configName: "removeArrows",
             value: false
         },
