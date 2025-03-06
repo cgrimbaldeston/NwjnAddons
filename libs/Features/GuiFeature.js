@@ -7,7 +7,6 @@
 
 import Feature from "./Feature";
 import { data } from "../../data/Data";
-import Event from "../Events/Event";
 import ElementUtils from "../../../DocGuiLib/core/Element"
 import HandleGui from "../../../DocGuiLib/core/Gui"
 import { CenterConstraint, CramSiblingConstraint, ScrollComponent, UIRoundedRectangle, UIText, OutlineEffect } from "../../../Elementa"
@@ -38,26 +37,28 @@ export default class GuiFeature extends Feature {
     } = {}) {
         super({setting, worlds, zones})
 
-        if (!dataObj || !dataObj.x || !dataObj.y || !dataObj.scale) this.data = data[name] = {x: 0, y: 0, scale: 1}
+        this.name = name
+        if (!dataObj || !dataObj.x || !dataObj.y || !dataObj.scale) this.data = data[this.name] = {x: 0, y: 0, scale: 1}
         else this.data = dataObj
 
-        this.gui = new Gui()
-        this.gui.registerScrolled((_, __, dir) => this.data.scale += (dir * 0.02))
-        this.gui.registerMouseDragged((mx, my) => {this.data.x = mx; this.data.y = my})
-        this.gui.registerDraw(() => this._draw(this.message || initText))
-        guis.put(this.name = name, this.gui)
+        const gui = new Gui()
+        gui.registerScrolled((_, __, dir) => this.data.scale += (dir * 0.025))
+        gui.registerMouseDragged((mx, my) => {this.data.x = mx; this.data.y = my})
+        gui.registerDraw(() => this._draw(this.message || initText))
 
-        if (color && color in Settings()) {
-            this.color = Settings()[color]
-            Settings().getConfig().registerListener(color, (_, val) => this.color = val)
+        guis.put(name, gui)
+
+        if (color && color in Settings) {
+            this.Color = Settings[color]
+            Settings.getConfig().registerListener(color, (_, val) => this.Color = val)
         }
-        else this.color = [255, 255, 255, 255]
+        else this.Color = [255, 255, 255, 255]
 
-        this.addEvent(this.render = new Event("renderOverlay", () => this._draw()))
+        this.addSubEvent("renderOverlay", () => this._draw(), null, () => this.message)
     }
     
     /** Draw based on data */
-    _draw(text = this.message, color = this.color, {x, y, scale} = this.data) {
+    _draw(text = this.message, color = this.Color, {x, y, scale} = this.data) {
         if (!text) return
 
         Renderer.retainTransforms(true)
@@ -71,9 +72,9 @@ export default class GuiFeature extends Feature {
 
     /** Automatically un(register) the render event when setting the text */
     setText(message) {
-        message ? this.render.register() : this.render.unregister() 
-
         this.message = message
+
+        this.updateSubEvents()
     }
 }
 

@@ -15,7 +15,7 @@ new class ChatWaypoints extends Feature {
                 const [mainText] = TextUtil.getMatches(/^(.+)§.:/, formatted)
                 if (!mainText) return
         
-                this.waypoints.set(ign, new Waypoint(mainText, text, x, y, z, 5, Settings().wpTime))
+                this.waypoints.set(ign, new Waypoint(mainText, text, x, y, z, 5, Settings.wpTime))
                 this.updateSubEvents()
             }, /^(?:[\w\-]{5} > )?(?:\[\d{1,3}\] .? ?)?(?:\[\w+\+*\] )?(\w{1,16})(?: .? ?)?: x: (-?[\d\.]+), y: (-?[\d\.]+), z: (-?[\d\.]+) ?(.+)?$/)
         
@@ -31,12 +31,12 @@ new class ChatWaypoints extends Feature {
                 )
             }, null, () => this.waypoints?.size)
 
-        Settings().getConfig().registerListener("wpColor", (_, val) => this.Color = val)
+        Settings.getConfig().registerListener("wpColor", (_, val) => this.Color = val)
     }
 
     onEnabled() {
         this.waypoints = new Map()
-        this.Color = Settings().wpColor
+        this.Color = Settings.wpColor
     }
 
     onDisabled() {

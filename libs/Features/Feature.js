@@ -28,14 +28,15 @@ export default class Feature {
         if (worlds) this.worlds = worlds
         if (zones) this.zones = zones
         // Main setting enables/disables entire [Feature]
-        if (setting in Settings()) {
-            this.isSettingEnabled = Settings()[setting]
+        if (setting in Settings) {
+            this.isSettingEnabled = Settings[setting]
+            // Waits for Features to actually define their listener functions
             Client.scheduleTask(() => this.isSettingEnabled ? this.onEnabled() : this.onDisabled())
     
-            Settings().getConfig().registerListener(setting, (prev, val) => {
+            Settings.getConfig().registerListener(setting, (_, val) => {
                 this.isSettingEnabled = val
+                this.isSettingEnabled ? this.onEnabled(val) : this.onDisabled()
                 this._updateRegister()
-                Client.scheduleTask(() => this.isSettingEnabled ? this.onEnabled(prev) : this.onDisabled(prev))
             })
         }
 

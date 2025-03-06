@@ -23,11 +23,10 @@ new class BlockHighlight extends Feature {
                 Block./* setBlockBoundsBasedOnState */func_180654_a(this.World, BlockPos)
                 const BlockBounds = Block./* getSelectedBoundingBox */func_180646_a(this.World, BlockPos)
         
-                const [r, g, b, a] = this.Color
-                RenderUtil.drawOutlinedAABB(BlockBounds, r, g, b, a, false, 3, false)
+                RenderUtil.drawOutlinedAABB(BlockBounds, this.Color, false, 4, false)
             })
 
-        Settings().getConfig().registerListener("highlightColor", (_, val) => this.Color = val)
+        Settings.getConfig().registerListener("highlightColor", (_, val) => this.Color = val)
     }
 
     onEnabled() {
@@ -41,7 +40,7 @@ new class BlockHighlight extends Feature {
 
     onRegister() {
         this.World = World.getWorld()
-        this.Color = Settings().highlightColor
+        this.Color = Settings.highlightColor
     }
 
     onUnregister() {

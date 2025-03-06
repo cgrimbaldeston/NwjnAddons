@@ -67,5 +67,5 @@ addCommand(
   "Apply",
   "(Dev) Apply scheme setting changes",
   () =>
-    Settings().getConfig().setScheme("/data/Scheme.json").apply()
+    Settings.getConfig().setScheme("/data/Scheme.json").apply()
 )

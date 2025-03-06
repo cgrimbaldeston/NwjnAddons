@@ -8,7 +8,7 @@ new class JunkSpawnAborter extends Feature {
             .addEvent("packetReceived", (_, event) => cancel(event), net.minecraft.network.play.server.S10PacketSpawnPainting)
             .addEvent("packetReceived", (_, event) => cancel(event), net.minecraft.network.play.server.S11PacketSpawnExperienceOrb)
 
-        Settings().getConfig()
+        Settings.getConfig()
             .registerListener("removeArrows", (_, val) => this.blacklist?.set(60, val))
             .registerListener("removeFallingBlocks", (_, val) => this.blacklist?.set(70, val))
     }
@@ -38,8 +38,8 @@ new class JunkSpawnAborter extends Feature {
         
         list.forEach(id => this.blacklist.set(id, true))
 
-        this.blacklist.set(60, Settings().removeArrows)
-        this.blacklist.set(70, Settings().removeFallingBlocks)
+        this.blacklist.set(60, Settings.removeArrows)
+        this.blacklist.set(70, Settings.removeFallingBlocks)
     }
 
     onDisabled() { 

@@ -22,8 +22,8 @@ export default class Waypoint {
         this.text = `${this.mainText} §b[${ this.distance }m]${this.subText}`
     }
 
-    render([r, g, b, a]) {
+    render(color) {
         const {x, y, z} = this.blockPos
-        RenderUtil.renderWaypoint(this.text, x, y, z, r, g, b, a, true, true)
+        RenderUtil.renderWaypoint(this.text, x, y, z, color, true, true)
     }
 }

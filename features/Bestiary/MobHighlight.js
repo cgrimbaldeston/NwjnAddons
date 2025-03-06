@@ -15,23 +15,22 @@ new class MobHighlight extends Feature {
 
                 if (entity./* isInvisible */func_82150_aj()) return
 
-                const [r, g, b, a] = this.Color
-                RenderUtil.drawOutlinedAABB(entity./* getEntityBoundingBox */func_174813_aQ(), r, g, b, a, false, 3, false)
+                RenderUtil.drawOutlinedAABB(entity./* getEntityBoundingBox */func_174813_aQ(), this.Color, false, 4, false)
             })
         
             .addEvent(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent, ({entity}) => 
                 RenderHelper.isEntityInFrustum(entity) && this?.validate(entity)
             )
                 
-            .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, ({entity}) => this.RenderList?.remove(entity))
+            .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, (event) => this.RenderList?.remove(event.entity))
 
-        Settings().getConfig()
+        Settings.getConfig()
             .registerListener("mobHighlightColor", (_, val) => this.Color = val)
-            .onCloseGui(() => this?.updateWhitelist())
+            .onCloseGui(() => this?.updateWhitelist(Settings.mobList))
     }
     
-    onEnabled(previousValue) {
-        if ("updateWhitelist" in this && previousValue) return this.updateWhitelist()
+    onEnabled(newValue) {
+        if ("updateWhitelist" in this) return this.updateWhitelist(newValue)
             
         const Whitelist = new HashMap()
         const EntityList = net.minecraft.entity.EntityList
@@ -41,7 +40,7 @@ new class MobHighlight extends Feature {
         StringToClassMap.forEach((k, v) => StringToClassMap.put(k.toLowerCase(), v))
 
         this.RenderList = new java.util.WeakHashMap()
-        this.Color = Settings().mobHighlightColor
+        this.Color = Settings.mobHighlightColor
 
         this.validate = (entity) => {
             const healthList = Whitelist.get(entity.class)
@@ -53,10 +52,10 @@ new class MobHighlight extends Feature {
             if (typeof(healthList) === "boolean" || healthList?.includes(maxHP)) this.RenderList.put(entity, true)
         }
 
-        this.updateWhitelist = () => {
+        this.updateWhitelist = (newValue) => {
             Whitelist.clear(), this.RenderList.clear()
 
-            Settings().mobList.split(/,\s?/g).forEach((entry, index) => {
+            newValue.split(/,\s?/g).forEach((entry, index) => {
                 const [name, hpParam] = entry.split("-")
 
                 if (!name) return

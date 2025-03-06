@@ -22,7 +22,7 @@ export const addCommand = (name, description, onRun) => {
 addCommand("help", "Shows this list")
 
 register("command", (...args) => {
-    if (!args?.[0]) return Settings().getConfig().openGui()
+    if (!args?.[0]) return Settings.getConfig().openGui()
     const command = args.shift().toLowerCase()
 
     if (command === "help") {

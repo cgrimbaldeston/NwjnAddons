@@ -8,7 +8,7 @@ export default class RenderHelper {
 
     static getRenderPitch = () => RenderManager./* playerViewY */field_78735_i
 
-    static getRenderPos = () => {
+    static getRenderPos() {
         return {
             rx: Frustum.getRenderX(),
             ry: Frustum.getRenderY(),
@@ -16,22 +16,46 @@ export default class RenderHelper {
         }
     }
 
+    static lerp = (last, curr, mult) => last + (curr - last) * mult
+
+    static toRGBA(long) {
+        return [
+            ((long >> 24) & 0xFF) / 255,
+            ((long >> 16) & 0xFF) / 255,
+            ((long >> 8) & 0xFF) / 255,
+            ((long >> 0) & 0xFF) / 255
+        ]
+    }
+
     static inFrustum = (aabb) => Frustum.isAABBInFrustum(aabb)
+
+    static isBoundsInFrustum = (x, y, z, w, h) => Frustum.isBoxInFrustum.call(null, RenderHelper.createBounds(x, y, z, w, h))
 
     static isEntityInFrustum = (entity) => Frustum.isAABBInFrustum(entity./* getEntityBoundingBox */func_174813_aQ())
     
-    static getRenderDistanceBlocks() {
-        return Client.settings.video.getRenderDistance() * 16
-    }
+    static getRenderDistanceBlocks = () => Client.settings.video.getRenderDistance() * 16
 
     static getAxisCoords(aabb) {
         return [
-            aabb./* minX */field_72340_a,
-            aabb./* minY */field_72338_b,
-            aabb./* minZ */field_72339_c,
-            aabb./* maxX */field_72336_d,
-            aabb./* maxY */field_72337_e,
-            aabb./* maxZ */field_72334_f
+            aabb./* minX */field_72340_a - 0.002,
+            aabb./* minY */field_72338_b - 0.002,
+            aabb./* minZ */field_72339_c - 0.002,
+            aabb./* maxX */field_72336_d + 0.002,
+            aabb./* maxY */field_72337_e + 0.002,
+            aabb./* maxZ */field_72334_f + 0.002
+        ]
+    }
+
+    static createBounds(x, y, z, w, h) {
+        const wHalf = w / 2
+        return [
+            (x - wHalf) - 0.002,
+            (y) - 0.002,
+            (z - wHalf) - 0.002,
+
+            (x + wHalf) + 0.002,
+            (y + h) + 0.002,
+            (z + wHalf) + 0.002
         ]
     }
 
@@ -39,16 +63,7 @@ export default class RenderHelper {
 
     static isAir = (mcBlockState) => mcBlockState == IBlockStateAir
 
-    static toAABB(x, y, z, w = 1, h = 1) {
-        return new AxisAlignedBB(
-            x - w / 2,
-            y,
-            z - w / 2,
-            x + w / 2,
-            y + h,
-            z + w / 2
-        )./* expand */func_72314_b(0.002, 0.002, 0.002)
-    }
+    static toAABB = (x, y, z, w, h) => new AxisAlignedBB(...RenderHelper.createBounds(x, y, z, w, h))
 
     /** @param {Block} ctBlock*/
     static getCTBlockAABB(ctBlock) {
@@ -71,10 +86,11 @@ export default class RenderHelper {
 
         const scale = renderDistBlocks / distTo
 
-        return [
-            rx + (x - rx) * scale,
-            ry + (y - ry) * scale,
-            rz + (z - rz) * scale
-        ]
+        return {
+            x: this.lerp(rx, x, scale),
+            y: this.lerp(ry, y, scale),
+            z: this.lerp(rz, z, scale),
+            s: scale
+        }
     }
 }

@@ -10,19 +10,19 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     value: true
 })
 .addSwitch({
-    category: "QOL",
+    category: "General",
     configName: "blockHighlight",
     title: "Toggle Block Highlight",
     description: "Toggles block highlight",
     value: false
 })
 .addColorPicker({
-    category: "QOL",
+    category: "General",
     configName: "highlightColor",
     title: "Highlight Color",
     description: "Sets the color for block highlight",
     value: [255, 190, 239, 255],
-    shouldShow: data => data.blockHighlight
+    shouldShow: data => data.blockHighlight === true
 })
 .addSwitch({
     category: "General",
@@ -37,16 +37,16 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     title: "➤ Waypoint Color",
     description: "     Sets the color for waypoints",
     value: [255, 190, 239, 200],
-    shouldShow: data => data.waypoint
+    shouldShow: data => data.waypoint === true
 })
 .addSlider({
     category: "General",
     configName: "wpTime",
     title: "➤ Waypoint Time",
     description: "     The amount of seconds waypoints should stay",
-    options: [30, 150],
+    options: [30, 90],
     value: 120,
-    shouldShow: data => data.waypoint
+    shouldShow: data => data.waypoint === true
 })
 .addSwitch({
     category: "General",
@@ -118,7 +118,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
             value: true
         }
     ],
-    shouldShow: data => data.partyCommands
+    shouldShow: data => data.partyCommands === true
 })
 .addSwitch({
     category: "General",
@@ -143,7 +143,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     subcategory: "Clock",
     value: [255, 190, 239, 255],
 
-    shouldShow: data => data.clock
+    shouldShow: data => data.clock === true
 })
 .addSwitch({
     category: "Combat",
@@ -492,7 +492,7 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
             value: true
         }
     ],
-    shouldShow: data => data.abortJunkSpawns
+    shouldShow: data => data.abortJunkSpawns === true
 })
 
 import TextUtil from "../core/static/TextUtil"
@@ -501,4 +501,4 @@ const meinConf = new Settings("NwjnAddons", defCon1, "/data/Scheme.json", `${Tex
     .setSize(70, 70)
     .apply()
     
-export default () => meinConf.settings
+export default meinConf.settings
