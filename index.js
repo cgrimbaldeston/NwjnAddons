@@ -26,7 +26,6 @@ import "./features/General/Clock"
 import "./features/General/Commands"
 
 // import "./features/HUD/BlazeTimers"
-import "./features/Performance/CullUpdates"
 import "./features/Performance/DeathClutter"
 import "./features/Performance/SpawnClutter"
 
