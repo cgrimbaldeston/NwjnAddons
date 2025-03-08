@@ -4,7 +4,7 @@ import { data } from "../../data/Data";
 new class Clock extends GuiFeature {
     constructor() {
         super({
-            setting: "clock",
+            setting: "Clock",
             name: "Clock",
             dataObj: data.Clock,
             initText: "00:00:00 AM",
@@ -20,6 +20,6 @@ new class Clock extends GuiFeature {
     }
 
     onDisabled() {
-        this.getTime = null
+        delete this.getTime
     }
 }

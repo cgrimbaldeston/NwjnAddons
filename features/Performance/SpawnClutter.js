@@ -1,27 +1,25 @@
 import Feature from "../../libs/Features/Feature";
 import Settings from "../../data/Settings";
 
-new class JunkSpawnAborter extends Feature {
+new class SpawnClutter extends Feature {
     constructor() {
-        super({setting: "abortJunkSpawns"}), this
-            .addEvent("spawnObject", (typeId, event) => this.blacklist?.get(typeId) && cancel(event))
+        super(this)
+            .addEvent("spawnObject", (typeId, event) => this.blacklist?.has(typeId) && cancel(event))
             .addEvent("packetReceived", (_, event) => cancel(event), net.minecraft.network.play.server.S10PacketSpawnPainting)
             .addEvent("packetReceived", (_, event) => cancel(event), net.minecraft.network.play.server.S11PacketSpawnExperienceOrb)
 
         Settings.getConfig()
-            .registerListener("removeArrows", (_, val) => this.blacklist?.set(60, val))
-            .registerListener("removeFallingBlocks", (_, val) => this.blacklist?.set(70, val))
+            .registerListener("SpawnClutterArrows", (_, val) => this?.updateOptionals(val, 60))
+            .registerListener("SpawnClutterFallingBlocks", (_, val) => this?.updateOptionals(val, 70))
     }
 
     onEnabled() {
         /** 
          * Check link for type list, notify me on discord if any of these types not to be edited or changed to have a setting
          * @see {https://github.com/Marcelektro/MCP-919/blob/1717f75902c6184a1ed1bfcd7880404aab4da503/src/minecraft/net/minecraft/entity/EntityTrackerEntry.java} ctrl-f S0EPacketSpawnObject
-         * @type {Map<Number, Boolean>} 
+         * @type {Set<Number>} 
          */
-        this.blacklist = new Map()
-        
-        const list = [
+        this.blacklist = new Set([
             1,  // Boat
             10, // MineCart
             61, // Snowball
@@ -34,15 +32,19 @@ new class JunkSpawnAborter extends Feature {
             75, // ExpBottle
             76, // Rocket
             77 // Leash
-        ]
-        
-        list.forEach(id => this.blacklist.set(id, true))
+        ])
 
-        this.blacklist.set(60, Settings.removeArrows)
-        this.blacklist.set(70, Settings.removeFallingBlocks)
+        if (Settings.SpawnClutterArrows) this.blacklist.add(60)
+        if (Settings.SpawnClutterFallingBlocks) this.blacklist.add(70)
+
+        this.updateOptionals = (bool, id) => {
+            if (bool) this.blacklist.add(id)
+            else this.blacklist.delete(id)
+        }
     }
 
     onDisabled() { 
-        this.blacklist = null
+        delete this.blacklist
+        delete this.updateOptionals
     }
 }

@@ -4,132 +4,132 @@ import DefaultConfig from "../../Amaterasu/core/DefaultConfig"
 const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
 .addSwitch({
     category: "General",
-    configName: "linkFix",
+    configName: "LinkFix",
     title: "&e✯&r &bLink Fix",
     description: "Encodes and Decodes Links to allow sending and viewing for those with the mod",
     value: true
 })
 .addSwitch({
     category: "General",
-    configName: "blockHighlight",
+    configName: "BlockHighlight",
     title: "Toggle Block Highlight",
     description: "Toggles block highlight",
     value: false
 })
 .addColorPicker({
     category: "General",
-    configName: "highlightColor",
+    configName: "BlockHighlightColor",
     title: "Highlight Color",
     description: "Sets the color for block highlight",
     value: [255, 190, 239, 255],
-    shouldShow: data => data.blockHighlight === true
+    shouldShow: data => data.BlockHighlight
 })
 .addSwitch({
     category: "General",
-    configName: "waypoint",
+    configName: "ChatWaypoints",
     title: "Draw Chat Waypoints",
     description: "Creates waypoints taken from chat messages in patcher sendcoords format",
     value: false
 })
 .addColorPicker({
     category: "General",
-    configName: "wpColor",
+    configName: "ChatWaypointsColor",
     title: "➤ Waypoint Color",
     description: "     Sets the color for waypoints",
     value: [255, 190, 239, 200],
-    shouldShow: data => data.waypoint === true
+    shouldShow: data => data.ChatWaypoints
 })
 .addSlider({
     category: "General",
-    configName: "wpTime",
+    configName: "ChatWaypointsTime",
     title: "➤ Waypoint Time",
     description: "     The amount of seconds waypoints should stay",
     options: [30, 90],
     value: 120,
-    shouldShow: data => data.waypoint === true
+    shouldShow: data => data.ChatWaypoints
 })
 .addSwitch({
     category: "General",
-    configName: "partyCommands",
+    configName: "PartyCommands",
     title: "Party Commands",
     description: "Enables party commands, universally triggers on [.,!?] commands",
     value: false
 })
 .addMultiCheckbox({
     category: "General",
-    configName: "partyToggles",
+    configName: "PartyCommandToggles",
     title: "Party Command Toggles",
     description: "Toggles for various party commands",
     placeHolder: "Click",
     options: [
         {
             title: "Join Instance",
-            configName: "pcInstance",
+            configName: "PartyCommandsInstance",
             value: true
         },
         {
             title: "Party Transfer <?ign>",
-            configName: "pcTransfer",
+            configName: "PartyCommandsTransfer",
             value: true
         },
         {
             title: "Warp",
-            configName: "pcWarp",
+            configName: "PartyCommandsWarp",
             value: true
         },
         {
             title: "Invite <ign>",
-            configName: "pcInvite",
+            configName: "PartyCommandsInvite",
             value: true
         },
         {
             title: "All Invite",
-            configName: "pcAllinvite",
+            configName: "PartyCommandsAllInvite",
             value: true
         },
         {
             title: "Build Imgur",
-            configName: "pcBuild",
+            configName: "PartyCommandsBuild",
             value: true
         },
         {
             title: "Server TPS",
-            configName: "pcTps",
+            configName: "PartyCommandsTPS",
             value: "true"
         },
         {
             title: "Tab Stats",
-            configName: "pcStats",
+            configName: "PartyCommandsStats",
             value: true
         },
         {
             title: "Power, Tuning, Enrich, MP Data",
-            configName: "pcPower",
+            configName: "PartyCommandsPower",
             value: true
         },
         {
             title: "Send Coords",
-            configName: "pcCoords",
+            configName: "PartyCommandsCoords",
             value: true
         },
         {
             title: "Your Current Time",
-            configName: "pcTime",
+            configName: "PartyCommandsTime",
             value: true
         }
     ],
-    shouldShow: data => data.partyCommands === true
+    shouldShow: data => data.PartyCommands
 })
 .addSwitch({
     category: "General",
-    configName: "skyblockXP",
+    configName: "SkyblockXP",
     title: "Skyblock XP Gain Message",
     description: "Displays skyblock xp gains in chat",
     value: false
 })
 .addSwitch({
     category: "General",
-    configName: "clock",
+    configName: "Clock",
     title: "Clock Display",
     description: "Stay productive by keeping track of time!",
     subcategory: "Clock",
@@ -137,38 +137,38 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
 })
 .addColorPicker({
     category: "General",
-    configName: "clockColor",
+    configName: "ClockColor",
     title: "➤ Clock Color",
     description: "     Sets the color for the clock display",
     subcategory: "Clock",
     value: [255, 190, 239, 255],
 
-    shouldShow: data => data.clock === true
+    shouldShow: data => data.Clock
 })
 .addSwitch({
     category: "Combat",
-    configName: "damageTracker",
+    configName: "DamageTracker",
     title: "Damage Tracker",
     description: "Displays Damage Tag values in chat",
     value: false
 })
 .addSwitch({
     category: "Combat",
-    configName: "reaperTimer",
+    configName: "ReaperTimer",
     title: "Reaper Buff Timer",
     description: "Displays the time left on your reaper armor buff",
     value: false
 })
 .addSwitch({
     category: "Combat",
-    configName: "rendArrows",
+    configName: "RendArrows",
     title: "Rend Arrows",
     description: "Displays the amount of arrows pulled on rend in chat",
     value: false
 })
 .addDropDown({
     category: "Combat",
-    configName: "fatalTempo",
+    configName: "FatalTempo",
     title: "Fatal Tempo Display",
     description: "Select when to show Fatal Tempo Display -> /moveFT",
     options: ["Off", "Always", "Over 0%", "At 200%"],
@@ -177,73 +177,73 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
 })
 .addMultiCheckbox({
     category: "Combat",
-    configName: "ftParts",
+    configName: "FatalTempoComponents",
     title: "Fatal Tempo Components",
     description: "Toggles for different aspects of this display",
     placeHolder: "Click",
     options: [
         {
             title: "Prefix",
-            configName: "ftPrefix",
+            configName: "FatalTempoPrefix",
             value: true
         },
         {
             title: "Percent",
-            configName: "ftPercent",
+            configName: "FatalTempoPercent",
             value: true
         },
         {
             title: "Time",
-            configName: "ftTime",
+            configName: "FatalTempoTime",
             value: true
         }
     ],
-    shouldShow: data => data.fatalTempo !== 0
+    shouldShow: data => data.FatalTempo !== 0
 })
 .addTextInput({
     category: "Bestiary",
-    configName: "mobList",
+    configName: "MobHighlight",
     title: "Mob Highlight",
     description: "Boxes entities by input based on mob class and health\n&bExamples: `Zombie` or `Zombie-100|120|2k|45k` or `Zombie, Skeleton` or `Zombie-100, Cow`",
     value: ""
 })
 .addColorPicker({
     category: "Bestiary",
-    configName: "mobHighlightColor",
+    configName: "MobHighlightColor",
     title: "Mob Highlight Color",
     description: "Sets the color for monster hitboxes",
     value: [255, 190, 239, 255],
-    shouldShow: data => data.mobList !== ""
+    shouldShow: data => data.MobHighlight !== ""
 })
 .addTextInput({
     category: "Bestiary",
-    configName: "standList",
+    configName: "StandHighlight",
     title: "Armor Stand Names Highlight",
     description: "Draws hitboxes around armor stands that include the inputted name, seperate with '|' character",
     value: ""
 })
 .addColorPicker({
     category: "Bestiary",
-    configName: "standColor",
+    configName: "StandHighlightColor",
     title: "Armor Stand Highlight Color",
     description: "Sets the color for armor stand hitboxes",
     value: [255, 190, 239, 255],
-    shouldShow: data => data.standList !== ""
+    shouldShow: data => data.StandHighlight !== ""
 })
 .addTextInput({
     category: "Bestiary",
-    configName: "playerList",
+    configName: "PlayerHighlight",
     title: "Player Highlight",
     description: "Draws hitboxes around players that include the inputted name, seperate with '|' character\nInput `Player` to show all real players",
     value: ""
 })
 .addColorPicker({
     category: "Bestiary",
-    configName: "playerColor",
+    configName: "PlayerHighlightColor",
     title: "Player Highlight Color",
     description: "Sets the color for player hitboxes",
     value: [255, 190, 239, 255],
-    shouldShow: data => data.playerList !== ""
+    shouldShow: data => data.PlayerHighlight !== ""
 })
 .addButton({
     category: "HUD",
@@ -253,190 +253,22 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     onClick: () => ChatLib.command("nwjn gui", true)
 })
 .addSwitch({
-    category: "HUD",
-    configName: "blaze",
-    title: "Blaze Display",
-    description: "Shows how much time left on gummy and wisp pot -> /moveBlaze",
-    subcategory: "Blaze",
-    value: false
-})
-.addSwitch({
-    category: "HUD",
-    configName: "poison",
-    title: "Poison Display",
-    description: "Displays the amount of poisons in your inventory -> /movePoison",
-    subcategory: "Poison",
-    value: false
-})
-.addSwitch({
-    category: "HUD",
-    configName: "mini",
-    title: "Miniboss Display",
-    description: "Shows your recent CI miniboss kills -> /moveMini",
-    subcategory: "Miniboss",
-    value: false
-})
-.addSwitch({
-    category: "HUD",
-    configName: "widget",
-    title: "Widget Display",
-    description: "Renders tab widgets on screen",
-    subcategory: "Widget",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "kuudraHP",
-    title: "Draws Kuudra's HP",
-    description: "Displays text of Kuudra's hp on kuudra",
-    subcategory: "General",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "teamHighlight",
-    title: "Team Highlight",
-    description: "Draws a box of the selected color on teammates, changes to green if that player gets fresh tools",
-    subcategory: "General",
-    value: false
-})
-.addColorPicker({
-    category: "Kuudra",
-    configName: "teammateColor",
-    title: "➤ Team Color",
-    description: "     Sets the color for teammates",
-    value: [255, 190, 239, 255],
-    subcategory: "General"
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "unrenderPerks",
-    title: "Unrender Perks",
-    description: "Declutters the shop gui by unrendering unused perks",
-    subcategory: "General",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "kuudraHitbox",
-    title: "Draws Kuudra's Hitbox",
-    description: "Draws a box around Kuudra's hitbox",
-    subcategory: "General",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "supplyBeacons",
-    title: "Supply Beacons",
-    description: "Draws beacons where supplies are",
-    subcategory: "Phase 1",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "supplyPiles",
-    title: "Supply Drop Beacons",
-    description: "Draws beacons on piles where supplies are needed",
-    subcategory: "Phase 1",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "pearl",
-    title: "Pearl Lineups",
-    description: "Draws target boxes of where to pearl to insta place supply\n&eBoxes on the ceiling: pearl at ~38%\n&eBoxes on the sides: pearl at ~76%",
-    subcategory: "Phase 1",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "noSupply",
-    title: "No Supply Chat",
-    description: "Tells party if your pre or second doesn't spawn",
-    subcategory: "Phase 1",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "customSupply",
-    title: "Custom Supply Drop Message",
-    description: "Changes supply message to include time when a supply is dropped:\n&r&6[MVP&r&9++&r&6] nwjn&r&f &a&lrecovered a supply at 18s! &r&8(1/6)&r",
-    subcategory: "Phase 1",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "buildPiles",
-    title: "Unfinished Pile Beacons",
-    description: "Draws beacons on build piles that are incomplete",
-    subcategory: "Phase 2",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "buildPercent",
-    title: "Cumulative Build Percentage",
-    description: "Draws the overall build percentage over the ballista",
-    subcategory: "Phase 2",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "buildFresh",
-    title: "Fresh Timer",
-    description: "Draws the seconds of fresh you have left on the ballista",
-    subcategory: "Phase 2",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "progressWithPhase",
-    title: "Show Pile Progress Through Mobs",
-    description: "Draws the 'Progress: 77%' text on a pile through mobs",
-    subcategory: "Phase 2",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "fresh",
-    title: "Notify Party On Fresh",
-    description: "Say `FRESH!` in party chat when you get fresh tools",
-    subcategory: "Phase 2",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "partyDrain",
-    title: "Party Drain",
-    description: "Tells your party who you mana drained\n&9Party &8> &6[MVP&8++&6] nwjn&f: Drained 2431 mana for: [LucDJ, raidermc, LhxSeven]",
-    subcategory: "Phase 4",
-    value: false
-})
-.addSwitch({
-    category: "Kuudra",
-    configName: "drainDisplay",
-    title: "Mana Drain Display",
-    description: "Shows buffs received from mana drain",
-    subcategory: "Phase 4",
-    value: false
-})
-.addSwitch({
     category: "Crimson Isle",
-    configName: "announceVanqs",
+    configName: "AnnounceVanqs",
     title: "Announce Vanquishers",
     description: "Announces Vanquisher coords to party",
     value: false
 })
 .addSwitch({
     category: "Crimson Isle",
-    configName: "magma",
+    configName: "MagmaBossMessage",
     title: "Better Magma Boss Message",
     description: "Replaces magma boss damage messages with custom ones that also show total damage\n&r&4&lMagma Boss&r &8> &c+35% &7(100%)",
     value: false
 })
 .addSwitch({
     category: "Mining",
-    configName: "mineshaftWaypoints",
+    configName: "MineshaftWaypoints",
     title: "Mineshaft Waypoints",
     description: "Shows guesses of corpses and exit in mineshaft, walk within 3 blocks of a guess waypoint to remove it",
     value: false
@@ -444,23 +276,15 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
 .addSwitch({
     category: "Performance",
     subcategory: "Death Clutter",
-    configName: "removeDyingMobs",
-    title: "&e✯&r &bRemove Dying Mobs",
-    description: "Fully kills the entity before it can perform the animation",
-    value: true
-})
-.addSwitch({
-    category: "Performance",
-    subcategory: "Death Clutter",
-    configName: "removeDeadNames",
-    title: "&e✯&r &bRemove Names of Dead Mobs",
-    description: "Kills the ArmorStand used for a mob's HP instantly when the mob dies",
+    configName: "DeathClutter",
+    title: "&e✯&r &bRemove Dying Mobs and Names",
+    description: "Fully kills the entity before it can perform the animation & removes the entity's nametag",
     value: true
 })
 .addSwitch({
     category: "Performance",
     subcategory: "Spawn Clutter",
-    configName: "abortJunkSpawns",
+    configName: "SpawnClutter",
     title: "&e✯&r &bAbort Junk-Spawns",
     description: `Completely cancels the construction of many unused + non-performative entities`,
     value: true
@@ -468,23 +292,23 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
 .addMultiCheckbox({
     category: "Performance",
     subcategory: "Spawn Clutter",
-    configName: "abortJunkSpawnsOptions",
+    configName: "SpawnClutterOptions",
     title: "➤ &e✯&r &bAbort Junk-Spawns Customization",
     description: "     Optional toggles for a few entities",
     placeHolder: "Edit",
     options: [
         {
             title: "Arrows",
-            configName: "removeArrows",
+            configName: "SpawnClutterArrows",
             value: false
         },
         {
             title: "&e✯&r Falling Blocks",
-            configName: "removeFallingBlocks",
+            configName: "SpawnClutterFallingBlocks",
             value: true
         }
     ],
-    shouldShow: data => data.abortJunkSpawns === true
+    shouldShow: data => data.SpawnClutter
 })
 
 import TextUtil from "../core/static/TextUtil"

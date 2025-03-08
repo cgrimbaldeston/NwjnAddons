@@ -7,12 +7,10 @@ import EntityUtil from "../../core/static/EntityUtil"
  * 2. Removing their armorstand nametag that stays for multiple ticks after death
  */
 
-new Feature({setting: "removeDyingMobs"})
-    .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, ({entity}) => EntityUtil.removeEntity(entity))
-
-new class DeadNameDeletor extends Feature {
+new class DeathClutter extends Feature {
     constructor() {
-        super({setting: "removeDeadNames"}), this
+        super(this)
+            .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, ({entity}) => EntityUtil.removeEntity(entity))
             .addEvent("packetReceived", (packet) => {
                 // Nametag changes always have only one watcher
                 const WatchList = packet./* getWatcherList */func_149376_c()
@@ -31,6 +29,6 @@ new class DeadNameDeletor extends Feature {
     }
 
     onDisabled() {
-        this.isNametag = null
+        delete this.isNametag
     }
 }

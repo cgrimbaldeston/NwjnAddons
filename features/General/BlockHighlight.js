@@ -5,7 +5,7 @@ import RenderHelper from "../../libs/Render/RenderHelper"
 
 new class BlockHighlight extends Feature {
     constructor() {
-        super({setting: "blockHighlight"}), this
+        super(this)
             .addEvent(net.minecraftforge.client.event.DrawBlockHighlightEvent, (event) => {
                 const {target} = event
                 cancel(event)
@@ -26,7 +26,7 @@ new class BlockHighlight extends Feature {
                 RenderUtil.drawOutlinedAABB(BlockBounds, this.Color, false, 4, false)
             })
 
-        Settings.getConfig().registerListener("highlightColor", (_, val) => this.Color = val)
+        Settings.getConfig().registerListener("BlockHighlightColor", (_, val) => this.Color = val)
     }
 
     onEnabled() {
@@ -35,16 +35,16 @@ new class BlockHighlight extends Feature {
     }
 
     onDisabled() {
-        this.isTargetingBlock = null
+        delete this.isTargetingBlock
     }
 
     onRegister() {
         this.World = World.getWorld()
-        this.Color = Settings.highlightColor
+        this.Color = Settings.BlockHighlightColor
     }
 
     onUnregister() {
-        this.World = null
-        this.Color = null
+        delete this.World
+        delete this.Color
     }
 }

@@ -1,7 +1,7 @@
 import Feature from "../../libs/Features/Feature";
 import TextUtil from "../../core/static/TextUtil";
 
-new Feature({setting: "skyblockXP"})
+new Feature({setting: "SkyblockXP"})
     .addEvent("actionBarChange", (xp, category, progress) => {
         const hashCode = 30000 + (~~xp + ~~progress)
         

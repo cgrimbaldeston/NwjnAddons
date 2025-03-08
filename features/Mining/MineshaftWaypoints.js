@@ -5,13 +5,10 @@ import Waypoint from "../../libs/Render/TempWaypoint";
 /** @todo make a quick check for vang which immediately checks for a gold block at a coord relative to the player's location */
 new class MineshaftWaypoints extends Feature {
     constructor() {
-        super({
-            setting: "mineshaftWaypoints",
-            zones: "Glacite Mineshafts"
-            // Does not use Mineshaft as world because the scoreboard check is always triggered before it
-        })
-
-        this
+        // Does not use Mineshaft as world because the scoreboard check is always triggered before it
+        this.zones = "Glacite Mineshafts"
+        
+        super(this)
             .addEvent("sidebarChange", (id, material, type) => {
                 if (this.hasChecked) return
                 if (type != 2 && !(id in this.data.rooms)) return
@@ -54,7 +51,7 @@ new class MineshaftWaypoints extends Feature {
     }
 
     onDisabled() {
-        this.data = null
+        delete this.data
     }
 
     onRegister() {
@@ -62,7 +59,7 @@ new class MineshaftWaypoints extends Feature {
     }
 
     onUnregister() {
-        this.hasChecked = null
-        this.waypoints = null
+        delete this.hasChecked
+        delete this.waypoints
     }
 }

@@ -19,21 +19,24 @@ export default class Feature {
      * - Utility that handles registering various events and listeners to make complex, functional, and performative features
      * - Class can be used with or without requiring the settings, worlds, or zones fields depending on the intended functionality
      * 
-     * @param {Object} obj
+     * @param {Object|Feature} obj If passed in as a child of this, uses the name of this child and return it
      * @param {String|null} obj.setting The main config name: If null -> Feature is always active, If setting returns false -> all events of this feature will be unregistered
      * @param {String[]|String|null} obj.worlds The world(s) where this feature should activate: If null -> Feature is not world dependent
      * @param {String[]|String|null} obj.zones The zones(s) where this feature should activate: If null -> Feature is not zone dependent
      */
-    constructor({setting = null, worlds = null, zones = null} = {}) {
-        if (worlds) this.worlds = worlds
-        if (zones) this.zones = zones
+    constructor(obj = {}) {
+        if (obj.constructor.name !== "Object") obj.setting = obj.constructor.name
+
+        this.worlds = obj.worlds
+        this.zones = obj.zones
+
         // Main setting enables/disables entire [Feature]
-        if (setting in Settings) {
-            this.isSettingEnabled = Settings[setting]
+        if (obj.setting in Settings) {
+            this.isSettingEnabled = Settings[obj.setting]
             // Waits for Features to actually define their listener functions
             Client.scheduleTask(() => this.isSettingEnabled ? this.onEnabled() : this.onDisabled())
     
-            Settings.getConfig().registerListener(setting, (_, val) => {
+            Settings.getConfig().registerListener(obj.setting, (_, val) => {
                 this.isSettingEnabled = val
                 this.isSettingEnabled ? this.onEnabled(val) : this.onDisabled()
                 this._updateRegister()
@@ -42,7 +45,7 @@ export default class Feature {
 
         // Will always update on world changes
         Location.onWorldChange(() => this._updateRegister())
-        if (zones) Location.onZoneChange(() => this._updateRegister())
+        if (this.zones) Location.onZoneChange(() => this._updateRegister())
 
         Client.scheduleTask(() => this._updateRegister())
     }
