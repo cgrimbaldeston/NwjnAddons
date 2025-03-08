@@ -6,66 +6,31 @@ import "./utils/Party"
 import "./utils/Profile"
 import "./libs/Time/ServerTime"
 
-import "./features/Combat/DamageTracker"
-import "./features/Combat/ReaperTimer"
-import "./features/Combat/RendArrows"
-import "./features/Combat/FatalTempo"
+// import Settings from "./data/Settings"
+import TextUtil from "./core/static/TextUtil"
+// Handles loading all Feature files because I was too lazy to type them all out
+(function requireFeatures(file) {
+    if (file.isDirectory()) return file.listFiles().forEach(file => requireFeatures(file))
+        
+    /* File.separator: "/" or "\" */
+    const [path, name] = TextUtil.getMatches(/NwjnAddons[\/\\]features[\/\\](.+[\/\\](\w+))\.js$/, file.getPath())
+    if (!path) return
 
-import "./features/CrimsonIsle/AnnounceVanqs"
-import "./features/CrimsonIsle/LastMinibossKills"
-import "./features/CrimsonIsle/MagmaBossMessage"
+    const importPath = "./features/" + path.replace(/\\/g, "/")
+    
+    require(importPath)
 
-import "./features/Bestiary/MobHighlight"
-// import "./features/CrimsonIsle(Move)";
-import "./features/General/BlockHighlight"
-import "./features/General/ChatWaypoints"
-import "./features/General/LinkFix"
-import "./features/General/PartyCommands"
-import "./features/General/SkyblockXP"
-import "./features/General/Clock"
-import "./features/General/Commands"
+    // Future ClassLoader and Caching bs
+    // if (Settings[name]) {
+    //     require(importPath)
+    // } else {
+    //     const configListenerMap = Settings.getConfig()._configListeners
+    //     if (!configListenerMap.has(name)) configListenerMap.set(name, [])
 
-// import "./features/HUD/BlazeTimers"
-import "./features/Performance/DeathClutter"
-import "./features/Performance/SpawnClutter"
-
-import "./features/Mining/MineshaftWaypoints"
-
-// import "./features/HUD/FatalTempo"
-// import "./features/HUD/Minibosses"
-// import "./features/HUD/Poison"
-// import "./features/HUD/Widgets"
-
-// Kuudra {
-  // import "./features/Kuudra/KuudraUtil"
-  
-  // General
-  // import "./features/Kuudra/General/CancelUselessPerk"
-  // import "./features/Kuudra/General/TeamHighlight"
-  // import "./features/Kuudra/General/KuudraBox"
-  // import "./features/Kuudra/General/KuudraHP"
-  
-  // P1
-  // import "./features/Kuudra/Phase1/CustomSupplyMessage"
-  // import "./features/Kuudra/Phase1/NoSupply"
-  // import "./features/Kuudra/Phase1/PearlLineups"
-  // import "./features/Kuudra/Phase1/SupplyDrops"
-  // import "./features/Kuudra/Phase1/SupplyBeacons"
-  
-  // P2
-  // import "./features/Kuudra/Phase2/BuildFresh"
-  // import "./features/Kuudra/Phase2/BuildPercent"
-  // import "./features/Kuudra/Phase2/BuildPiles"
-  // import "./features/Kuudra/Phase2/FreshBox"
-  
-  // P3
-  
-  // P4
-  // import "./features/Kuudra/Phase4/DrainDisplay"
-  // import "./features/Kuudra/Phase4/ManaDrain"
-  // Kuudra }
-  
-  // Bestiary {
-    // import "./features/Bestiary/PlayerHighlight"
-    // import "./features/Bestiary/StandHighlight"
-    // Bestiary }
+    //     const stemListenerList = configListenerMap.get(name)    
+    //     stemListenerList.unshift(() => {
+    //         require(importPath)
+    //         stemListenerList.shift()
+    //     })
+    // }
+})(new java.io.File(`${Config.modulesFolder}/NwjnAddons/features`))
