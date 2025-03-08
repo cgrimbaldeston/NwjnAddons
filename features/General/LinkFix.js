@@ -6,6 +6,7 @@
 
 import Feature from "../../libs/Features/Feature";
 import TextUtil from "../../core/static/TextUtil";
+import { getField } from "../../utils/Reflect"
 
 new class LinkFix extends Feature {
     /**
@@ -42,7 +43,7 @@ new class LinkFix extends Feature {
     wrapIndex(index, min, max) {}
 
     constructor() {
-        super({setting: "linkFix"}), this
+        super(this)
             .addEvent("messageSent", (msg, event) => {
                 const [link] = TextUtil.getMatches(/([a-z\d]{2,}:\/\/[-\w.]+\.[a-z]{2,}\/(?:$|\S+\.\w+|\S+))/, msg)
                 if (!link) return
@@ -60,7 +61,7 @@ new class LinkFix extends Feature {
         
                 component./* getSiblings */func_150253_a().find(comp => {
                     const text = this.textField?.get(comp)
-                    if (!text.includes(url)) return false
+                    if (!text?.includes(url)) return false
         
                     // Bypass CT messing up link text in new TextComponent & setText
                     this.textField?.set(comp, text.replace(url, decoded))
@@ -77,9 +78,7 @@ new class LinkFix extends Feature {
     }
 
     onEnabled() {
-        const ChatComponentText = net.minecraft.util.ChatComponentText
-        this.textField = ChatComponentText.class.getDeclaredField("field_150267_b")
-        this.textField.setAccessible(true)
+        this.textField = getField(net.minecraft.util.ChatComponentText, /* text */"field_150267_b")
 
         const schemes = {
             "h": "http://",
@@ -160,10 +159,10 @@ new class LinkFix extends Feature {
     }
 
     onDisabled() {
-        this.wrapIndex = null
-        this.translate = null
-        this.decode = null
-        this.encode = null
-        this.textField = null
+        delete this.wrapIndex
+        delete this.translate
+        delete this.decode
+        delete this.encode
+        delete this.textField
     }
 }

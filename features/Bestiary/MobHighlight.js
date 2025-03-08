@@ -5,10 +5,11 @@ import Feature from "../../libs/Features/Feature"
 import TextUtil from "../../core/static/TextUtil"
 import Settings from "../../data/Settings"
 import RenderHelper from "../../libs/Render/RenderHelper"
+import { getField } from "../../utils/Reflect"
 
 new class MobHighlight extends Feature {
     constructor() {
-        super({setting: "mobList"}), this
+        super(this)
             .addEvent("entityRendered", ({entity}) => {
                 const shouldRender = this.RenderList?.get(entity)
                 if (!shouldRender) return
@@ -25,22 +26,19 @@ new class MobHighlight extends Feature {
             .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, (event) => this.RenderList?.remove(event.entity))
 
         Settings.getConfig()
-            .registerListener("mobHighlightColor", (_, val) => this.Color = val)
-            .onCloseGui(() => this?.updateWhitelist(Settings.mobList))
+            .registerListener("MobHighlightColor", (_, val) => this.Color = val)
+            .onCloseGui(() => this?.updateWhitelist(Settings.MobHighlight))
     }
     
     onEnabled(newValue) {
         if ("updateWhitelist" in this) return this.updateWhitelist(newValue)
             
         const Whitelist = new HashMap()
-        const EntityList = net.minecraft.entity.EntityList
-        const StringToClassMapField = EntityList.class.getDeclaredField(/* stringToClassMapping */"field_75625_b")
-        StringToClassMapField.setAccessible(true)
-        const StringToClassMap = StringToClassMapField.get(EntityList)
-        StringToClassMap.forEach((k, v) => StringToClassMap.put(k.toLowerCase(), v))
+        const StringToClassMap = new Map()
+        getField(net.minecraft.entity.EntityList, /* stringToClassMapping */"field_75625_b").get().forEach((k, v) => StringToClassMap.set(k.toLowerCase(), v))
 
         this.RenderList = new java.util.WeakHashMap()
-        this.Color = Settings.mobHighlightColor
+        this.Color = Settings.MobHighlightColor
 
         this.validate = (entity) => {
             const healthList = Whitelist.get(entity.class)
@@ -76,15 +74,15 @@ new class MobHighlight extends Feature {
     }
 
     onDisabled() {
-        this.Whitelist = null
-        this.RenderList = null
-        this.Color = null
+        delete this.Whitelist
+        delete this.RenderList
+        delete this.Color
 
-        this.validate = null
+        delete this.validate
         delete this.updateWhitelist
     }
 
     onUnregister() {
-        this.RenderList.clear()
+        this.RenderList?.clear()
     }
 }

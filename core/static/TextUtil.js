@@ -27,11 +27,9 @@ export default class TextUtil {
     // }
 
     /**
-     * - Returns the matches of the regex
-     * - For assignments
+     * - Returns the matches of the regex or an empty array
      * @param {RegExp} regex 
      * @param {String} string
-     * @param {Number} vars the number of vars to be assigned 
      * @returns {RegExpMatchArray|[]} matches 
      */
     static getMatches(regex, string) {
