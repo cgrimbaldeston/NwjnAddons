@@ -63,7 +63,7 @@ export default class RenderHelper {
 
     static isAir = (mcBlockState) => mcBlockState == IBlockStateAir
 
-    static toAABB = (x, y, z, w, h) => new AxisAlignedBB(...RenderHelper.createBounds(x, y, z, w, h))
+    static toAABB = (x, y, z, w, h) => new AxisAlignedBB.call(null, RenderHelper.createBounds(x, y, z, w, h))
 
     /** @param {Block} ctBlock*/
     static getCTBlockAABB(ctBlock) {

@@ -6,75 +6,87 @@
  */
 
 import Feature from "./Feature";
+import Event from "../Events/Event";
 import { data } from "../../data/Data";
 import ElementUtils from "../../../DocGuiLib/core/Element"
 import HandleGui from "../../../DocGuiLib/core/Gui"
-import { CenterConstraint, CramSiblingConstraint, ScrollComponent, UIRoundedRectangle, UIText, OutlineEffect } from "../../../Elementa"
+import { CenterConstraint, CramSiblingConstraint, ScrollComponent, UIRoundedRectangle, UIText, OutlineEffect, Window, SubtractiveConstraint, ScaledTextConstraint, UIBlock, ConstantColorConstraint, AlphaAspectColorConstraint, MousePositionConstraint, AspectConstraint, TextAspectConstraint, ScaleConstraint } from "../../../Elementa"
 import { addCommand } from "../../utils/Command"
 import Settings from "../../data/Settings"
 
-const guis = new HashMap()
+const Editor = new Window()
+
+const GuiFeatures = new Set()
 
 export default class GuiFeature extends Feature {
     /**
      * - Extension of [Feature] for features that include gui elements
      * 
-     * @param {Object} obj
-     * @param {String} obj.setting The main config name: If null -> Feature is always active, If setting returns false -> all events of this feature will be unregistered
+     * @param {Object|Feature} obj If passed in as a child of this, uses the name of this child and return it
+     * @param {String|null} obj.setting The main config name: If null -> Feature is always active, If setting returns false -> all events of this feature will be unregistered
      * @param {String[]|String|null} obj.worlds The world(s) where this feature should activate: If null -> Feature is not world dependent
      * @param {String[]|String|null} obj.zones The zones(s) where this feature should activate: If null -> Feature is not zone dependent
-     * 
-     * @param {String?} obj.name The gui name to show on the button in the editor
-     * @param {Object?} obj.dataObj The reference to the data with the x, y, scale values
-     * @param {String?} obj.initText The text to shown in the editor if the feature's text is blank
-     * @param {String?} obj.color The feature's color setting (Not needed for texts with color codes)
+
+     * @param {String?} obj.defaultText The text to shown in the editor if the feature's text is blank
     */
-    constructor({setting = null, worlds = null, zones = null,
-        name = null,
-        dataObj = {},
-        initText = null,
-        color = null
-    } = {}) {
-        super({setting, worlds, zones})
+    constructor(obj = {}) {
+        super(obj)
 
-        this.name = name
-        if (!dataObj || !dataObj.x || !dataObj.y || !dataObj.scale) this.data = data[this.name] = {x: 0, y: 0, scale: 1}
-        else this.data = dataObj
+        // Get gui pos from data or create new one, then return that reference to the original data and the reference within this class
+        this.data = data[this.setting] ??= {
+            x: Renderer.screen.getWidth() / (GuiFeatures.size + 1), 
+            y: Renderer.screen.getHeight() / (GuiFeatures.size + 1), 
+            scale: 1.5
+        }
 
-        const gui = new Gui()
-        gui.registerScrolled((_, __, dir) => this.data.scale += (dir * 0.025))
-        gui.registerMouseDragged((mx, my) => {this.data.x = mx; this.data.y = my})
-        gui.registerDraw(() => this._draw(this.message || initText))
-
-        guis.put(name, gui)
-
-        if (color && color in Settings) {
+        const color = `${this.setting}Color`
+        if (color in Settings) {
             this.Color = Settings[color]
             Settings.getConfig().registerListener(color, (_, val) => this.Color = val)
         }
-        else this.Color = [255, 255, 255, 255]
 
-        this.addSubEvent("renderOverlay", () => this._draw(), null, () => this.message)
-    }
-    
-    /** Draw based on data */
-    _draw(text = this.message, color = this.Color, {x, y, scale} = this.data) {
-        if (!text) return
+        this.boundingBox = new UIRoundedRectangle(3)
+            .setX(this.data.x.pixels())
+            .setY(this.data.y.pixels())
+            .setWidth((Renderer.getStringWidth(this.defaultText) * this.data.scale).pixels())
+            .setHeight((9 * this.data.scale).pixels())
+            .setColor(ElementUtils.getJavaColor([0, 0, 0, 160]))
+            .enableEffect(new OutlineEffect(ElementUtils.getJavaColor([255, 255, 255, 80]), 1))
+            .setChildOf(Editor)
 
-        Renderer.retainTransforms(true)
-        Renderer.translate(x, y)
-        Renderer.scale(scale)
-        Renderer.colorize(color[0], color[1], color[2], color[3])
-        Renderer.drawStringWithShadow(text, 0, 0)
-        Renderer.retainTransforms(false)
-        Renderer.finishDraw()
+        this.text = new UIText(this.defaultText, true)
+            .setX(new CenterConstraint())
+            .setY(new CenterConstraint())
+            .setWidth((Renderer.getStringWidth(this.defaultText) * this.data.scale * 0.95).pixels())
+            .setHeight((9 * this.data.scale * 0.9).pixels())
+            .setColor(ElementUtils.getJavaColor(this.Color))
+            .setChildOf(this.boundingBox)
+
+        this.addSubEvent("renderOverlay", () => this.isSettingEnabled && this.boundingBox.draw())
+        // this.boundingBox
+        //     .onMouseEnter(() => {
+        //         this.boundingBox
+        //             .setColor(new ConstantColorConstraint(ElementUtils.getJavaColor(255, 255, 255, 80)))
+        //             .enableEffect(new OutlineEffect(ElementUtils.getJavaColor(0, 0, 0, 160), 3))
+        //     })
+        //     .onMouseLeave(() => {
+        //         this.boundingBox
+        //             .setColor(new ConstantColorConstraint(ElementUtils.getJavaColor(0, 0, 0, 160)))
+        //             .enableEffect(new OutlineEffect(ElementUtils.getJavaColor(255, 255, 255, 80), 3))
+        //     })
+        //     .onMouseDrag((comp, x, y) => {
+        //         this.text
+        //             .setX(x)
+        //             .setY(y)
+        //     })
     }
 
     /** Automatically un(register) the render event when setting the text */
     setText(message) {
+        this.boundingBox.setWidth((Renderer.getStringWidth(message) * this.data.scale).pixels())
+        this.text.setText(message)
+        
         this.message = message
-
-        this.updateSubEvents()
     }
 }
 
@@ -133,8 +145,8 @@ class ButtonComponent {
 }
 
 addCommand("gui", "Opens the Editor Gui", () => {
-    guis.forEach((name, gui) => {
-        if (!buttons.has(name)) new ButtonComponent(name, gui)
+    GuiFeatures.forEach((gui) => {
+        if (!buttons.has(gui.setting)) new ButtonComponent(gui.setting, gui)
     })
 
     handler.ctGui.open()

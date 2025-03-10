@@ -26,17 +26,18 @@ export default class Feature {
      */
     constructor(obj = {}) {
         if (obj.constructor.name !== "Object") obj.setting = obj.constructor.name
-
+        
+        this.setting = obj.setting
         this.worlds = obj.worlds
         this.zones = obj.zones
 
         // Main setting enables/disables entire [Feature]
-        if (obj.setting in Settings) {
-            this.isSettingEnabled = Settings[obj.setting]
+        if (this.setting in Settings) {
+            this.isSettingEnabled = Settings[this.setting]
             // Waits for Features to actually define their listener functions
-            Client.scheduleTask(() => this.isSettingEnabled ? this.onEnabled() : this.onDisabled())
+            Client.scheduleTask(2, () => this.isSettingEnabled ? this.onEnabled() : this.onDisabled())
     
-            Settings.getConfig().registerListener(obj.setting, (_, val) => {
+            Settings.getConfig().registerListener(this.setting, (_, val) => {
                 this.isSettingEnabled = val
                 this.isSettingEnabled ? this.onEnabled(val) : this.onDisabled()
                 this._updateRegister()
@@ -47,7 +48,7 @@ export default class Feature {
         Location.onWorldChange(() => this._updateRegister())
         if (this.zones) Location.onZoneChange(() => this._updateRegister())
 
-        Client.scheduleTask(() => this._updateRegister())
+        Client.scheduleTask(2, () => this._updateRegister())
     }
 
     /**
@@ -62,6 +63,7 @@ export default class Feature {
         }
         this.events.push(new Event(triggerType, methodFn, args, false))
 
+        this._updateRegister()
         return this
     }
 
@@ -77,6 +79,7 @@ export default class Feature {
         }
         this.subEvents.push([new Event(triggerType, methodFn, args, false), condition])
 
+        this._updateRegister()
         return this
     }
 
