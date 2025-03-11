@@ -315,6 +315,7 @@ import TextUtil from "../core/static/TextUtil"
 const meinConf = new Settings("NwjnAddons", defCon1, "/data/Scheme.json", `${TextUtil.NWJNADDONS} by &6nwjn`)
     .setPos(15, 15)
     .setSize(70, 70)
+    .setClickSound(() => World.playSound("gui.button.press", 0.25, 1))
     .apply()
     
 export default meinConf.settings
