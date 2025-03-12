@@ -8,23 +8,22 @@
 import Feature from "./Feature";
 import { data } from "../../data/Data";
 import ElementUtils from "../../../DocGuiLib/core/Element"
-import HandleGui from "../../../DocGuiLib/core/Gui"
 import { CenterConstraint, CramSiblingConstraint, ScrollComponent, UIRoundedRectangle, UIText, OutlineEffect, Window, SubtractiveConstraint, ScaledTextConstraint, UIBlock, ConstantColorConstraint, AlphaAspectColorConstraint, MousePositionConstraint, AspectConstraint, TextAspectConstraint, ScaleConstraint, RelativeConstraint } from "../../../Elementa"
 import { addCommand } from "../../utils/Command"
 import Settings from "../../data/Settings"
 
 const GuiEditor = new Gui()
 const Windex = new Window()
-const Overlay = register("renderOverlay", () => Windex.draw())
+const Features = new Set()
+
+const Overlay = register("renderOverlay", () => Features.forEach(feat => feat.draw()))
 GuiEditor.registerOpened(() => Overlay.unregister())
 GuiEditor.registerClosed(() => Overlay.register())
 GuiEditor.registerClicked((x, y, b) => Windex.mouseClick(x, y, b))
 GuiEditor.registerMouseReleased(() => Windex.mouseRelease())
-GuiEditor.registerScrolled((x, y, d) => {
-    const comp = Windex.hitTest(x, y)?.parent
-    if (comp && comp !== Windex) comp.mouseScroll(d)
-})
-GuiEditor.registerDraw(() => Windex.draw())
+GuiEditor.registerMouseDragged((x, y) => Features.forEach(feat => feat.isEditing && feat.onMouseDrag(x, y)))
+GuiEditor.registerScrolled((x, y, d) => Windex.hitTest(x, y)?.mouseScroll(d))
+GuiEditor.registerDraw(() => Features.forEach(feat => feat.draw()))
 
 export default class GuiFeature extends Feature {
     /**
@@ -53,42 +52,66 @@ export default class GuiFeature extends Feature {
             Settings.getConfig().registerListener(color, (_, val) => this.Color = val)
         }
 
-        this.boundingBox = new UIRoundedRectangle(3)
+        this.component = new UIRoundedRectangle(3)
             .setX(this.data.x.pixels())
             .setY(this.data.y.pixels())
-            .setWidth((Renderer.getStringWidth(this.defaultText) * this.data.scale * 1.05).pixels())
-            .setHeight((10 * this.data.scale).pixels())
+            .enableEffect(new OutlineEffect(ElementUtils.getJavaColor([255, 255, 255, 80]), 1, true))
+
+            .onMouseClick(_ => this.isEditing = true)
+            .onMouseRelease(_ => this.isEditing = false)
+            .onMouseScroll((_, {delta}) => this.setScale(this.data.scale + delta * 0.05))
             .setColor(ElementUtils.getJavaColor([0, 0, 0, 160]))
-            .enableEffect(new OutlineEffect(ElementUtils.getJavaColor([255, 255, 255, 80]), 1))
             .setChildOf(Windex)
-
-        this.text = new UIText(this.defaultText, true)
-            .setX(new CenterConstraint())
-            .setY(new CenterConstraint())
-            .setTextScale(this.data.scale.pixels())
-            .setColor(ElementUtils.getJavaColor(this.Color))
-            .setChildOf(this.boundingBox)
-
-        this.boundingBox
-            .onMouseClick(_ => this.boundingBox.setX(new MousePositionConstraint()).setY(new MousePositionConstraint()))
-            .onMouseRelease(_ => this.boundingBox.setX((this.data.x = this.boundingBox.getLeft()).pixels()).setY((this.data.y = this.boundingBox.getTop()).pixels()))
-            .onMouseScroll((_, {delta}) => {
-                this.data.scale += (delta * 0.05)
-
-                this.boundingBox
-                    .setWidth((Renderer.getStringWidth(this.text.getText()) * this.data.scale * 1.05).pixels())
-                    .setHeight((10 * this.data.scale).pixels())
-
-                // todo: fix int scaling
-                this.text
-                    .setTextScale(this.data.scale.pixels())
-                    .setText(this.text.getText())
-            })
+            
+        this.setText(this.defaultText)
+        Features.add(this)
     }
 
-    setText(message) {
-        this.boundingBox.setWidth((Renderer.getStringWidth(message) * this.data.scale * 1.05).pixels())
-        this.text.setText(message)
+    onMouseDrag(x, y) {
+        this.setX(x)
+        this.setY(y)
+    }
+
+    setText(text) {
+        this.text = text
+        this.setWidth(Renderer.getStringWidth(this.text) * this.data.scale)
+        this.setHeight(10 * this.data.scale)
+    }
+
+    setScale(number) {
+        this.data.scale = number
+        this.setWidth(Renderer.getStringWidth(this.text) * this.data.scale)
+        this.setHeight(10 * this.data.scale)
+    }
+
+    setX(number) {
+        this.data.x = number
+        this.component.setX(number.pixels())
+    }
+
+    setY(number) {
+        this.data.y = number
+        this.component.setY(number.pixels())
+    }
+
+    setWidth(number) {
+        this.component.setWidth(number.pixels())
+    }
+
+    setHeight(number) {
+        this.component.setHeight(number.pixels())
+    }
+
+    draw() {
+        this.component.draw()
+        
+        Renderer.translate(
+            this.data.x, 
+            this.data.y + (this.component.getHeight() - 9) / 5
+        )
+        Renderer.scale(this.data.scale, this.data.scale)
+        if (this.Color) Renderer.colorize(...this.Color)
+        Renderer.drawStringWithShadow(this.text, 0, 0)
     }
 }
 
