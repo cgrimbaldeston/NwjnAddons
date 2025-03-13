@@ -166,6 +166,13 @@ const defCon1 = new DefaultConfig("NwjnAddons", "/data/.Config.json")
     description: "Displays the amount of arrows pulled on rend in chat",
     value: false
 })
+.addSwitch({
+    category: "Combat",
+    configName: "Poison",
+    title: "Poison Display",
+    description: "Displays amounts of arrows and poisons in inventory",
+    value: false
+})
 .addDropDown({
     category: "Combat",
     configName: "FatalTempo",

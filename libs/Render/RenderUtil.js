@@ -48,18 +48,18 @@ export default class RenderUtil {
         const {rx, ry, rz} = RenderHelper.getRenderPos()
         const [r, g, b, a] = color
 
-        GL11.glLineWidth(lineWidth)
         Tessellator
+            .pushMatrix()
             .disableTexture2D()
+            .enableBlend()
             .disableLighting()
             .disableAlpha()
-            .colorize(r / 255, g / 255, b / 255, a / 255)
-            .pushMatrix()
-            .translate(-rx, -ry, -rz)
-            .depthMask(false)
-            .enableBlend()
             .tryBlendFuncSeparate(770, 771, 1, 0)
-            if (esp) Tessellator.disableDepth()
+            .colorize(r / 255, g / 255, b / 255, a / 255)
+            .translate(-rx, -ry, -rz)
+        GL11.glLineWidth(lineWidth)
+        
+        if (esp) Tessellator.disableDepth()
 
         const [minX, minY, minZ, maxX, maxY, maxZ] = RenderHelper.getAxisCoords(aabb)
         WorldRenderer./* begin */func_181668_a(3, DefaultVertexFormats$POSITION)
@@ -87,15 +87,16 @@ export default class RenderUtil {
         WorldRenderer./* pos */func_181662_b(minX, maxY, maxZ)./* endVertex */func_181675_d()
         MCTessellator./* draw */func_78381_a()
 
+        if (esp) Tessellator.enableDepth()
+        
         Tessellator
-            .popMatrix()
-            .enableTexture2D()
-            .enableAlpha()
-            .depthMask(true)
+            .translate(rx, ry, rz)
             .disableBlend()
-            if (esp) Tessellator.enableDepth()
-
-        GL11.glLineWidth(1)
+            .enableAlpha()
+            .enableTexture2D()
+            .colorize(1, 1, 1, 1)
+            .enableLighting()
+            .popMatrix()
     }
 
     /**

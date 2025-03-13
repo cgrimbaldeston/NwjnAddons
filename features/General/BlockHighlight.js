@@ -11,17 +11,18 @@ new class BlockHighlight extends Feature {
                 cancel(event)
         
                 if (!this?.isTargetingBlock(target./* typeOfHit */field_72313_a)) return
+                const ZeWorld = World.getWorld()
         
                 const BlockPos = target./* getBlockPos */func_178782_a()
                 if (!BlockPos) return
 
-                const BlockState = this.World./* getBlockState */func_180495_p(BlockPos) 
+                const BlockState = ZeWorld./* getBlockState */func_180495_p(BlockPos) 
                 if (RenderHelper.isAir(BlockState)) return
         
                 // Accurately retrieve the Block's bounds
                 const Block = BlockState./* getBlock */func_177230_c()
-                Block./* setBlockBoundsBasedOnState */func_180654_a(this.World, BlockPos)
-                const BlockBounds = Block./* getSelectedBoundingBox */func_180646_a(this.World, BlockPos)
+                Block./* setBlockBoundsBasedOnState */func_180654_a(ZeWorld, BlockPos)
+                const BlockBounds = Block./* getSelectedBoundingBox */func_180646_a(ZeWorld, BlockPos)
         
                 RenderUtil.drawOutlinedAABB(BlockBounds, this.Color, false, 4, false)
             })
@@ -32,19 +33,11 @@ new class BlockHighlight extends Feature {
     onEnabled() {
         const MovingObjectType$BLOCK = net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK
         this.isTargetingBlock = (typeOfHit) => typeOfHit.equals(MovingObjectType$BLOCK)
+        this.Color = Settings.BlockHighlightColor
     }
 
     onDisabled() {
         delete this.isTargetingBlock
-    }
-
-    onRegister() {
-        this.World = World.getWorld()
-        this.Color = Settings.BlockHighlightColor
-    }
-
-    onUnregister() {
-        delete this.World
         delete this.Color
     }
 }

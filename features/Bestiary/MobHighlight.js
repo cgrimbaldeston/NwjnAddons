@@ -15,7 +15,6 @@ new class MobHighlight extends Feature {
                 if (!shouldRender) return
 
                 if (entity./* isInvisible */func_82150_aj()) return
-
                 RenderUtil.drawOutlinedAABB(entity./* getEntityBoundingBox */func_174813_aQ(), this.Color, false, 4, false)
             })
         
@@ -28,6 +27,13 @@ new class MobHighlight extends Feature {
         Settings.getConfig()
             .registerListener("MobHighlightColor", (_, val) => this.Color = val)
             .onCloseGui(() => this?.updateWhitelist(Settings.MobHighlight))
+
+        // Weird hardcoding update because it wasn't working normally
+        Client.scheduleTask(20, () => {
+            const val = this.isSettingEnabled
+            Settings.getConfig().setConfigValue("Bestiary", "MobHighlight", val + " ")
+            Settings.getConfig().setConfigValue("Bestiary", "MobHighlight", val)
+        })
     }
     
     onEnabled(newValue) {
@@ -35,7 +41,8 @@ new class MobHighlight extends Feature {
             
         const Whitelist = new HashMap()
         const StringToClassMap = new Map()
-        getField(net.minecraft.entity.EntityList, /* stringToClassMapping */"field_75625_b").get().forEach((k, v) => StringToClassMap.set(k.toLowerCase(), v))
+        const EntityList = net.minecraft.entity.EntityList
+        getField(EntityList, /* stringToClassMapping */"field_75625_b").get(EntityList).forEach((k, v) => StringToClassMap.set(k.toLowerCase(), v))
 
         this.RenderList = new java.util.WeakHashMap()
         this.Color = Settings.MobHighlightColor
@@ -46,14 +53,14 @@ new class MobHighlight extends Feature {
             
             const maxHP = EntityUtil.getMaxHP(entity)
             if (!maxHP) return
-
+            
             if (typeof(healthList) === "boolean" || healthList?.includes(maxHP)) this.RenderList.put(entity, true)
         }
 
         this.updateWhitelist = (newValue) => {
             Whitelist.clear(), this.RenderList.clear()
 
-            newValue.split(/,\s?/g).forEach((entry, index) => {
+            newValue?.split(/,\s?/g)?.forEach((entry, index) => {
                 const [name, hpParam] = entry.split("-")
 
                 if (!name) return
@@ -69,8 +76,6 @@ new class MobHighlight extends Feature {
                 )
             })
         }
-
-        this.updateWhitelist()
     }
 
     onDisabled() {
