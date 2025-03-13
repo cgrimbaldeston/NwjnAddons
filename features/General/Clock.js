@@ -5,7 +5,7 @@ new class Clock extends GuiFeature {
         super(this)
             .addEvent("interval", () => this?.setTime(), 1)
 
-        this.setText("00:00:00 AM")
+        this.defaultText = "00:00:00 AM"
     }
 
     onEnabled() {

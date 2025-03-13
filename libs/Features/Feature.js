@@ -30,12 +30,13 @@ export default class Feature {
         this.setting = obj.setting
         this.worlds = obj.worlds
         this.zones = obj.zones
+        this.isRegistered = false
 
         // Main setting enables/disables entire [Feature]
         if (this.setting in Settings) {
             this.isSettingEnabled = Settings[this.setting]
             // Waits for Features to actually define their listener functions
-            Client.scheduleTask(2, () => this.isSettingEnabled ? this.onEnabled() : this.onDisabled())
+            Client.scheduleTask(2, () => this.isSettingEnabled ? this.onEnabled(Settings[this.setting]) : this.onDisabled())
     
             Settings.getConfig().registerListener(this.setting, (_, val) => {
                 this.isSettingEnabled = val
@@ -97,6 +98,7 @@ export default class Feature {
     /** UnRegisters all strung [Events] including [SubEvents] */
     _unregister() {
         if (!this.isRegistered) return this.isRegistered = false
+        this.isRegistered = false
         
         this.unregisterEvents?.()
         this.unregisterSubEvents?.()
@@ -106,6 +108,7 @@ export default class Feature {
     /** Registers all strung [Events] and updates [SubEvents] */
     _register() {
         if (this.isRegistered) return this.isRegistered = true
+        this.isRegistered = true
         
         this.registerEvents?.()
         this.updateSubEvents?.()
