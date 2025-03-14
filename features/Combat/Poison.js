@@ -2,7 +2,13 @@ import GuiFeature from "../../libs/Features/GuiFeature"
 
 new class Poison extends GuiFeature {
     constructor() {
-        super(this)
+        const defaultText = [
+            "0&8x &5Twilight Arrow Poison",
+            "0&8x &rFlint Arrows",
+            "0&8x &aToxic Arrow Poison"
+        ]
+
+        super(this, defaultText)
             .addEvent("interval", () => {
                 if (!World.isLoaded()) return
 
@@ -24,17 +30,13 @@ new class Poison extends GuiFeature {
 
                 this.setStatistics(stats)
             }, 1)
-
-        this.defaultText = this.setStatistics([0, 0, 0])
     }
 
     setStatistics([twilight, arrows, toxic]) {
-        this.setText([
+        this.setLines([
             `${twilight}&8x &5Twilight Arrow Poison`,
             `${arrows}&8x &rFlint Arrows`,
             `${toxic}&8x &aToxic Arrow Poison`
-        ].join("\n"))
-
-        return this.text
+        ])
     }
 }

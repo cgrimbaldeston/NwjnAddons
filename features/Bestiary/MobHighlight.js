@@ -39,16 +39,16 @@ new class MobHighlight extends Feature {
     onEnabled(newValue) {
         if ("updateWhitelist" in this) return this.updateWhitelist(newValue)
             
-        const Whitelist = new HashMap()
-        const StringToClassMap = new Map()
+        this.Whitelist = new HashMap()
+        this.StringToClassMap = new Map()
         const EntityList = net.minecraft.entity.EntityList
-        getField(EntityList, /* stringToClassMapping */"field_75625_b").get(EntityList).forEach((k, v) => StringToClassMap.set(k.toLowerCase(), v))
+        getField(EntityList, /* stringToClassMapping */"field_75625_b").get(EntityList).forEach((k, v) => this.StringToClassMap.set(k.toLowerCase(), v))
 
         this.RenderList = new java.util.WeakHashMap()
         this.Color = Settings.MobHighlightColor
 
         this.validate = (entity) => {
-            const healthList = Whitelist.get(entity.class)
+            const healthList = this.Whitelist.get(entity.class)
             if (!healthList) return
             
             const maxHP = EntityUtil.getMaxHP(entity)
@@ -58,19 +58,20 @@ new class MobHighlight extends Feature {
         }
 
         this.updateWhitelist = (newValue) => {
-            Whitelist.clear(), this.RenderList.clear()
+            this.Whitelist.clear()
+            this.RenderList.clear()
 
-            newValue?.split(/,\s?/g)?.forEach((entry, index) => {
+            newValue.split(/,\s?/g).forEach((entry, index) => {
                 const [name, hpParam] = entry.split("-")
 
                 if (!name) return
-                const clazz = StringToClassMap.get(name.toLowerCase())
+                const clazz = this.StringToClassMap.get(name.toLowerCase())
                 if (!clazz) return new Message(`${TextUtil.NWJNADDONS} &cEntity class called &e'${name}'&r &cdoesn't exist. Make sure to use Mob Class Name not SkyBlock name. &3@see https://github.com/nwjn/NwjnAddons/wiki/Bestiary-Entries`).setChatLineId(28500 + index).chat()
                 ChatLib.deleteChat(28500 + index)
 
                 const hps = hpParam?.split("|")?.map(MathUtil.convertToNumber)
 
-                Whitelist.put(
+                this.Whitelist.put(
                     clazz,
                     hps ?? true
                 )
@@ -80,6 +81,7 @@ new class MobHighlight extends Feature {
 
     onDisabled() {
         delete this.Whitelist
+        delete this.StringToClassMap
         delete this.RenderList
         delete this.Color
 

@@ -367,4 +367,104 @@ export default class RenderUtil {
             .depthMask(true)
             if (depth) Tessellator.enableDepth()
     }
+
+    /**
+     * @param {Number} color long
+     * @param {Number} x center
+     * @param {Number} y center
+     * @param {Number} radius
+     * @param {Number} angleI initial radians
+     * @param {Number} angleF final radians
+     * @param {Number} segments roundness 
+     * @param {Number} lineWidth
+     */
+    static drawArc(color, x, y, radius, angleI, angleF, segments, lineWidth) {
+        if (angleF < angleI) return this.drawArc(color, x, y, radius, angleF, angleI, segments, lineWidth)
+
+        const dAngle = angleF - angleI
+        const rotations = dAngle / segments
+    
+        GL11.glLineWidth(lineWidth)
+        GL11.glEnable(2848)
+        GlStateManager./* enableBlend */func_179147_l()
+        GlStateManager./* disableTexture2D */func_179090_x()
+        GlStateManager./* tryBlendFuncSeparate */func_179120_a(770, 771, 1, 0)
+        GlStateManager./* disableDepth */func_179097_i()
+        GlStateManager./* disableCull */func_179129_p()
+        GlStateManager./* pushMatrix */func_179094_E()
+        GlStateManager./* color */func_179131_c(
+            ((color >> 24) & 0xFF) / 255,
+            ((color >> 16) & 0xFF) / 255,
+            ((color >> 8) & 0xFF) / 255,
+            ((color >> 0) & 0xFF) / 255
+        )
+
+        WorldRenderer./* begin */func_181668_a(3, DefaultVertexFormats$POSITION);
+        WorldRenderer./* pos */func_181662_b(x + Math.cos(angleI) * radius, y - Math.sin(angleI) * radius, 0)./* endVertex */func_181675_d()
+        for (let i = 1; i <= segments; i++) {
+            let segment = angleI + rotations * i
+            WorldRenderer./* pos */func_181662_b(x + Math.cos(segment) * radius, y - Math.sin(segment) * radius, 0)./* endVertex */func_181675_d()
+        }
+        MCTessellator./* draw */func_78381_a()
+
+        GlStateManager./* popMatrix */func_179121_F()
+        GlStateManager./* disableBlend */func_179084_k()
+        GlStateManager./* enableTexture2D */func_179098_w()
+        GlStateManager./* enableDepth */func_179126_j()
+        GlStateManager./* enableCull */func_179089_o()
+        GL11.glDisable(2848)
+        GL11.glLineWidth(3)
+    }
+    
+    /**
+     * @param {Number} color long
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Number} width
+     * @param {Number} height
+     * @param {Number} radius
+     * @param {Number} lineWidth
+     */
+    static drawRoundRectangle(color, x, y, width, height, radius, lineWidth) {
+        radius = Math.min(width / 2, height / 2, radius);
+    
+        GL11.glLineWidth(lineWidth)
+        GL11.glEnable(2848)
+        GlStateManager./* enableBlend */func_179147_l()
+        GlStateManager./* disableTexture2D */func_179090_x()
+        GlStateManager./* tryBlendFuncSeparate */func_179120_a(770, 771, 1, 0)
+        GlStateManager./* disableDepth */func_179097_i()
+        GlStateManager./* disableCull */func_179129_p()
+        GlStateManager./* pushMatrix */func_179094_E()
+        GlStateManager./* color */func_179131_c(
+            ((color >> 24) & 0xFF) / 255,
+            ((color >> 16) & 0xFF) / 255,
+            ((color >> 8) & 0xFF) / 255,
+            ((color >> 0) & 0xFF) / 255
+        )
+
+        WorldRenderer./* begin */func_181668_a(1, DefaultVertexFormats$POSITION)
+        WorldRenderer./* pos */func_181662_b(x + radius, y, 0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + width - radius, y, 0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x, y + radius, 0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x, y + height - radius, 0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + radius, y + height, 0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + width - radius, y + height, 0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + width, y + radius, 0)./* endVertex */func_181675_d()
+        WorldRenderer./* pos */func_181662_b(x + width, y + height - radius, 0)./* endVertex */func_181675_d()
+        MCTessellator./* draw */func_78381_a()
+        
+        GlStateManager./* popMatrix */func_179121_F()
+        GlStateManager./* disableBlend */func_179084_k()
+        GlStateManager./* enableTexture2D */func_179098_w()
+        GlStateManager./* enableDepth */func_179126_j()
+        GlStateManager./* enableCull */func_179089_o()
+        GL11.glDisable(2848)
+        GL11.glLineWidth(3)
+
+        this.drawArc(color, x + radius, y + radius, radius, Math.PI / 2, Math.PI, 10, lineWidth)
+        this.drawArc(color, x + width - radius, y + radius, radius, 0, Math.PI / 2, 10, lineWidth)
+        this.drawArc(color, x + radius, y + height - radius, radius, Math.PI, Math.PI * 3 / 2, 10, lineWidth)
+        this.drawArc(color, x + width - radius, y + height - radius, radius, Math.PI * 3 / 2, 2 * Math.PI, 10, lineWidth)
+    }
 }
