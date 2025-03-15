@@ -8,8 +8,7 @@
 import Feature from "./Feature"
 import { data } from "../../data/Data"
 import Settings from "../../data/Settings"
-import addFeature from "./GuiEditor"
-import RenderUtil from "../Render/RenderUtil"
+import { createOverlayFor } from "./GuiEditor"
 
 export default class GuiFeature extends Feature {
     /**
@@ -33,18 +32,20 @@ export default class GuiFeature extends Feature {
         }
 
         const color = `${this.setting}Color`
+        this.Color = Renderer.WHITE
         if (color in Settings) {
-            this.Color = Settings[color]
-            Settings.getConfig().registerListener(color, (_, val) => this.Color = val)
-        }
-        else this.Color = [255, 255, 255, 255]
+            const [r, g, b, a] = Settings[color]
+            this.Color = Renderer.color(r, g, b, a)
 
-        this.defaultText = defaultText
-        this.lines = []
+            Settings.getConfig().registerListener(color, (_, [r, g, b, a]) => this.Color = Renderer.color(r, g, b, a))
+        }
+
+        this.defaultText = defaultText.addColor()
+        this.lines = Array(0)
         this.maxWidth = 0
         this.totHeight = 0
 
-        addFeature(this)
+        createOverlayFor(this)
     }
 
     addLine(text) {
@@ -72,35 +73,7 @@ export default class GuiFeature extends Feature {
 
     removeText() {
         this.lines.length = 0
-    }
-
-    isInBounds(mX, mY) {
-        const { x, y, scale } = this.data
-
-        return mX >= x
-            && mX <= y
-            && mY >= x + this.maxWidth * scale
-            && mY <= y + this.totHeight * scale
-    }
-
-    draw(fontRenderer) {
-        if (!this.isEditing && !this.lines.length) return
-
-        const { x, y, scale } = this.data
-        
-        Renderer.retainTransforms(true)
-        Renderer.translate(x, y)
-        Renderer.scale(scale, scale)
-
-        RenderUtil.drawRoundRectangle(Renderer.WHITE, -1, -1, this.maxWidth + 2, this.totHeight + 2, 2, 2)
-
-        const textToUse = this.lines.length ? this.lines : this.defaultText
-        const color = Renderer.color(...this.Color)
-        
-        textToUse.forEach((line, i) => 
-            fontRenderer./* drawString */func_175065_a(line, -1, i * 9, color, true)
-        )
-        Renderer.retainTransforms(false)
-        Renderer.finishDraw()
+        this.maxWidth = 0
+        this.totHeight = 0
     }
 }
