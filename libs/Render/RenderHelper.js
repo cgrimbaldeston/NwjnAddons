@@ -18,15 +18,6 @@ export default class RenderHelper {
 
     static lerp = (last, curr, mult) => last + (curr - last) * mult
 
-    static toRGBA(long) {
-        return [
-            ((long >> 24) & 0xFF) / 255,
-            ((long >> 16) & 0xFF) / 255,
-            ((long >> 8) & 0xFF) / 255,
-            ((long >> 0) & 0xFF) / 255
-        ]
-    }
-
     static inFrustum = (aabb) => Frustum.isAABBInFrustum(aabb)
 
     static isBoundsInFrustum = (x, y, z, w, h) => Frustum.isBoxInFrustum.call(null, RenderHelper.createBounds(x, y, z, w, h))
@@ -80,20 +71,21 @@ export default class RenderHelper {
         return MCBlock./* getSelectedBoundingBox */func_180646_a(MCWorldClient, MCBlockPos)./* expand */func_72314_b(0.002, 0.002, 0.002)
     }
 
-    static coerceToRenderDist(x, y, z) {
+    static coerceToRenderDist(ix, iy, iz) {
         const renderDistBlocks = RenderHelper.getRenderDistanceBlocks()
         const {rx, ry, rz} = RenderHelper.getRenderPos()
-        const distTo = Math.hypot(rx - x, ry - y, rz - z)
+        const [x, y, z] = [ix - rx, iy - ry, iz - rz]
+        const distTo = Math.hypot(x, y, z)
 
-        if (distTo < renderDistBlocks) return [x, y, z]
+        if (distTo < renderDistBlocks) return {x, y, z, scale: 1}
 
-        const scale = renderDistBlocks / distTo
+        const scale = distTo / renderDistBlocks
 
         return {
-            x: RenderHelper.lerp(rx, x, scale),
-            y: RenderHelper.lerp(ry, y, scale),
-            z: RenderHelper.lerp(rz, z, scale),
-            s: scale
+            x: x / scale,
+            y: y / scale,
+            z: z / scale,
+            scale
         }
     }
 }

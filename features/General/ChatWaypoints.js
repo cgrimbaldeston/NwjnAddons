@@ -15,7 +15,7 @@ new class ChatWaypoints extends Feature {
                 const [mainText] = TextUtil.getMatches(/^(.+)§.:/, formatted)
                 if (!mainText) return
         
-                this.waypoints.set(ign, new Waypoint(mainText, text, x, y, z, null, Settings.ChatWaypointsTime))
+                this.waypoints.set(ign, new Waypoint(mainText, text, x, y, z, null, null))
                 this.updateSubEvents()
             }, /^(?:[\w\-]{5} > )?(?:\[\d{1,3}\] .? ?)?(?:\[\w+\+*\] )?(\w{1,16})(?: .? ?)?: x: (-?[\d\.]+), y: (-?[\d\.]+), z: (-?[\d\.]+) ?(.+)?$/)
         
