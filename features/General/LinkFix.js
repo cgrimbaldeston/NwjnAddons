@@ -75,6 +75,7 @@ new class LinkFix extends Feature {
                     return true
                 })
             }, / (l\$(?:h|H)?\d+\|\S+)/)
+        this.init()
     }
 
     onEnabled() {

@@ -6,6 +6,8 @@ new class Clock extends GuiFeature {
 
         super(this, defaultText)
             .addEvent("interval", () => this?.setTime(), 1)
+
+        this.init()
     }
 
     onEnabled() {

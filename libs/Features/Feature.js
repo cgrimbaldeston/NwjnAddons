@@ -35,8 +35,6 @@ export default class Feature {
         // Main setting enables/disables entire [Feature]
         if (this.setting in Settings) {
             this.isSettingEnabled = Settings[this.setting]
-            // Waits for Features to actually define their listener functions
-            Client.scheduleTask(2, () => this.isSettingEnabled ? this.onEnabled(Settings[this.setting]) : this.onDisabled())
     
             Settings.getConfig().registerListener(this.setting, (_, val) => {
                 this.isSettingEnabled = val
@@ -48,8 +46,12 @@ export default class Feature {
         // Will always update on world changes
         Location.onWorldChange(() => this._updateRegister())
         if (this.zones) Location.onZoneChange(() => this._updateRegister())
+    }
 
-        Client.scheduleTask(2, () => this._updateRegister())
+    /* Became a function because I could not find a way to make it consistently call these listeners correctly */
+    init() {
+        this.isSettingEnabled ? this.onEnabled(this.isSettingEnabled) : this.onDisabled()
+        this._updateRegister()
     }
 
     /**
@@ -64,7 +66,6 @@ export default class Feature {
         }
         this.events.push(new Event(triggerType, methodFn, args, false))
 
-        this._updateRegister()
         return this
     }
 
@@ -80,7 +81,6 @@ export default class Feature {
         }
         this.subEvents.push([new Event(triggerType, methodFn, args, false), condition])
 
-        this._updateRegister()
         return this
     }
 

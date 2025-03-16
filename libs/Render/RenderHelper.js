@@ -63,7 +63,10 @@ export default class RenderHelper {
 
     static isAir = (mcBlockState) => mcBlockState == IBlockStateAir
 
-    static toAABB = (x, y, z, w, h) => new AxisAlignedBB.call(null, RenderHelper.createBounds(x, y, z, w, h))
+    static toAABB(x, y, z, w, h) {
+        const [minX, minY, minZ, maxX, maxY, maxZ] = RenderHelper.createBounds(x, y, z, w, h)
+        return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ)
+    }
 
     /** @param {Block} ctBlock*/
     static getCTBlockAABB(ctBlock) {
@@ -78,8 +81,8 @@ export default class RenderHelper {
     }
 
     static coerceToRenderDist(x, y, z) {
-        const renderDistBlocks = this.getRenderDistanceBlocks()
-        const {rx, ry, rz} = this.getRenderPos()
+        const renderDistBlocks = RenderHelper.getRenderDistanceBlocks()
+        const {rx, ry, rz} = RenderHelper.getRenderPos()
         const distTo = Math.hypot(rx - x, ry - y, rz - z)
 
         if (distTo < renderDistBlocks) return [x, y, z]
@@ -87,9 +90,9 @@ export default class RenderHelper {
         const scale = renderDistBlocks / distTo
 
         return {
-            x: this.lerp(rx, x, scale),
-            y: this.lerp(ry, y, scale),
-            z: this.lerp(rz, z, scale),
+            x: RenderHelper.lerp(rx, x, scale),
+            y: RenderHelper.lerp(ry, y, scale),
+            z: RenderHelper.lerp(rz, z, scale),
             s: scale
         }
     }

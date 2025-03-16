@@ -11,6 +11,8 @@ new class SpawnClutter extends Feature {
         Settings.getConfig()
             .registerListener("SpawnClutterArrows", (_, val) => this?.updateOptionals(val, 60))
             .registerListener("SpawnClutterFallingBlocks", (_, val) => this?.updateOptionals(val, 70))
+
+        this.init()
     }
 
     onEnabled() {

@@ -15,7 +15,7 @@ new class ChatWaypoints extends Feature {
                 const [mainText] = TextUtil.getMatches(/^(.+)§.:/, formatted)
                 if (!mainText) return
         
-                this.waypoints.set(ign, new Waypoint(mainText, text, x, y, z, 5, Settings.ChatWaypointsTime))
+                this.waypoints.set(ign, new Waypoint(mainText, text, x, y, z, null, Settings.ChatWaypointsTime))
                 this.updateSubEvents()
             }, /^(?:[\w\-]{5} > )?(?:\[\d{1,3}\] .? ?)?(?:\[\w+\+*\] )?(\w{1,16})(?: .? ?)?: x: (-?[\d\.]+), y: (-?[\d\.]+), z: (-?[\d\.]+) ?(.+)?$/)
         
@@ -23,15 +23,16 @@ new class ChatWaypoints extends Feature {
                 this.waypoints.forEach((v, k) => 
                     v.dirty ? this.waypoints.delete(k) && this.updateSubEvents() : v.update()
                 ), 
-            1 / 5, () => this.waypoints?.size)
+            1 / 5, () => this.waypoints.size)
         
             .addSubEvent("renderWorld", () => {
-                this.waypoints.forEach(it => 
+                this.waypoints.forEach(it => {
                     !it.dirty && it.render(this.Color)
-                )
-            }, null, () => this.waypoints?.size)
+            })
+            }, null, () => this.waypoints.size)
 
         Settings.getConfig().registerListener("ChatWaypointsColor", (_, val) => this.Color = val)
+        this.init()
     }
 
     onEnabled() {

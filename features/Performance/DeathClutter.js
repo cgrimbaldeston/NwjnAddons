@@ -19,6 +19,8 @@ new class DeathClutter extends Feature {
                 const object = WatchList[0]./* getObject */func_75669_b()
                 if (this?.isNametag(object)) EntityUtil.removeEntityByID(packet./* getEntityId */func_149375_d())
             }, net.minecraft.network.play.server.S1CPacketEntityMetadata)
+
+        this.init()
     }
 
     onEnabled() {

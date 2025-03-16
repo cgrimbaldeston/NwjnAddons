@@ -40,7 +40,7 @@ export default class GuiFeature extends Feature {
             Settings.getConfig().registerListener(color, (_, [r, g, b, a]) => this.Color = Renderer.color(r, g, b, a))
         }
 
-        this.defaultText = defaultText.addColor()
+        this.defaultText = defaultText
         this.lines = Array(0)
         this.maxWidth = 0
         this.totHeight = 0

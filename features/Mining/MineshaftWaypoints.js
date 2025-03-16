@@ -44,6 +44,8 @@ new class MineshaftWaypoints extends Feature {
                     !it.dirty && it.render([255, 0, 0, 255])
                 )
             )
+        
+            this.init()
     }
 
     onEnabled() {

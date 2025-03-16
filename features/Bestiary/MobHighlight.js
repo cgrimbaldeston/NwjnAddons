@@ -29,11 +29,12 @@ new class MobHighlight extends Feature {
             .onCloseGui(() => this?.updateWhitelist(Settings.MobHighlight))
 
         // Weird hardcoding update because it wasn't working normally
-        Client.scheduleTask(20, () => {
-            const val = this.isSettingEnabled
-            Settings.getConfig().setConfigValue("Bestiary", "MobHighlight", val + " ")
-            Settings.getConfig().setConfigValue("Bestiary", "MobHighlight", val)
-        })
+        // Client.scheduleTask(20, () => {
+        //     const val = this.isSettingEnabled
+        //     Settings.getConfig().setConfigValue("Bestiary", "MobHighlight", val + " ")
+        //     Settings.getConfig().setConfigValue("Bestiary", "MobHighlight", val)
+        // })
+        this.init()
     }
     
     onEnabled(newValue) {

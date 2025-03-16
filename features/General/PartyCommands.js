@@ -117,5 +117,7 @@ new class PartyCommands extends Feature {
                 const response = Object.values(commands).find(obj => obj.matches.test(cmd) && obj.access())
                 if (response) scheduleTask(() => ChatLib.command(response.fn(ign, cmd)))
             }, /^Party > (.+): [,.?!](.+)$/)
+
+        this.init()
     }
 }

@@ -24,10 +24,11 @@ new class BlockHighlight extends Feature {
                 Block./* setBlockBoundsBasedOnState */func_180654_a(ZeWorld, BlockPos)
                 const BlockBounds = Block./* getSelectedBoundingBox */func_180646_a(ZeWorld, BlockPos)
         
-                RenderUtil.drawOutlinedAABB(BlockBounds, this.Color, false, 4, false)
+                RenderUtil.drawOutlinedAABB(BlockBounds, this.Color, true, 4, false)
             })
 
         Settings.getConfig().registerListener("BlockHighlightColor", (_, val) => this.Color = val)
+        this.init()
     }
 
     onEnabled() {

@@ -1,6 +1,6 @@
 import Feature from "../../libs/Features/Feature"
 
-new Feature({setting: "DamageTracker"})
+const DamageTracker = new Feature({setting: "DamageTracker"})
     .addEvent("packetReceived", (packet) => {
         if (packet./* getEntityType */func_149025_e() !== 30) return
 
@@ -9,3 +9,5 @@ new Feature({setting: "DamageTracker"})
 
         if (Nametag && !Nametag.includes(" ")) ChatLib.chat(Nametag)
     }, net.minecraft.network.play.server.S0FPacketSpawnMob)
+
+DamageTracker.init()

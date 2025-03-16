@@ -3,9 +3,9 @@ import GuiFeature from "../../libs/Features/GuiFeature"
 new class Poison extends GuiFeature {
     constructor() {
         const defaultText = [
-            "0&8x &5Twilight Arrow Poison",
-            "0&8x &rFlint Arrows",
-            "0&8x &aToxic Arrow Poison"
+            "0§8x §5Twilight Arrow Poison",
+            "0§8x §rFlint Arrows",
+            "0§8x §aToxic Arrow Poison"
         ]
 
         super(this, defaultText)
@@ -30,13 +30,14 @@ new class Poison extends GuiFeature {
 
                 this.setStatistics(stats)
             }, 1)
+        this.init()
     }
 
     setStatistics([twilight, arrows, toxic]) {
         this.setLines([
-            `${twilight}&8x &5Twilight Arrow Poison`,
-            `${arrows}&8x &rFlint Arrows`,
-            `${toxic}&8x &aToxic Arrow Poison`
+            `${twilight}§8x §5Twilight Arrow Poison`,
+            `${arrows}§8x §rFlint Arrows`,
+            `${toxic}§8x §aToxic Arrow Poison`
         ])
     }
 }
