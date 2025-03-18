@@ -8,6 +8,7 @@
 import Settings from "../../data/Settings";
 import Location from "../../utils/Location"
 import Event from "../Events/Event";
+import RenderHelper from "../Render/RenderHelper";
 
 export default class Feature {
     /** @override Function called when this is registered */ onRegister() {}
@@ -19,14 +20,12 @@ export default class Feature {
      * - Utility that handles registering various events and listeners to make complex, functional, and performative features
      * - Class can be used with or without requiring the settings, worlds, or zones fields depending on the intended functionality
      * 
-     * @param {Object|Feature} obj If passed in as a child of this, uses the name of this child and return it
+     * @param {Object} obj If passed in as a child of this, uses the name of this child and return it
      * @param {String|null} obj.setting The main config name: If null -> Feature is always active, If setting returns false -> all events of this feature will be unregistered
      * @param {String[]|String|null} obj.worlds The world(s) where this feature should activate: If null -> Feature is not world dependent
      * @param {String[]|String|null} obj.zones The zones(s) where this feature should activate: If null -> Feature is not zone dependent
      */
     constructor(obj = {}) {
-        if (obj.constructor.name !== "Object") obj.setting = obj.constructor.name
-        
         this.setting = obj.setting
         this.worlds = obj.worlds
         this.zones = obj.zones
@@ -52,6 +51,20 @@ export default class Feature {
     init() {
         this.isSettingEnabled ? this.onEnabled(this.isSettingEnabled) : this.onDisabled()
         this._updateRegister()
+    }
+
+    /**
+     * - Attaches a listener that tracks this feature's color setting
+     * - The value can be accessed with [this.Color] and is packaged as a [long]
+     */
+    addColorListener() {
+        const ColorSetting = this.setting + "Color"
+
+        this.Color = RenderHelper.RGBAtoLong(Settings[ColorSetting])
+
+        Settings.getConfig().registerListener(ColorSetting, (_, val) => this.Color = RenderHelper.RGBAtoLong(val))
+
+        return this
     }
 
     /**

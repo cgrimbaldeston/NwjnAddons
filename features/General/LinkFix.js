@@ -43,7 +43,7 @@ new class LinkFix extends Feature {
     wrapIndex(index, min, max) {}
 
     constructor() {
-        super(this)
+        super({setting: this.constructor.name})
             .addEvent("messageSent", (msg, event) => {
                 const [link] = TextUtil.getMatches(/([a-z\d]{2,}:\/\/[-\w.]+\.[a-z]{2,}\/(?:$|\S+\.\w+|\S+))/, msg)
                 if (!link) return

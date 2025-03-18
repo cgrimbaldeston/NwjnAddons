@@ -16,15 +16,20 @@ const DefaultVertexFormats$POSITION = DefaultVertexFormats./* POSITION */field_1
 const WorldRenderer = MCTessellator./* getWorldRenderer */func_178180_c()
 
 // From BeaconBeam module
-const MathHelper = net.minecraft.util.MathHelper
 const beaconBeam = new net.minecraft.util.ResourceLocation("textures/entity/beacon_beam.png")
 
 export default class RenderUtil {
-    static drawFilledOutline(aabb, /** @type {Number[]} */color, esp, lineWidth, checkFrustum) {
+    /**
+     * @param {AxisAlignedBB} aabb
+     * @param {Number} color
+     * @param {Boolean} esp 
+     * @param {Number} lineWidth 
+     * @param {Boolean} checkFrustum
+     */
+    static drawFilledOutline(aabb, color, esp, lineWidth, checkFrustum) {
         if (checkFrustum && !RenderHelper.inFrustum(aabb)) return
         
         const {rx, ry, rz} = RenderHelper.getRenderPos()
-        const [r, g, b, a] = [color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255]
 
         GL11.glLineWidth(lineWidth)
         GL11.glEnable(2848)
@@ -33,7 +38,7 @@ export default class RenderUtil {
         GlStateManager./* tryBlendFuncSeparate */func_179120_a(770, 771, 1, 0)
         if (esp) GlStateManager./* disableDepth */func_179097_i()
         GlStateManager./* pushMatrix */func_179094_E()
-        GlStateManager./* color */func_179131_c(r, g, b, 0.2)
+        RenderHelper.color(RenderHelper.adjustLumin(color, 50))
         GlStateManager./* translate */func_179109_b(-rx, -ry, -rz)
                 
         const [minX, minY, minZ, maxX, maxY, maxZ] = RenderHelper.getAxisCoords(aabb)
@@ -62,7 +67,7 @@ export default class RenderUtil {
         MCTessellator./* draw */func_78381_a()
 
         // Outline
-        GlStateManager./* color */func_179131_c(r, g, b, a)
+        RenderHelper.color(color)
         WorldRenderer./* begin */func_181668_a(3, DefaultVertexFormats$POSITION)
         WorldRenderer./* pos */func_181662_b(minX, minY, minZ)./* endVertex */func_181675_d()
         WorldRenderer./* pos */func_181662_b(maxX, minY, minZ)./* endVertex */func_181675_d()
@@ -102,18 +107,18 @@ export default class RenderUtil {
      * @param {Number} z
      * @param {Number} w
      * @param {Number} h
-     * @param {Number[]} color r, g, b, a
+     * @param {Number} color
      * @param {Boolean} esp 
      * @param {Number} lineWidth 
      * @param {Boolean} checkFrustum
      */
     static drawOutlinedBox(x, y, z, w, h, color, esp, lineWidth, checkFrustum) {
-        this.drawOutlinedAABB(RenderHelper.toAABB(x, y, z, w, h), color, esp, lineWidth, checkFrustum)
+        RenderHelper.drawOutlinedAABB(RenderHelper.toAABB(x, y, z, w, h), color, esp, lineWidth, checkFrustum)
     }
 
     /**
      * @param {net.minecraft.util.AxisAlignedBB} aabb 
-     * @param {Number[]} color r, g, b, a
+     * @param {Number} color
      * @param {Boolean} esp 
      * @param {Number} lineWidth 
      * @param {Boolean} checkFrustum
@@ -128,7 +133,7 @@ export default class RenderUtil {
         GlStateManager./* disableAlpha */func_179118_c()
         GL11.glLineWidth(lineWidth)
         GL11.glEnable(2848)
-        GlStateManager./* color */func_179131_c(color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255)
+        RenderHelper.color(color)
         GlStateManager./* pushMatrix */func_179094_E()
         GlStateManager./* translate */func_179109_b(-rx, -ry, -rz)
         GlStateManager./* depthMask */func_179132_a(false)
@@ -178,17 +183,17 @@ export default class RenderUtil {
      * @param {Number} z
      * @param {Number} w
      * @param {Number} h
-     * @param {Number[]} color r, g, b, a
+     * @param {Number} color
      * @param {Boolean} esp 
      * @param {Boolean} checkFrustum
      */
     static drawFilledBox(x, y, z, w, h, color, esp, checkFrustum) {
-        this.drawFilledBox(RenderHelper.toAABB(x, y, z, w, h), color, esp, checkFrustum)
+        RenderUtil.drawFilledBox(RenderHelper.toAABB(x, y, z, w, h), color, esp, checkFrustum)
     }
 
     /**
      * @param {net.minecraft.util.AxisAlignedBB} aabb 
-     * @param {Number[]} color r, g, b, a
+     * @param {Number} color
      * @param {Boolean} esp 
      * @param {Boolean} checkFrustum
      */
@@ -200,7 +205,7 @@ export default class RenderUtil {
         GlStateManager./* disableTexture2D */func_179090_x()
         GlStateManager./* disableLighting */func_179140_f()
         GlStateManager./* disableAlpha */func_179118_c()
-        GlStateManager./* color */func_179131_c(color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255)
+        RenderHelper.color(color)
         GlStateManager./* pushMatrix */func_179094_E()
         GlStateManager./* translate */func_179109_b(-rx, -ry, -rz)
         GlStateManager./* depthMask */func_179132_a(false)
@@ -247,7 +252,7 @@ export default class RenderUtil {
      * @param {Number} ix
      * @param {Number} iy
      * @param {Number} iz
-     * @param {Number[]} color r, g, b, a
+     * @param {Number} color
      * @param {Boolean} esp
      * @param {Number} height 
      * @param {Boolean} checkFrustum
@@ -258,7 +263,7 @@ export default class RenderUtil {
 
         const {rx, ry, rz} = RenderHelper.getRenderPos()
 
-        const [r, g, b, a] = [color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255]
+        const [r, g, b, a] = RenderHelper.toRGBA(color)
 
         GlStateManager./* pushMatrix */func_179094_E()
         GlStateManager./* translate */func_179109_b(-rx, -ry, -rz)
@@ -291,22 +296,22 @@ export default class RenderUtil {
         const d15 = height * 2.5 + d14
 
         WorldRenderer.func_181668_a(7, DefaultVertexFormats.field_181709_i);
-        WorldRenderer.func_181662_b(x + d4, y + topOffset, z + d5).func_181673_a(1, d15).func_181666_a(r, g, b, 1 * a).func_181675_d()
+        WorldRenderer.func_181662_b(x + d4, y + topOffset, z + d5).func_181673_a(1, d15).func_181666_a(r, g, b, a).func_181675_d()
         WorldRenderer.func_181662_b(x + d4, y + bottomOffset, z + d5).func_181673_a(1, d14).func_181666_a(r, g, b, 1).func_181675_d()
         WorldRenderer.func_181662_b(x + d6, y + bottomOffset, z + d7).func_181673_a(0, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d6, y + topOffset, z + d7).func_181673_a(0, d15).func_181666_a(r, g, b, 1 * a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d10, y + topOffset, z + d11).func_181673_a(1, d15).func_181666_a(r, g, b, 1 * a).func_181675_d()
+        WorldRenderer.func_181662_b(x + d6, y + topOffset, z + d7).func_181673_a(0, d15).func_181666_a(r, g, b, a).func_181675_d()
+        WorldRenderer.func_181662_b(x + d10, y + topOffset, z + d11).func_181673_a(1, d15).func_181666_a(r, g, b, a).func_181675_d()
         WorldRenderer.func_181662_b(x + d10, y + bottomOffset, z + d11).func_181673_a(1, d14).func_181666_a(r, g, b, 1).func_181675_d()
         WorldRenderer.func_181662_b(x + d8, y + bottomOffset, z + d9).func_181673_a(0, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d8, y + topOffset, z + d9).func_181673_a(0, d15).func_181666_a(r, g, b, 1 * a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d6, y + topOffset, z + d7).func_181673_a(1, d15).func_181666_a(r, g, b, 1 * a).func_181675_d()
+        WorldRenderer.func_181662_b(x + d8, y + topOffset, z + d9).func_181673_a(0, d15).func_181666_a(r, g, b, a).func_181675_d()
+        WorldRenderer.func_181662_b(x + d6, y + topOffset, z + d7).func_181673_a(1, d15).func_181666_a(r, g, b, a).func_181675_d()
         WorldRenderer.func_181662_b(x + d6, y + bottomOffset, z + d7).func_181673_a(1, d14).func_181666_a(r, g, b, 1).func_181675_d()
         WorldRenderer.func_181662_b(x + d10, y + bottomOffset, z + d11).func_181673_a(0, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d10, y + topOffset, z + d11).func_181673_a(0, d15).func_181666_a(r, g, b, 1 * a).func_181675_d()
-        WorldRenderer.func_181662_b(x + d8, y + topOffset, z + d9).func_181673_a(1, d15).func_181666_a(r, g, b, 1 * a).func_181675_d()
+        WorldRenderer.func_181662_b(x + d10, y + topOffset, z + d11).func_181673_a(0, d15).func_181666_a(r, g, b, a).func_181675_d()
+        WorldRenderer.func_181662_b(x + d8, y + topOffset, z + d9).func_181673_a(1, d15).func_181666_a(r, g, b, a).func_181675_d()
         WorldRenderer.func_181662_b(x + d8, y + bottomOffset, z + d9).func_181673_a(1, d14).func_181666_a(r, g, b, 1).func_181675_d()
         WorldRenderer.func_181662_b(x + d4, y + bottomOffset, z + d5).func_181673_a(0, d14).func_181666_a(r, g, b, 1).func_181675_d()
-        WorldRenderer.func_181662_b(x + d4, y + topOffset, z + d5).func_181673_a(0, d15).func_181666_a(r, g, b, 1 * a).func_181675_d()
+        WorldRenderer.func_181662_b(x + d4, y + topOffset, z + d5).func_181673_a(0, d15).func_181666_a(r, g, b, a).func_181675_d()
         MCTessellator./* draw */func_78381_a()
         GlStateManager./* disableCull */func_179129_p()
 
@@ -339,17 +344,15 @@ export default class RenderUtil {
     }
     
     static renderWaypoint(text, x, y, z, color, phase, checkFrustum) {
-        const [r, g, b, a] = color
-
         const BeaconBB = RenderHelper.toAABB(x, y, z, 1, 100)
         if (checkFrustum && !RenderHelper.inFrustum(BeaconBB)) return
-        RenderUtil.renderBeaconBeam(x, y, z, [r, g, b, 165], phase, 100, false)
+        RenderUtil.renderBeaconBeam(x, y, z, RenderHelper.adjustLumin(color, 165), phase, 100, false)
 
         const BlockBB = RenderHelper.toAABB(x, y, z, 1, 1)
         if (checkFrustum && !RenderHelper.inFrustum(BlockBB)) return
 
         RenderUtil.drawFilledOutline(BlockBB, color, phase, 4, false)
-        RenderUtil.drawString(text, x, y + 3, z, [255, 255, 255, 255], true, 1, true, true, phase, false)
+        RenderUtil.drawString(text, x, y + 3, z, Renderer.WHITE, true, 1, true, true, phase, false)
     }
     
     /**
@@ -360,7 +363,7 @@ export default class RenderUtil {
      * @param {Number} x X coordinate in the game world
      * @param {Number} y Y coordinate in the game world
      * @param {Number} z Z coordinate in the game world
-     * @param {Number[]} color the color of the text
+     * @param {Number} color the color of the text
      * @param {Boolean} renderBlackBox
      * @param {Number} scale the scale of the text
      * @param {Boolean} increase whether to scale the text up as the player moves away
@@ -415,7 +418,7 @@ export default class RenderUtil {
         
         Tessellator
             .enableTexture2D()
-        GlStateManager./* color */func_179131_c(color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255)
+        RenderHelper.color(color)
 
         const FontRenderer = Renderer.getFontRenderer()
         lines.forEach((line, index) => 
@@ -427,105 +430,5 @@ export default class RenderUtil {
             .disableBlend()
             .depthMask(true)
             if (esp) Tessellator.enableDepth()
-    }
-
-    /**
-     * @param {Number} color long
-     * @param {Number} x center
-     * @param {Number} y center
-     * @param {Number} radius
-     * @param {Number} angleI initial radians
-     * @param {Number} angleF final radians
-     * @param {Number} segments roundness 
-     * @param {Number} lineWidth
-     */
-    static drawArc(color, x, y, radius, angleI, angleF, segments, lineWidth) {
-        if (angleF < angleI) return this.drawArc(color, x, y, radius, angleF, angleI, segments, lineWidth)
-
-        const dAngle = angleF - angleI
-        const rotations = dAngle / segments
-    
-        GL11.glLineWidth(lineWidth)
-        GL11.glEnable(2848) // GL_LINE_SMOOTH
-        GlStateManager./* enableBlend */func_179147_l()
-        GlStateManager./* disableTexture2D */func_179090_x()
-        GlStateManager./* tryBlendFuncSeparate */func_179120_a(770, 771, 1, 0)
-        GlStateManager./* disableDepth */func_179097_i()
-        GlStateManager./* disableCull */func_179129_p()
-        GlStateManager./* pushMatrix */func_179094_E()
-        GlStateManager./* color */func_179131_c(
-            ((color >> 24) & 0xFF) / 255,
-            ((color >> 16) & 0xFF) / 255,
-            ((color >> 8) & 0xFF) / 255,
-            ((color >> 0) & 0xFF) / 255
-        )
-
-        WorldRenderer./* begin */func_181668_a(3, DefaultVertexFormats$POSITION);
-        WorldRenderer./* pos */func_181662_b(x + Math.cos(angleI) * radius, y - Math.sin(angleI) * radius, 0)./* endVertex */func_181675_d()
-        for (let i = 1; i <= segments; i++) {
-            let segment = angleI + rotations * i
-            WorldRenderer./* pos */func_181662_b(x + Math.cos(segment) * radius, y - Math.sin(segment) * radius, 0)./* endVertex */func_181675_d()
-        }
-        MCTessellator./* draw */func_78381_a()
-
-        GlStateManager./* popMatrix */func_179121_F()
-        GlStateManager./* disableBlend */func_179084_k()
-        GlStateManager./* enableTexture2D */func_179098_w()
-        GlStateManager./* enableDepth */func_179126_j()
-        GlStateManager./* enableCull */func_179089_o()
-        GL11.glDisable(2848) // GL_LINE_SMOOTH
-        GL11.glLineWidth(3)
-    }
-    
-    /**
-     * @param {Number} color long
-     * @param {Number} x
-     * @param {Number} y
-     * @param {Number} width
-     * @param {Number} height
-     * @param {Number} radius
-     * @param {Number} lineWidth
-     */
-    static drawRoundRectangle(color, x, y, width, height, radius, lineWidth) {
-        radius = Math.min(width / 2, height / 2, radius);
-    
-        GL11.glLineWidth(lineWidth)
-        GL11.glEnable(2848)
-        GlStateManager./* enableBlend */func_179147_l()
-        GlStateManager./* disableTexture2D */func_179090_x()
-        GlStateManager./* tryBlendFuncSeparate */func_179120_a(770, 771, 1, 0)
-        GlStateManager./* disableDepth */func_179097_i()
-        GlStateManager./* disableCull */func_179129_p()
-        GlStateManager./* pushMatrix */func_179094_E()
-        GlStateManager./* color */func_179131_c(
-            ((color >> 24) & 0xFF) / 255,
-            ((color >> 16) & 0xFF) / 255,
-            ((color >> 8) & 0xFF) / 255,
-            ((color >> 0) & 0xFF) / 255
-        )
-
-        WorldRenderer./* begin */func_181668_a(1, DefaultVertexFormats$POSITION)
-        WorldRenderer./* pos */func_181662_b(x + radius, y, 0)./* endVertex */func_181675_d()
-        WorldRenderer./* pos */func_181662_b(x + width - radius, y, 0)./* endVertex */func_181675_d()
-        WorldRenderer./* pos */func_181662_b(x, y + radius, 0)./* endVertex */func_181675_d()
-        WorldRenderer./* pos */func_181662_b(x, y + height - radius, 0)./* endVertex */func_181675_d()
-        WorldRenderer./* pos */func_181662_b(x + radius, y + height, 0)./* endVertex */func_181675_d()
-        WorldRenderer./* pos */func_181662_b(x + width - radius, y + height, 0)./* endVertex */func_181675_d()
-        WorldRenderer./* pos */func_181662_b(x + width, y + radius, 0)./* endVertex */func_181675_d()
-        WorldRenderer./* pos */func_181662_b(x + width, y + height - radius, 0)./* endVertex */func_181675_d()
-        MCTessellator./* draw */func_78381_a()
-        
-        GlStateManager./* popMatrix */func_179121_F()
-        GlStateManager./* disableBlend */func_179084_k()
-        GlStateManager./* enableTexture2D */func_179098_w()
-        GlStateManager./* enableDepth */func_179126_j()
-        GlStateManager./* enableCull */func_179089_o()
-        GL11.glDisable(2848)
-        GL11.glLineWidth(3)
-
-        this.drawArc(color, x + radius, y + radius, radius, Math.PI / 2, Math.PI, 10, lineWidth)
-        this.drawArc(color, x + width - radius, y + radius, radius, 0, Math.PI / 2, 10, lineWidth)
-        this.drawArc(color, x + radius, y + height - radius, radius, Math.PI, Math.PI * 3 / 2, 10, lineWidth)
-        this.drawArc(color, x + width - radius, y + height - radius, radius, Math.PI * 3 / 2, 2 * Math.PI, 10, lineWidth)
     }
 }

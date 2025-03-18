@@ -7,7 +7,6 @@
 
 import Feature from "./Feature"
 import { data } from "../../data/Data"
-import Settings from "../../data/Settings"
 import { createOverlayFor } from "./GuiEditor"
 
 export default class GuiFeature extends Feature {
@@ -30,16 +29,8 @@ export default class GuiFeature extends Feature {
             y: ~~(Renderer.screen.getHeight() * Math.random() * 0.5), 
             scale: 1.5
         }
-
-        const color = `${this.setting}Color`
+        
         this.Color = Renderer.WHITE
-        if (color in Settings) {
-            const [r, g, b, a] = Settings[color]
-            this.Color = Renderer.color(r, g, b, a)
-
-            Settings.getConfig().registerListener(color, (_, [r, g, b, a]) => this.Color = Renderer.color(r, g, b, a))
-        }
-
         this.defaultText = defaultText
         this.lines = Array(0)
         this.maxWidth = 0
