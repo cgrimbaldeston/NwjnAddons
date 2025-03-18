@@ -4,8 +4,9 @@ new class Clock extends GuiFeature {
     constructor() {
         const defaultText = ["00:00:00 AM"]
 
-        super(this, defaultText)
-            .addEvent("interval", () => this?.setTime(), 1)
+        super({setting: this.constructor.name}, defaultText)
+            .addColorListener()
+            .addEvent("interval", () => this.setTime(), 1)
 
         this.init()
     }

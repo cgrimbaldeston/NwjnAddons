@@ -9,7 +9,8 @@ import { getField } from "../../utils/Reflect"
 
 new class MobHighlight extends Feature {
     constructor() {
-        super(this)
+        super({setting: this.constructor.name})
+            .addColorListener()
             .addEvent("entityRendered", ({entity}) => {
                 const shouldRender = this.RenderList?.get(entity)
                 if (!shouldRender) return
@@ -24,9 +25,7 @@ new class MobHighlight extends Feature {
                 
             .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, (event) => this.RenderList?.remove(event.entity))
 
-        Settings.getConfig()
-            .registerListener("MobHighlightColor", (_, val) => this.Color = val)
-            .onCloseGui(() => this?.updateWhitelist(Settings.MobHighlight))
+        Settings.getConfig().onCloseGui(() => this?.updateWhitelist(Settings.MobHighlight))
 
         // Weird hardcoding update because it wasn't working normally
         // Client.scheduleTask(20, () => {
@@ -46,7 +45,6 @@ new class MobHighlight extends Feature {
         getField(EntityList, /* stringToClassMapping */"field_75625_b").get(EntityList).forEach((k, v) => this.StringToClassMap.set(k.toLowerCase(), v))
 
         this.RenderList = new java.util.WeakHashMap()
-        this.Color = Settings.MobHighlightColor
 
         this.validate = (entity) => {
             const healthList = this.Whitelist.get(entity.class)
@@ -84,7 +82,6 @@ new class MobHighlight extends Feature {
         delete this.Whitelist
         delete this.StringToClassMap
         delete this.RenderList
-        delete this.Color
 
         delete this.validate
         delete this.updateWhitelist

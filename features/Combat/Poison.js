@@ -8,7 +8,7 @@ new class Poison extends GuiFeature {
             "0§8x §aToxic Arrow Poison"
         ]
 
-        super(this, defaultText)
+        super({setting: this.constructor.name}, defaultText)
             .addEvent("interval", () => {
                 if (!World.isLoaded()) return
 

@@ -6,7 +6,8 @@ import { isBlacklisted } from "../../utils/Profile";
 
 new class ChatWaypoints extends Feature {
     constructor() {
-        super(this)
+        super({setting: this.constructor.name})
+            .addColorListener()
             .addEvent("serverChat", (displayName, x, y, z, text = "", event, formatted) => {
                 const ign = TextUtil.getSenderName(displayName).toLowerCase()
                 
@@ -31,17 +32,14 @@ new class ChatWaypoints extends Feature {
             })
             }, null, () => this.waypoints.size)
 
-        Settings.getConfig().registerListener("ChatWaypointsColor", (_, val) => this.Color = val)
         this.init()
     }
 
     onEnabled() {
         this.waypoints = new Map()
-        this.Color = Settings.ChatWaypointsColor
     }
 
     onDisabled() {
         delete this.waypoints
-        delete this.Color
     }
 }

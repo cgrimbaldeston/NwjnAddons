@@ -3,7 +3,7 @@ import Settings from "../../data/Settings";
 
 new class SpawnClutter extends Feature {
     constructor() {
-        super(this)
+        super({setting: this.constructor.name})
             .addEvent("spawnObject", (typeId, event) => this.blacklist?.has(typeId) && cancel(event))
             .addEvent("packetReceived", (_, event) => cancel(event), net.minecraft.network.play.server.S10PacketSpawnPainting)
             .addEvent("packetReceived", (_, event) => cancel(event), net.minecraft.network.play.server.S11PacketSpawnExperienceOrb)

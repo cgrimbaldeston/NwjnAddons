@@ -9,7 +9,7 @@ import EntityUtil from "../../core/static/EntityUtil"
 
 new class DeathClutter extends Feature {
     constructor() {
-        super(this)
+        super({setting: this.constructor.name})
             .addEvent(net.minecraftforge.event.entity.living.LivingDeathEvent, ({entity}) => EntityUtil.removeEntity(entity))
             .addEvent("packetReceived", (packet) => {
                 // Nametag changes always have only one watcher

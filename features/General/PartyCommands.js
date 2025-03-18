@@ -107,7 +107,7 @@ const commands = {
 
 new class PartyCommands extends Feature {
     constructor() {
-        super(this)
+        super({setting: this.constructor.name})
             .addEvent("serverChat", (player, command, event) => {
                 const ign = TextUtil.getSenderName(player).toLowerCase()
                 const cmd = command.toLowerCase().trim()
