@@ -1,12 +1,12 @@
 /** 
  * An adaption of STuF (With Stuffy)
- * @original Stuffyerface
- * @credit https://github.com/stuffyerface/ImageLinkFix
+ * @author Stuffyerface
+ * @link https://github.com/stuffyerface/ImageLinkFix
  */
 
 import Feature from "../../libs/Features/Feature";
 import TextUtil from "../../core/static/TextUtil";
-import { getField } from "../../utils/Reflect"
+import { getProperty } from "../../utils/Reflect"
 
 new class LinkFix extends Feature {
     /**
@@ -79,7 +79,7 @@ new class LinkFix extends Feature {
     }
 
     onEnabled() {
-        this.textField = getField(net.minecraft.util.ChatComponentText, /* text */"field_150267_b")
+        this.textField = getProperty(net.minecraft.util.ChatComponentText, /* text */"field_150267_b")
 
         const schemes = {
             "h": "http://",

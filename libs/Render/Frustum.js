@@ -1,5 +1,5 @@
 /** Optimized by PerseusPotter */
-import { getField } from "../../utils/Reflect"
+import { getProperty } from "../../utils/Reflect"
 
 export default new class Frustum {
     /**
@@ -29,12 +29,12 @@ export default new class Frustum {
         // Needs to be called from within the Minecraft Thread to initialize the Frustum class
         Client.scheduleTask(() => {
             const RenderManager = Renderer.getRenderManager()
-            const renderPosX = getField(RenderManager, /* renderPosX */"field_78725_b")
-            const renderPosY = getField(RenderManager, /* renderPosY */"field_78726_c")
-            const renderPosZ = getField(RenderManager, /* renderPosZ */"field_78723_d")
-            this.getRenderX = () => renderPosX.get(RenderManager)
-            this.getRenderY = () => renderPosY.get(RenderManager)
-            this.getRenderZ = () => renderPosZ.get(RenderManager)
+            const renderPosX = getProperty(RenderManager, /* renderPosX */"field_78725_b")
+            const renderPosY = getProperty(RenderManager, /* renderPosY */"field_78726_c")
+            const renderPosZ = getProperty(RenderManager, /* renderPosZ */"field_78723_d")
+            this.getRenderX = () => renderPosX.get()
+            this.getRenderY = () => renderPosY.get()
+            this.getRenderZ = () => renderPosZ.get()
 
             // Needs to be called from within the Minecraft Thread to initialize the Frustum class
             // Otherwise you will get this error: Java.lang.RuntimeException: No OpenGL context found in the current thread.
@@ -50,9 +50,9 @@ export default new class Frustum {
                 if (!phase.equals(PRE)) return
 
                 frustum./* setPos */func_78547_a(
-                    renderPosX.get(RenderManager), 
-                    renderPosY.get(RenderManager), 
-                    renderPosZ.get(RenderManager)
+                    renderPosX.get(), 
+                    renderPosY.get(), 
+                    renderPosZ.get()
                 )
             })
         })
