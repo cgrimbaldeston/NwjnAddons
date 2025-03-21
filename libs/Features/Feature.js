@@ -57,9 +57,7 @@ export default class Feature {
      * - Attaches a listener that tracks this feature's color setting
      * - The value can be accessed with [this.Color] and is packaged as a [long]
      */
-    addColorListener() {
-        const ColorSetting = this.setting + "Color"
-
+    addColorListener(ColorSetting = this.setting + "Color") {
         this.Color = RenderHelper.RGBAtoLong(Settings[ColorSetting])
 
         Settings.getConfig().registerListener(ColorSetting, (_, val) => this.Color = RenderHelper.RGBAtoLong(val))

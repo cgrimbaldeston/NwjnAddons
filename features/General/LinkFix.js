@@ -6,7 +6,7 @@
 
 import Feature from "../../libs/Features/Feature";
 import TextUtil from "../../core/static/TextUtil";
-import { getProperty } from "../../utils/Reflect"
+import { getField } from "../../libs/Wrappers/Field";
 
 new class LinkFix extends Feature {
     /**
@@ -79,7 +79,7 @@ new class LinkFix extends Feature {
     }
 
     onEnabled() {
-        this.textField = getProperty(net.minecraft.util.ChatComponentText, /* text */"field_150267_b")
+        this.textField = getField(net.minecraft.util.ChatComponentText, /* text */"field_150267_b")
 
         const schemes = {
             "h": "http://",
@@ -108,7 +108,7 @@ new class LinkFix extends Feature {
             return Array.from(input).reduce((prev, curr) => {
                 const idx = charSet.indexOf(curr)
     
-                const ret = ~idx ? charSet[this.wrapIndex(idx + offset, 0, 61)] : curr
+                const ret = ~idx ? charSet[this.wrapIndex(idx + offset, 0, charSet.length - 1)] : curr
     
                 return prev + ret
             }, "")

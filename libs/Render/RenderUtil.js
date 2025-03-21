@@ -348,11 +348,12 @@ export default class RenderUtil {
         if (checkFrustum && !RenderHelper.inFrustum(BeaconBB)) return
         RenderUtil.renderBeaconBeam(x, y, z, RenderHelper.adjustLumin(color, 165), phase, 100, false)
 
+        RenderUtil.drawString(text, x, y + 3, z, Renderer.WHITE, true, 0.8, true, true, phase, true)
+
         const BlockBB = RenderHelper.toAABB(x, y, z, 1, 1)
         if (checkFrustum && !RenderHelper.inFrustum(BlockBB)) return
 
         RenderUtil.drawFilledOutline(BlockBB, color, phase, 4, false)
-        RenderUtil.drawString(text, x, y + 3, z, Renderer.WHITE, true, 1, true, true, phase, false)
     }
     
     /**
@@ -383,11 +384,16 @@ export default class RenderUtil {
         esp = true,
         checkFrustum = true
     ) {
-        if (checkFrustum && !RenderHelper.isBoundsInFrustum(x, y, z, 1, 1)) return
-        
         const {rx, ry, rz} = RenderHelper.getRenderPos()
-        if (increase) scale = Math.hypot(x - rx, y - ry, z - rz) / RenderHelper.getRenderDistanceBlocks()
+        if (increase) scale = Math.hypot(x - rx, y - ry, z - rz) / 128
         const xMulti = Client.settings.getSettings()./* thirdPersonView */field_74320_O === 2 ? -1 : 1
+    
+        const lines = text.addColor().split("\n")
+        const height = lines.length * 9 + 1
+        const widths = lines.map(l => Renderer.getStringWidth(l) * 0.5)
+        const maxWidth = Math.max.call(null, widths) + 1
+        
+        if (checkFrustum && !RenderHelper.isBoundsInFrustum((x - rx) * scale, (y - ry) * scale, (z - rz) * scale, maxWidth, height)) return
 
         Tessellator
             .pushMatrix()
@@ -400,11 +406,6 @@ export default class RenderUtil {
             .tryBlendFuncSeparate(770, 771, 1, 771)
             .depthMask(false)
             if (esp) Tessellator.disableDepth()
-            
-        const lines = text.addColor().split("\n")
-        const height = lines.length * 9 + 1
-        const widths = lines.map(l => Renderer.getStringWidth(l) / 2)
-        const maxWidth = Math.max.call(null, widths) + 1
 
         if (renderBlackBox) {
             Tessellator.colorize(0, 0, 0, 0.25)

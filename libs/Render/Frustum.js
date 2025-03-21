@@ -1,5 +1,5 @@
 /** Optimized by PerseusPotter */
-import { getProperty } from "../../utils/Reflect"
+import { getFields } from "../Wrappers/Field"
 
 export default new class Frustum {
     /**
@@ -21,20 +21,29 @@ export default new class Frustum {
      */
     isBoxInFrustum(minX, minY, minZ, maxX, maxY, maxZ) {}
 
+    /**
+     * @returns {Number}
+     */
     getRenderX() {}
+
+    /**
+     * @returns {Number}
+     */
     getRenderY() {}
+
+    /**
+     * @returns {Number}
+     */
     getRenderZ() {}
 
     constructor() {
         // Needs to be called from within the Minecraft Thread to initialize the Frustum class
         Client.scheduleTask(() => {
             const RenderManager = Renderer.getRenderManager()
-            const renderPosX = getProperty(RenderManager, /* renderPosX */"field_78725_b")
-            const renderPosY = getProperty(RenderManager, /* renderPosY */"field_78726_c")
-            const renderPosZ = getProperty(RenderManager, /* renderPosZ */"field_78723_d")
-            this.getRenderX = () => renderPosX.get()
-            this.getRenderY = () => renderPosY.get()
-            this.getRenderZ = () => renderPosZ.get()
+            const [rx, ry, rz] = getFields(RenderManager, /* renderPosX */"field_78725_b", /* renderPosY */"field_78726_c", /* renderPosZ */"field_78723_d")
+            this.getRenderX = () => rx.get()
+            this.getRenderY = () => ry.get()
+            this.getRenderZ = () => rz.get()
 
             // Needs to be called from within the Minecraft Thread to initialize the Frustum class
             // Otherwise you will get this error: Java.lang.RuntimeException: No OpenGL context found in the current thread.
@@ -50,9 +59,9 @@ export default new class Frustum {
                 if (!phase.equals(PRE)) return
 
                 frustum./* setPos */func_78547_a(
-                    renderPosX.get(), 
-                    renderPosY.get(), 
-                    renderPosZ.get()
+                    rx.get(), 
+                    ry.get(), 
+                    rz.get()
                 )
             })
         })

@@ -5,7 +5,7 @@ import Feature from "../../libs/Features/Feature"
 import TextUtil from "../../core/static/TextUtil"
 import Settings from "../../data/Settings"
 import RenderHelper from "../../libs/Render/RenderHelper"
-import { getProperty } from "../../utils/Reflect"
+import { getFieldValue } from "../../libs/Wrappers/Field"
 
 new class MobHighlight extends Feature {
     constructor() {
@@ -41,7 +41,9 @@ new class MobHighlight extends Feature {
             
         this.Whitelist = new HashMap()
         this.StringToClassMap = new Map()
-        getProperty(net.minecraft.entity.EntityList, /* stringToClassMapping */"field_75625_b").get().forEach((k, v) => this.StringToClassMap.set(k.toLowerCase(), v))
+        
+        getFieldValue(net.minecraft.entity.EntityList, /* stringToClassMapping */"field_75625_b")
+            .forEach((k, v) => this.StringToClassMap.set(k.toLowerCase(), v))
 
         this.RenderList = new java.util.WeakHashMap()
 

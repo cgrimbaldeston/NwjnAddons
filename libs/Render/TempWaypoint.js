@@ -6,7 +6,7 @@ export default class Waypoint {
     constructor(mainText, subText, x, y, z, removalRadius = null, lifespan = null) {
         this.mainText = mainText
         this.subText = subText.trim(), subText && `\n${subText}`
-        this.blockPos = new BlockPos(~~x - 0.5, ~~y, ~~z - 0.5)
+        this.blockPos = new BlockPos(~~x, ~~y, ~~z)
         this.removalRadius = removalRadius
         this.distance = ~~Player.asPlayerMP().distanceTo(this.blockPos)
 
