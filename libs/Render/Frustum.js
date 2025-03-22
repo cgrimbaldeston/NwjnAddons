@@ -1,16 +1,53 @@
 /** Optimized by PerseusPotter */
-import { getFields } from "../Wrappers/Field"
+import { getField } from "../Wrappers/Field"
+const RenderManager = Renderer.getRenderManager()
 
 export default new class Frustum {
+    constructor() {
+        this.renderPosX = getField(RenderManager, /* renderPosX */"field_78725_b")
+        this.renderPosY = getField(RenderManager, /* renderPosY */"field_78726_c")
+        this.renderPosZ = getField(RenderManager, /* renderPosZ */"field_78723_d")
+
+        // Needs to be called from within the Minecraft Thread to initialize the Frustum class
+        // Otherwise you will get this error: Java.lang.RuntimeException: No OpenGL context found in the current thread.
+        Client.scheduleTask(() => this.Frustum = new net.minecraft.client.renderer.culling.Frustum())
+
+        // Updates frustum position on preRenderTicks, all view angle changes are handled within GL
+        register(net.minecraftforge.fml.common.gameevent.TickEvent, (event) => {
+            if (event.phase.toString() !== "START") return
+
+            this.Frustum?./* setPos */func_78547_a(
+                this.getRenderX(), 
+                this.getRenderY(), 
+                this.getRenderZ()
+            )
+        })
+    }
+
+    /** @returns {Number} */
+    getRenderX() {
+        return this.renderPosX.get(RenderManager)
+    }
+
+    /** @returns {Number} */
+    getRenderY() {
+        return this.renderPosY.get(RenderManager)
+    }
+
+    /** @returns {Number} */
+    getRenderZ() {
+        return this.renderPosZ.get(RenderManager)
+    }
+
     /**
-     * @override Should be overridden when Frustum is created
      * @param AxisAlignedBB net.minecraft.util.AxisAlignedBB
      * @returns {Boolean} true if any corner of the aabb is within the frustum
      */
-    isAABBInFrustum(AxisAlignedBB) {}
+    isAABBInFrustum(AxisAlignedBB) {
+        return this.Frustum?./* isBoundingBoxInFrustum */func_78546_a(AxisAlignedBB)
+    }
         
     /**
-     * @override Should be overridden when Frustum is created
      * @param {Number} minX
      * @param {Number} minY
      * @param {Number} minZ
@@ -19,51 +56,7 @@ export default new class Frustum {
      * @param {Number} maxZ
      * @returns {Boolean} true if any corner of the aabb is within the frustum
      */
-    isBoxInFrustum(minX, minY, minZ, maxX, maxY, maxZ) {}
-
-    /**
-     * @returns {Number}
-     */
-    getRenderX() {}
-
-    /**
-     * @returns {Number}
-     */
-    getRenderY() {}
-
-    /**
-     * @returns {Number}
-     */
-    getRenderZ() {}
-
-    constructor() {
-        // Needs to be called from within the Minecraft Thread to initialize the Frustum class
-        Client.scheduleTask(() => {
-            const RenderManager = Renderer.getRenderManager()
-            const [rx, ry, rz] = getFields(RenderManager, /* renderPosX */"field_78725_b", /* renderPosY */"field_78726_c", /* renderPosZ */"field_78723_d")
-            this.getRenderX = () => rx.get()
-            this.getRenderY = () => ry.get()
-            this.getRenderZ = () => rz.get()
-
-            // Needs to be called from within the Minecraft Thread to initialize the Frustum class
-            // Otherwise you will get this error: Java.lang.RuntimeException: No OpenGL context found in the current thread.
-            const frustum = new net.minecraft.client.renderer.culling.Frustum()
-
-            this.isAABBInFrustum = (AxisAlignedBB) => frustum./* isBoundingBoxInFrustum */func_78546_a(AxisAlignedBB)
-            this.isBoxInFrustum = (minX, minY, minZ, maxX, maxY, maxZ) => frustum./* isBoxInFrustum */func_78548_b(minX, minY, minZ, maxX, maxY, maxZ)
-
-            // Updates frustum position on preRenderTicks, all view angle changes are handled within GL
-            const TickEvent = net.minecraftforge.fml.common.gameevent.TickEvent
-            const PRE = TickEvent.Phase.START
-            register(TickEvent.RenderTickEvent, ({phase}) => {
-                if (!phase.equals(PRE)) return
-
-                frustum./* setPos */func_78547_a(
-                    rx.get(), 
-                    ry.get(), 
-                    rz.get()
-                )
-            })
-        })
+    isBoxInFrustum(minX, minY, minZ, maxX, maxY, maxZ) {
+        return this.Frustum?./* isBoxInFrustum */func_78548_b(minX, minY, minZ, maxX, maxY, maxZ)
     }
 }

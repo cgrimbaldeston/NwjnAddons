@@ -2,28 +2,8 @@ export function getMethod(instance, methodName) {
     return new WrappedJavaMethod(instance, methodName);
 }
 
-export function getMethods(instance, ...methodNames) {
-    return methodNames.map(name => new WrappedJavaMethod(instance, name));
-}
-
 export function getMethodValue(instance, methodName, ...params) {
     return WrappedJavaMethod.call(instance, methodName, params);
-}
-
-/**
- * For Minecraft classes this is hardly necessary, however,
- * This is better practice for any kind of reflection.
- * Additionally this may be important while working with Non-Minecraft classes
- * @param {JavaTMethod} method 
- * @param {Function} runnable 
- * @returns value of [runnable] if any
- */
-function runSafely(method, runnable) {
-    method.setAccessible(true);
-    const ret = runnable();
-    method.setAccessible(false);
-
-    return ret;
 }
 
 class WrappedJavaMethod {
@@ -33,12 +13,17 @@ class WrappedJavaMethod {
 
     constructor(instance, methodName) {
         this.property = instance.class.getDeclaredMethod(methodName);
-        this.isSafe = this.property.isAccessible();
+        this.shouldLeaveOpen = this.property.isAccessible();
     }
 
-    call(instance = null, ...params) {
-        if (this.isSafe) return this.property.invoke(instance, params);
+    call(instance, ...params) {
+        if (!instance) return console.warn("Reflected Java Methods require an instance parameter to access this caller");
+        /* Resetting accessibility because it is better practice despite it being largely unnecessary */
 
-        return runSafely(this.property, () => this.property.invoke(instance, params));
+        if (!this.shouldLeaveOpen) this.property.setAccessible(true);
+        const value = this.property.invoke(instance, params);
+        if (!this.shouldLeaveOpen) this.property.setAccessible(false);
+
+        return value;
     }
 }

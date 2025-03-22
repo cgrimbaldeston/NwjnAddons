@@ -2,32 +2,12 @@ export function getField(instance, fieldName) {
     return new WrappedJavaField(instance, fieldName);
 }
 
-export function getFields(instance, ...fieldNames) {
-    return fieldNames.map(name => new WrappedJavaField(instance, name));
-}
-
 export function getFieldValue(instance, fieldName) {
     return WrappedJavaField.get(instance, fieldName);
 }
 
 export function setFieldValue(instance, fieldName, value) {
     return WrappedJavaField.set(instance, fieldName, value);
-}
-
-/**
- * For Minecraft classes this is hardly necessary, however,
- * This is better practice for any kind of reflection.
- * Additionally this may be important while working with Non-Minecraft classes
- * @param {JavaTField} field 
- * @param {Function} runnable 
- * @returns value of [runnable] if any
- */
-function runSafely(field, runnable) {
-    field.setAccessible(true);
-    const ret = runnable();
-    field.setAccessible(false);
-
-    return ret;
 }
 
 class WrappedJavaField {
@@ -41,18 +21,26 @@ class WrappedJavaField {
 
     constructor(instance, fieldName) {
         this.property = instance.class.getDeclaredField(fieldName);
-        this.isSafe = this.property.isAccessible();
+        this.shouldLeaveOpen = this.property.isAccessible();
     }
 
-    get(instance = null) {
-        if (this.isSafe) return this.property.get(instance);
+    get(instance) {
+        if (!instance) return console.warn("Reflected Java Fields require an instance parameter to access this getter");
+        /* Resetting accessibility because it is better practice despite it being largely unnecessary */
 
-        return runSafely(this.property, () => this.property.get(instance));
+        if (!this.shouldLeaveOpen) this.property.setAccessible(true);
+        const value = this.property.get(instance);
+        if (!this.shouldLeaveOpen) this.property.setAccessible(false);
+
+        return value;
     }
 
-    set(instance = null, value) {
-        if (this.isSafe) return this.property.set(instance, value);
+    set(instance, value) {
+        if (!instance) return console.warn("Reflected Java Fields require an instance parameter to access this setter");
+        /* Resetting accessibility because it is better practice despite it being largely unnecessary */
 
-        return runSafely(this.property, () => this.property.set(instance, value));
+        if (!this.shouldLeaveOpen) this.property.setAccessible(true);
+        this.property.set(instance, value);
+        if (!this.shouldLeaveOpen) this.property.setAccessible(false);
     }
 }
