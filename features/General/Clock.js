@@ -1,22 +1,20 @@
-import GuiFeature from "../../libs/Features/GuiFeature";
+import GuiFeature from "../../libs/Features/GuiFeature"
+import { ColorContainer } from "../../libs/Render/ColorContainer"
+import Settings from "../../data/Settings"
 
 new class Clock extends GuiFeature {
     constructor() {
-        const defaultText = ["00:00:00 AM"]
+        super({setting: "Clock"}, ["00:00:00 AM"])
 
-        super({setting: this.constructor.name}, defaultText)
-            .addColorListener()
-            .addEvent("interval", () => this.setTime(), 1)
+        this.Color = ColorContainer.registerListener(Settings, "ClockColor")
+        this.formatter = new java.text.SimpleDateFormat("hh:mm:ss a", java.util.Locale.US)
+
+        this.addEvent("interval", this.onSecond.bind(this), 1)
 
         this.init()
     }
 
-    onEnabled() {
-        const TimeFormatter = new java.text.SimpleDateFormat("hh:mm:ss a", java.util.Locale.US)
-        this.setTime = () => this.setLine(TimeFormatter.format(Date.now()))
-    }
-    
-    onDisabled() {
-        delete this.setTime
+    onSecond() {
+        this.setLine(this.formatter.format(Date.now()))
     }
 }

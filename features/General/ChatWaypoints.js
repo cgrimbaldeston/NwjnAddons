@@ -3,12 +3,14 @@ import TextUtil from "../../core/static/TextUtil";
 import Settings from "../../data/Settings";
 import Waypoint from "../../libs/Render/TempWaypoint";
 import { isBlacklisted } from "../../utils/Profile";
+import { ColorContainer } from "../../libs/Render/ColorContainer";
 
 new class ChatWaypoints extends Feature {
     constructor() {
-        super({setting: this.constructor.name})
-            .addColorListener()
-            .addEvent("serverChat", (displayName, x, y, z, text = "", event, formatted) => {
+        super({setting: "ChatWaypoints"})
+
+        this.Color = ColorContainer.registerListener(Settings, "ChatWaypointsColor")
+        this.addEvent("serverChat", (displayName, x, y, z, text = "", event, formatted) => {
                 const ign = TextUtil.getSenderName(displayName).toLowerCase()
                 
                 if (isBlacklisted(ign)) return TextUtil.append(event./* getChatComponent */func_148915_c(), "§cBlacklisted")

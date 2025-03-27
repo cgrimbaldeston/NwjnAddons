@@ -54,7 +54,7 @@ export default class RenderHelper {
 
     static inFrustum = (aabb) => Frustum.isAABBInFrustum(aabb)
 
-    static isBoundsInFrustum = (x, y, z, w, h) => Frustum.isBoxInFrustum.call(null, RenderHelper.createBounds(x, y, z, w, h))
+    static isBoundsInFrustum = (x, y, z, w, h) => Frustum.isBoxInFrustum(...RenderHelper.createBounds(x, y, z, w, h))
 
     static isEntityInFrustum = (entity) => Frustum.isAABBInFrustum(entity./* getEntityBoundingBox */func_174813_aQ())
 
@@ -110,41 +110,4 @@ export default class RenderHelper {
     //         scale
     //     };
     // }
-
-    static toRGBA(long) {
-        return [
-            (long >> 24 & 0xff) / 255,
-            (long >> 16 & 0xff) / 255,
-            (long >> 8 & 0xff) / 255,
-            (long & 0xff) / 255
-        ]
-    }
-
-    static RGBAtoLong([r, g, b, a]) {
-        return (r * 0x1000000) + (g * 0x10000) + (b * 0x100) + a
-    }
-
-    /** minecraft uses ARGB for in FontRenderer */
-    static RGBALongToARGBLong(long) {
-        return ((long & 0xff) * 0x1000000) + ((long >> 24 & 0xff) * 0x10000) + ((long >> 16 & 0xff) * 0x100) + (long >> 8 & 0xff)
-    }
-
-    static color(long) {
-        GlStateManager./* color */func_179131_c(
-            ((long >> 24) & 0xff) / 255,
-            ((long >> 16) & 0xff) / 255,
-            ((long >> 8) & 0xff) / 255,
-            ((long >> 0) & 0xff) / 255
-        )
-    }
-
-    /**
-     * @param {Number} color initial color
-     * @param {Number} newValue 0 to 255 alpha
-     */
-    static adjustLumin(color, newValue) {
-        const alpha = ((color >> 0) & 0xff) / 255
-        const noAlpha = color - alpha
-        return Math.min(Math.max(noAlpha + newValue, noAlpha), noAlpha + 255)
-    }
 }

@@ -71,7 +71,7 @@ new class GuiEditor {
         GlStateManager./* enableBlend */func_179147_l()
         GlStateManager./* disableTexture2D */func_179090_x()
         GlStateManager./* tryBlendFuncSeparate */func_179120_a(770, 771, 1, 0)
-        RenderHelper.color(0x33333399)
+        GlStateManager./* color */func_179131_c(0.2, 0.2, 0.2, 0.6)
 
         WorldRenderer./* begin */func_181668_a(7, DefaultVertexFormats$POSITION)
         WorldRenderer./* pos */func_181662_b(ox - 1, oy + feat.totHeight + 1, 0)./* endVertex */func_181675_d()
@@ -83,7 +83,7 @@ new class GuiEditor {
         GlStateManager./* enableTexture2D */func_179098_w()
         GlStateManager./* disableBlend */func_179084_k()
         
-        const argb = RenderHelper.RGBALongToARGBLong(feat.Color) | 0
+        const argb = feat.Color.getFontHex()
         for (let i = 0; i < lines.length; i++) 
             FontRenderer./* drawString */func_175065_a(lines[i], ox, oy + 1 + i * 9, argb, true)
         Renderer.retainTransforms(false)

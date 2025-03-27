@@ -6,12 +6,16 @@ import TextUtil from "../../core/static/TextUtil"
 import Settings from "../../data/Settings"
 import RenderHelper from "../../libs/Render/RenderHelper"
 import { getFieldValue } from "../../libs/Wrappers/Field"
+import { ColorContainer } from "../../libs/Render/ColorContainer"
+import Settings from "../../data/Settings"
 
 new class MobHighlight extends Feature {
     constructor() {
-        super({setting: this.constructor.name})
-            .addColorListener()
-            .addEvent("entityRendered", ({entity}) => {
+        super({setting: "MobHighlight"})
+
+        this.Color = ColorContainer.registerListener(Settings, "MobHighlightColor")
+
+        this.addEvent("entityRendered", ({entity}) => {
                 const shouldRender = this.RenderList?.get(entity)
                 if (!shouldRender) return
 

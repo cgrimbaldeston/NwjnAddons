@@ -47,7 +47,7 @@ export default new class Party {
     }
 
     getUsername(string) {
-        const match = string.match(/(\w{1,16})/)
+        const match = string?.match(/(\w{1,16})/)
         if (match) return match[1]
     }
     

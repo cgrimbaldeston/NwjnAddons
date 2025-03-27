@@ -9,6 +9,7 @@
  * @credit https://github.com/PerseusPotter/chicktils/blob/master/util/draw.js
  */
 
+import { ColorContainer } from "./ColorContainer"
 import RenderHelper from "./RenderHelper"
 const MCTessellator = net.minecraft.client.renderer.Tessellator./* getInstance */func_178181_a()
 const DefaultVertexFormats = net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -21,7 +22,7 @@ const beaconBeam = new net.minecraft.util.ResourceLocation("textures/entity/beac
 export default class RenderUtil {
     /**
      * @param {AxisAlignedBB} aabb
-     * @param {Number} color
+     * @param {ColorContainer} color
      * @param {Boolean} esp 
      * @param {Number} lineWidth 
      * @param {Boolean} checkFrustum
@@ -38,7 +39,7 @@ export default class RenderUtil {
         GlStateManager./* tryBlendFuncSeparate */func_179120_a(770, 771, 1, 0)
         if (esp) GlStateManager./* disableDepth */func_179097_i()
         GlStateManager./* pushMatrix */func_179094_E()
-        RenderHelper.color(RenderHelper.adjustLumin(color, 50))
+        color.glColor(0.2)
         GlStateManager./* translate */func_179109_b(-rx, -ry, -rz)
                 
         const [minX, minY, minZ, maxX, maxY, maxZ] = RenderHelper.getAxisCoords(aabb)
@@ -67,7 +68,7 @@ export default class RenderUtil {
         MCTessellator./* draw */func_78381_a()
 
         // Outline
-        RenderHelper.color(color)
+        color.glColor()
         WorldRenderer./* begin */func_181668_a(3, DefaultVertexFormats$POSITION)
         WorldRenderer./* pos */func_181662_b(minX, minY, minZ)./* endVertex */func_181675_d()
         WorldRenderer./* pos */func_181662_b(maxX, minY, minZ)./* endVertex */func_181675_d()
@@ -107,7 +108,7 @@ export default class RenderUtil {
      * @param {Number} z
      * @param {Number} w
      * @param {Number} h
-     * @param {Number} color
+     * @param {ColorContainer} color
      * @param {Boolean} esp 
      * @param {Number} lineWidth 
      * @param {Boolean} checkFrustum
@@ -118,7 +119,7 @@ export default class RenderUtil {
 
     /**
      * @param {net.minecraft.util.AxisAlignedBB} aabb 
-     * @param {Number} color
+     * @param {ColorContainer} color
      * @param {Boolean} esp 
      * @param {Number} lineWidth 
      * @param {Boolean} checkFrustum
@@ -133,7 +134,7 @@ export default class RenderUtil {
         GlStateManager./* disableAlpha */func_179118_c()
         GL11.glLineWidth(lineWidth)
         GL11.glEnable(2848)
-        RenderHelper.color(color)
+        color.glColor()
         GlStateManager./* pushMatrix */func_179094_E()
         GlStateManager./* translate */func_179109_b(-rx, -ry, -rz)
         GlStateManager./* depthMask */func_179132_a(false)
@@ -183,7 +184,7 @@ export default class RenderUtil {
      * @param {Number} z
      * @param {Number} w
      * @param {Number} h
-     * @param {Number} color
+     * @param {ColorContainer} color
      * @param {Boolean} esp 
      * @param {Boolean} checkFrustum
      */
@@ -193,7 +194,7 @@ export default class RenderUtil {
 
     /**
      * @param {net.minecraft.util.AxisAlignedBB} aabb 
-     * @param {Number} color
+     * @param {ColorContainer} color
      * @param {Boolean} esp 
      * @param {Boolean} checkFrustum
      */
@@ -205,7 +206,7 @@ export default class RenderUtil {
         GlStateManager./* disableTexture2D */func_179090_x()
         GlStateManager./* disableLighting */func_179140_f()
         GlStateManager./* disableAlpha */func_179118_c()
-        RenderHelper.color(color)
+        color.glColor()
         GlStateManager./* pushMatrix */func_179094_E()
         GlStateManager./* translate */func_179109_b(-rx, -ry, -rz)
         GlStateManager./* depthMask */func_179132_a(false)
@@ -252,7 +253,7 @@ export default class RenderUtil {
      * @param {Number} ix
      * @param {Number} iy
      * @param {Number} iz
-     * @param {Number} color
+     * @param {ColorContainer} color
      * @param {Boolean} esp
      * @param {Number} height 
      * @param {Boolean} checkFrustum
@@ -263,7 +264,7 @@ export default class RenderUtil {
 
         const {rx, ry, rz} = RenderHelper.getRenderPos()
 
-        const [r, g, b, a] = RenderHelper.toRGBA(color)
+        const [r, g, b, a] = color.getRGBA1()
 
         GlStateManager./* pushMatrix */func_179094_E()
         GlStateManager./* translate */func_179109_b(-rx, -ry, -rz)
@@ -346,7 +347,9 @@ export default class RenderUtil {
     static renderWaypoint(text, x, y, z, color, phase, checkFrustum) {
         const BeaconBB = RenderHelper.toAABB(x, y, z, 1, 100)
         if (checkFrustum && !RenderHelper.inFrustum(BeaconBB)) return
-        RenderUtil.renderBeaconBeam(x, y, z, RenderHelper.adjustLumin(color, 165), phase, 100, false)
+        const BeaconColor = color.getRGBA1()
+        BeaconColor[3] = 0.65
+        RenderUtil.renderBeaconBeam(x, y, z, BeaconColor, phase, 100, false)
 
         RenderUtil.drawString(text, x, y + 3, z, Renderer.WHITE, true, 0.8, true, true, phase, true)
 
@@ -364,7 +367,7 @@ export default class RenderUtil {
      * @param {Number} x X coordinate in the game world
      * @param {Number} y Y coordinate in the game world
      * @param {Number} z Z coordinate in the game world
-     * @param {Number} color the color of the text
+     * @param {ColorContainer|Number} color the color of the text
      * @param {Boolean} renderBlackBox
      * @param {Number} scale the scale of the text
      * @param {Boolean} increase whether to scale the text up as the player moves away
@@ -376,7 +379,7 @@ export default class RenderUtil {
         x,
         y,
         z,
-        color,
+        color = Renderer.WHITE,
         renderBlackBox = true,
         scale = 1,
         increase = true,
@@ -419,11 +422,11 @@ export default class RenderUtil {
         
         Tessellator
             .enableTexture2D()
-        RenderHelper.color(color)
 
         const FontRenderer = Renderer.getFontRenderer()
+        color = color instanceof ColorContainer ? color.getFontHex() : color
         lines.forEach((line, index) => 
-            FontRenderer./* drawString */func_175065_a(line, -widths[index], index * 9, Renderer.WHITE, shadow)
+            FontRenderer./* drawString */func_175065_a(line, -widths[index], index * 9, color, shadow)
         )
 
         Tessellator
