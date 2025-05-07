@@ -160,7 +160,7 @@ registerWhen(register("chat", (player, command) => {
       ChatLib.command(CommandMsg);
     }
   }, 300)
-}).setCriteria(/Party > (.+): [.?!](.+)/), () => settings.party)
+}).setCriteria(/Party > (.+): [,.?!](.+)/), () => settings.party)
 
 let reaperUsed = 0
 registerWhen(register("soundPlay", () => {

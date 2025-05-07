@@ -6,7 +6,7 @@ import { realPlayer } from "../../utils/functions";
 
 let filteredPlayers = []
 registerWhen(register("step", () => {
-  const PLAYERS = World.getAllPlayers().filter(e => !e.isInvisible() && (settings.player != "Player" || realPlayer(e)))
+  const PLAYERS = World.getAllPlayers().filter(e => !e.isInvisible() && (settings.player == "Player" && realPlayer(e)))
   
   filteredPlayers = []
   PLAYERS.forEach(player => {
@@ -17,7 +17,10 @@ registerWhen(register("step", () => {
 }).setFps(2), () => settings.player !== "")
 
 registerWhen(register("renderWorld", () => {
-  filteredPlayers.forEach(player => {
+  let i = filteredPlayers
+  while (i--) {
+    const player = filteredPlayers[i]
+
     RenderLib.drawEspBox(player.getRenderX(), player.getRenderY(), player.getRenderZ(), 0.6, 1.8, ...getRGB1(settings.playerColor), 1, false)
-  })
+  }
 }), () => settings.player !== "")

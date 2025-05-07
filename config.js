@@ -494,6 +494,13 @@ class Settings {
   mineshaftPity = false
 
   @SwitchProperty({
+    name: "Mineshaft waypoint helper",
+    description: "Pops up in chat with a clickable link for adding routes for the crystal of that mineshaft",
+    category: "Mining"
+  })
+  QuickAddWaypoints = false
+
+  @SwitchProperty({
     name: 'Toggle Block Highlight',
     description: 'Toggles block highlight',
     category: 'QOL'

@@ -59,6 +59,7 @@ import "./features/QOL/VisitorCleaner"
 
 import "./features/Mining/MineshaftWaypoints"
 import "./features/Mining/MineshaftPity"
+import "./features/Mining/QuickAddWaypoints"
 
 import "./features/Beta/AgroCircle"
 import "./features/Beta/GyroCircle"
@@ -76,7 +77,7 @@ import axios from "./../axios"
 import WorldUtil from "./utils/world"
 
 // test
-import "./settings"
+// import "./settings"
 
 let changes;
 register("command", (arg) => {  
