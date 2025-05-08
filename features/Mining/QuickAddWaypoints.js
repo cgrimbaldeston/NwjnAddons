@@ -6,6 +6,8 @@ import WorldUtil from "../../utils/world"
 const data = JSON.parse(FileLib.read("NwjnAddons/features/Mining", "MineshaftWaypointsData.json"))
 const routes = JSON.parse(FileLib.read("NwjnAddons/features/Mining","Routes.json"))
 let currentRoom;
+let formatName;
+let route;
 
 //Basically the same function as the Mineshaft waypoints.  
 function findshaftType() {
@@ -19,16 +21,16 @@ function findshaftType() {
       currentRoom = data.rooms[type]
       const name = data.names[material]
     
-      const formatName = type === "Crystal" ? `${name} Crystal` : name
+      formatName = type === "Crystal" ? `${name} Crystal` : name
       ChatLib.chat(`${PREFIX}: ${formatName}`)
       
-      const route = routes.rooms[type].Route
+      route = routes.rooms[type].Route
       if (!route) {
         ChatLib.chat(`${PREFIX} No route found for ${formatName}`)
         return
       }
       else{
-        output()
+          output()
       }
     }   
 }
@@ -55,10 +57,20 @@ function output(){
 }
 
 registerWhen(register("step", () => {
-    if (!currentRoom) findshaftType()
+  if (currentRoom == undefined){
+    findshaftType() // Remove the condition to check currentRoom
+  }
 }).setDelay(1), () => WorldUtil.worldIs("Mineshaft") && settings.QuickAddWaypoints)
 
+// Reset variables when leaving world or changing areas
+register("worldLoad", () => {
+  currentRoom = undefined
+  formatName = undefined
+  route = undefined
+})
 
 onWorldLeave(() => {
   currentRoom = undefined
+  formatName = undefined
+  route = undefined
 })
